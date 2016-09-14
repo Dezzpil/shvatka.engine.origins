@@ -26,7 +26,7 @@ CREATE TABLE `ibf_sh_admin_msg` (
   `hash` varchar(16) COLLATE cp1251_general_cs NOT NULL DEFAULT '',
   `readed` text COLLATE cp1251_general_cs,
   PRIMARY KEY (`n`)
-) ENGINE=MyISAM AUTO_INCREMENT=21 DEFAULT CHARSET=cp1251 COLLATE=cp1251_general_cs PACK_KEYS=0;
+) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=cp1251 COLLATE=cp1251_general_cs PACK_KEYS=0;
 
 -- --------------------------------------------------------
 
@@ -44,7 +44,7 @@ CREATE TABLE `ibf_sh_comands` (
   `dt_ur` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
   `dengi` binary(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`n`)
-) ENGINE=MyISAM AUTO_INCREMENT=43 DEFAULT CHARSET=cp1251 COLLATE=cp1251_general_cs PACK_KEYS=0;
+) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=cp1251 COLLATE=cp1251_general_cs PACK_KEYS=0;
 
 -- --------------------------------------------------------
 
@@ -61,7 +61,7 @@ CREATE TABLE `ibf_sh_game` (
   `keyw` varchar(100) COLLATE cp1251_general_cs DEFAULT NULL,
   `b_keyw` varchar(100) COLLATE cp1251_general_cs NOT NULL,
   PRIMARY KEY (`n`)
-) ENGINE=MyISAM AUTO_INCREMENT=4577 DEFAULT CHARSET=cp1251 COLLATE=cp1251_general_cs PACK_KEYS=0;
+) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=cp1251 COLLATE=cp1251_general_cs PACK_KEYS=0;
 
 -- --------------------------------------------------------
 
@@ -80,7 +80,7 @@ CREATE TABLE `ibf_sh_games` (
   `leveltable` text COLLATE cp1251_general_cs,
   `logs` longtext COLLATE cp1251_general_cs,
   PRIMARY KEY (`n`)
-) ENGINE=MyISAM AUTO_INCREMENT=90 DEFAULT CHARSET=cp1251 COLLATE=cp1251_general_cs PACK_KEYS=0;
+) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=cp1251 COLLATE=cp1251_general_cs PACK_KEYS=0;
 
 -- --------------------------------------------------------
 
@@ -99,7 +99,7 @@ CREATE TABLE `ibf_sh_igroki` (
   `viwestatus` char(1) COLLATE cp1251_general_cs NOT NULL DEFAULT 'n',
   PRIMARY KEY (`n`),
   FULLTEXT KEY `nick` (`nick`)
-) ENGINE=MyISAM AUTO_INCREMENT=592 DEFAULT CHARSET=cp1251 COLLATE=cp1251_general_cs PACK_KEYS=0;
+) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=cp1251 COLLATE=cp1251_general_cs PACK_KEYS=0;
 
 -- --------------------------------------------------------
 
@@ -115,7 +115,7 @@ CREATE TABLE `ibf_sh_log` (
   `levdone` tinyint(4) NOT NULL DEFAULT '0',
   `autor` varchar(50) COLLATE cp1251_general_cs NOT NULL,
   PRIMARY KEY (`n`)
-) ENGINE=MyISAM AUTO_INCREMENT=1877 DEFAULT CHARSET=cp1251 COLLATE=cp1251_general_cs PACK_KEYS=0;
+) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=cp1251 COLLATE=cp1251_general_cs PACK_KEYS=0;
 
 -- --------------------------------------------------------
 
@@ -131,7 +131,7 @@ CREATE TABLE `ibf_sh_log_ochkov` (
   `ktopoctavil` text COLLATE cp1251_general_cs,
   `komand` binary(1) DEFAULT '0',
   PRIMARY KEY (`n`)
-) ENGINE=MyISAM AUTO_INCREMENT=488 DEFAULT CHARSET=cp1251 COLLATE=cp1251_general_cs PACK_KEYS=0;
+) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=cp1251 COLLATE=cp1251_general_cs PACK_KEYS=0;
 
 -- --------------------------------------------------------
 
@@ -145,4 +145,4 @@ CREATE TABLE `ibf_sh_recrut` (
   `kuda` int(4) NOT NULL DEFAULT '0',
   `otvet` text COLLATE cp1251_general_cs,
   PRIMARY KEY (`n`)
-) ENGINE=MyISAM AUTO_INCREMENT=957 DEFAULT CHARSET=cp1251 COLLATE=cp1251_general_cs PACK_KEYS=0;
+) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=cp1251 COLLATE=cp1251_general_cs PACK_KEYS=0;

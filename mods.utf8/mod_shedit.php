@@ -73,7 +73,7 @@ class module
                 //=====================================
                 // Set up structure
                 //=====================================
-               $this->ipsclass->DB->query("select field_4 from ibf_pfields_content where member_id=".$this->ipsclass->member['id']."");
+               $this->ipsclass->DB->query("select field_4 from pfields_content where member_id=".$this->ipsclass->member['id']."");
                $frows = $this->ipsclass->DB->fetch_row($fquery);
                if (( $this->ipsclass->member['mgroup'] == $this->ipsclass->vars['admin_group'] )or($frows['field_4']=='y'))
                {
@@ -129,7 +129,7 @@ class module
 	  {
 	     if ($this->ipsclass->input['del']!="1")
 	     {
-	       $curdir=getcwd();	  	   $this->ipsclass->DB->query("select * from ibf_sh_games WHERE status='п'");
+	       $curdir=getcwd();	  	   $this->ipsclass->DB->query("select * from sh_games WHERE status='п'");
            $frows = $this->ipsclass->DB->fetch_row($fquery);
            if ($frows['n']!="")                                                    /* Смотрим есть ли предстоящая или текущая игра */
            {
@@ -186,7 +186,7 @@ class module
            chdir($curdir);
          }
          else
-         {           $this->ipsclass->DB->query("select * from ibf_sh_games WHERE status='п'");
+         {           $this->ipsclass->DB->query("select * from sh_games WHERE status='п'");
            $frows = $this->ipsclass->DB->fetch_row($fquery);
            if (unlink(ROOT_PATH."upload/gam".$frows['n']."/l".$this->ipsclass->input['lev']."p".$this->ipsclass->input['npod']."/".$this->ipsclass->input['fname']))
            {$res.='Файл удалён';}
@@ -210,7 +210,7 @@ class module
                  $res="";
                  $lev = $this->ipsclass->input['lev'];
                  $npod = $this->ipsclass->input['npod'];
-                 if (($this->ipsclass->input['execs']=="")and($this->ipsclass->DB->get_num_rows($this->ipsclass->DB->query("select * from ibf_sh_game where (uroven=$lev)and(n_podskazki=$npod) "))))
+                 if (($this->ipsclass->input['execs']=="")and($this->ipsclass->DB->get_num_rows($this->ipsclass->DB->query("select * from sh_game where (uroven=$lev)and(n_podskazki=$npod) "))))
                  {
                     $res='Редактирование сценария. Уровень '.$lev.', подсказка '.$npod;
                     $frows = $this->ipsclass->DB->fetch_row($fquery);
@@ -301,7 +301,7 @@ $res.='<input type="submit" value="Подтвердить изменения">
 <input type="submit" name="dou" value="Закачать файл"><br>
 </form>
 ';
-           	  	 $this->ipsclass->DB->query("select * from ibf_sh_games WHERE status='п'");
+           	  	 $this->ipsclass->DB->query("select * from sh_games WHERE status='п'");
                  $frows = $this->ipsclass->DB->fetch_row($fquery);
                  if ($d=@opendir("upload/gam".$frows['n']."/l".$this->ipsclass->input['lev']."p".$this->ipsclass->input['npod']))
                   { // открываем каталог
@@ -344,11 +344,11 @@ $res.='<input type="submit" value="Подтвердить изменения">
                          {
                               $b_keyw = $this->ipsclass->input['b_keyw'];
                               $keyw = $this->ipsclass->input['keyw'];
-                              $this->ipsclass->DB->query( "update ibf_sh_game set p_time=$ptm, keyw='".$keyw."', b_keyw='".$b_keyw."', text='".(unch($text))."'  WHERE (uroven=$lev)and(n_podskazki=$npod)");
+                              $this->ipsclass->DB->query( "update sh_game set p_time=$ptm, keyw='".$keyw."', b_keyw='".$b_keyw."', text='".(unch($text))."'  WHERE (uroven=$lev)and(n_podskazki=$npod)");
                          }
                          else
                          {
-                              $this->ipsclass->DB->query("update ibf_sh_game set p_time=$ptm, text='".(unch($text))."' WHERE (uroven=$lev)and(n_podskazki=$npod)");
+                              $this->ipsclass->DB->query("update sh_game set p_time=$ptm, text='".(unch($text))."' WHERE (uroven=$lev)and(n_podskazki=$npod)");
                          }
                          $res.='<script >window.navigate("./index.php?act=module&module=reps&cmd=scn");</script>';
 
@@ -360,7 +360,7 @@ $res.='<input type="submit" value="Подтвердить изменения">
                  $res="";
                  $lev = $this->ipsclass->input['lev'];
                  $npod = $this->ipsclass->input['npod'];
-                 if (($this->ipsclass->input['execs']=="")and($this->ipsclass->DB->get_num_rows($this->ipsclass->DB->query("select * from ibf_sh_game where (uroven=$lev)and(n_podskazki=$npod) "))))
+                 if (($this->ipsclass->input['execs']=="")and($this->ipsclass->DB->get_num_rows($this->ipsclass->DB->query("select * from sh_game where (uroven=$lev)and(n_podskazki=$npod) "))))
                  {
                          $res='Удаление из сценария. Уровень '.$lev.', подсказка '.$npod;
                          $res.='<br>
@@ -376,7 +376,7 @@ $res.='<input type="submit" value="Подтвердить изменения">
                  }
                  if  ($this->ipsclass->input['execs']=='1')
                  {
-                         $this->ipsclass->DB->query("DELETE FROM ibf_sh_game WHERE (uroven=$lev)and(n_podskazki=$npod)");
+                         $this->ipsclass->DB->query("DELETE FROM sh_game WHERE (uroven=$lev)and(n_podskazki=$npod)");
                          $res='<b>Удалено.</b><br>Если это была последняя подсказка на уровне, то не забудьте поставить в предыдущей подсказке нулевое время.<br><a href="./index.php?act=module&module=reps&cmd=scn">Вернуться к сценарию.</a>';
                  }
                  $this->result=$res;
@@ -390,7 +390,7 @@ $res.='<input type="submit" value="Подтвердить изменения">
                  {
                      $lev = $this->ipsclass->input['lev'];
                      $npod = $this->ipsclass->input['npod'];
-                     if (($this->ipsclass->input['execs']=="")and(!$this->ipsclass->DB->get_num_rows($this->ipsclass->DB->query("select * from ibf_sh_game where (uroven=$lev)and(n_podskazki=$npod) "))))
+                     if (($this->ipsclass->input['execs']=="")and(!$this->ipsclass->DB->get_num_rows($this->ipsclass->DB->query("select * from sh_game where (uroven=$lev)and(n_podskazki=$npod) "))))
                      {
                         $res='Добавление к сценарию. Уровень '.$lev.', подсказка '.$npod;
                         $res.='<br>
@@ -479,7 +479,7 @@ function url(p)
 <input type="submit" name="dou" value="Закачать файл"><br>
 </form>
 ';
-           	  	        $this->ipsclass->DB->query("select * from ibf_sh_games WHERE status='п'");
+           	  	        $this->ipsclass->DB->query("select * from sh_games WHERE status='п'");
                         $frows = $this->ipsclass->DB->fetch_row($fquery);
                         if ($d=@opendir("upload/gam".$frows['n']."/l".$this->ipsclass->input['lev']."p".$this->ipsclass->input['npod']))
                         { // открываем каталог
@@ -522,11 +522,11 @@ function url(p)
                              {
                                   $b_keyw = $this->ipsclass->input['b_keyw'];
                                   $keyw = $this->ipsclass->input['keyw'];
-                                  $this->ipsclass->DB->query( "INSERT INTO ibf_sh_game  (p_time, keyw, b_keyw, text, uroven, n_podskazki) VALUES ($ptm, '".$keyw."', '".$b_keyw."', '".(unch($text))."', $lev, $npod)");
+                                  $this->ipsclass->DB->query( "INSERT INTO sh_game  (p_time, keyw, b_keyw, text, uroven, n_podskazki) VALUES ($ptm, '".$keyw."', '".$b_keyw."', '".(unch($text))."', $lev, $npod)");
                              }
                              else
                              {
-                              $this->ipsclass->DB->query("INSERT INTO ibf_sh_game  (p_time, text, uroven, n_podskazki) VALUES ($ptm, '".(unch($text))."', $lev, $npod)");
+                              $this->ipsclass->DB->query("INSERT INTO sh_game  (p_time, text, uroven, n_podskazki) VALUES ($ptm, '".(unch($text))."', $lev, $npod)");
                              }
                              $res='Добавлено';
                              $res.='<script >window.navigate("./index.php?act=module&module=reps&cmd=scn");</script>';

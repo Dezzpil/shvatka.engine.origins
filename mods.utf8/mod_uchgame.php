@@ -33,7 +33,7 @@ class module
                     //$res.='<div align="center"><b><u>Участники игры номер '.$id.'</u></b></div>';
                     $kkom=0;
                     $ob_kol_ig=0;
-                    $kquery=$this->ipsclass->DB->query("select * from ibf_sh_comands where cmp_games!='' order by ochki DESC, nazvanie");
+                    $kquery=$this->ipsclass->DB->query("select * from sh_comands where cmp_games!='' order by ochki DESC, nazvanie");
 	                while ($frows = $this->ipsclass->DB->fetch_row($kquery))
 	                {
 		                  $cur_cmd_games=explode(' ',strip_tags($frows['cmp_games']));
@@ -41,7 +41,7 @@ class module
 		                  {                   	         $kkom++;
                    	         $kig=0;
                    	         $res.="<h3><a href=\"#\">Команда ".$frows['nazvanie']."</a></h3><div><table>";
-                   	         $iquery=$this->ipsclass->DB->query("select * from ibf_sh_igroki where (komanda='".$frows['nazvanie']."')and(LOCATE('".$id."',games)!=0) order by ochki DESC");
+                   	         $iquery=$this->ipsclass->DB->query("select * from sh_igroki where (komanda='".$frows['nazvanie']."')and(LOCATE('".$id."',games)!=0) order by ochki DESC");
                    	         while ($ifrows = $this->ipsclass->DB->fetch_row($iquery))
                    	         {                   	         	$cur_igrok_games=explode(' ',strip_tags($ifrows['games']));
                    	         	if (in_array($id,$cur_igrok_games))

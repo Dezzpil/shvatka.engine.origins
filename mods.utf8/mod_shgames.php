@@ -84,7 +84,7 @@ class module
                              $this->disp($this->ipsclass->input['id']);
                              break;
                         case 'pub':
-                             $qqq=$this->ipsclass->DB->query("select field_4 from ibf_pfields_content where member_id=".$this->ipsclass->member['id']."");
+                             $qqq=$this->ipsclass->DB->query("select field_4 from pfields_content where member_id=".$this->ipsclass->member['id']."");
             				 $fff = $this->ipsclass->DB->fetch_row($qqq);
                              if (( $this->ipsclass->member['mgroup'] == $this->ipsclass->vars['admin_group'] )or($fff['field_4']=='y'))
                              {$this->pub();}
@@ -115,11 +115,11 @@ class module
       {
                  $res="";
                  $ptm="";
-                 if (mysql_num_rows($this->ipsclass->DB->query("select * from ibf_sh_games WHERE status='т'"))!=0)
+                 if (mysql_num_rows($this->ipsclass->DB->query("select * from sh_games WHERE status='т'"))!=0)
                  {
       //Сценарий                 	$res=$res.'<div align="center"><b>Cценарий</b></div><br><div  class="borderwrap" style={margin:2px;}>';
                  	$res.="<table style={width:100%;}><tr class=\"ipbtable\"><td class=\"row1\">";
-                 	$this->ipsclass->DB->query("select * from ibf_sh_game order by uroven, n_podskazki");
+                 	$this->ipsclass->DB->query("select * from sh_game order by uroven, n_podskazki");
                  	while ($frows = $this->ipsclass->DB->fetch_row($fquery))
                  	{
                  	if ($frows['n_podskazki']!='0')
@@ -149,7 +149,7 @@ class module
                       }
                     }
                     $res.='</center></td></tr></table></div>';
-                    $this->ipsclass->DB->query("update  ibf_sh_games set scenariy='".addslashes($res)."' WHERE status='т'");
+                    $this->ipsclass->DB->query("update  sh_games set scenariy='".addslashes($res)."' WHERE status='т'");
       //Таблица прохождения
                     $res="";
                  	$comd=array();
@@ -157,12 +157,12 @@ class module
                  	$tab=array();
                  	$res='<div align="center"><b>Таблица проходжения уровней</b></div><br><div align="center" style={margin:2px;}>';
                  	$levkeys=array();
-                 	$this->ipsclass->DB->query("select * from ibf_sh_comands");
+                 	$this->ipsclass->DB->query("select * from sh_comands");
                  	while ($frows = $this->ipsclass->DB->fetch_row($fquery))
                  	{
                  	  $comd[$frows['n']]=$frows['nazvanie'];
                  	}
-                 	$this->ipsclass->DB->query("select * from ibf_sh_game where n_podskazki=0 order by uroven");
+                 	$this->ipsclass->DB->query("select * from sh_game where n_podskazki=0 order by uroven");
                  	while ($frows = $this->ipsclass->DB->fetch_row($fquery))
                  	{
                  	  $levkeys[]=$frows['uroven'];
@@ -170,7 +170,7 @@ class module
                  	foreach ($comd as $n=>$naz)
                  	{
                  	   $fin=array();
-                 	   $fq=$this->ipsclass->DB->query("select * from ibf_sh_log where (comanda='".$naz."')and(levdone>0) order by levdone");
+                 	   $fq=$this->ipsclass->DB->query("select * from sh_log where (comanda='".$naz."')and(levdone>0) order by levdone");
                  	   while ($frows = $this->ipsclass->DB->fetch_row($fq))
                  	   {
                  	        $fin[$frows['levdone']]=$frows['time'];
@@ -223,13 +223,13 @@ class module
                  	       $res.='</tr>';
                  	}
                  	$res.='</table><br></div>';
-                    $this->ipsclass->DB->query("update  ibf_sh_games set leveltable='".addslashes($res)."' WHERE status='т'");
+                    $this->ipsclass->DB->query("update  sh_games set leveltable='".addslashes($res)."' WHERE status='т'");
       //Логи
 	                $chisla=array('0','1','2','3','4','5','6','7','8','9');
                  	$res="";
                  	$keyprev="";
                  	$comd=array();
-					$this->ipsclass->DB->query("select * from ibf_sh_comands");
+					$this->ipsclass->DB->query("select * from sh_comands");
                  	while ($frows = $this->ipsclass->DB->fetch_row($fquery))
                  	{
                  	  $comd[$frows['n']]=$frows['nazvanie'];
@@ -237,7 +237,7 @@ class module
                  	$res=$res.'<div>';
                  	foreach ($comd as $n=>$naz)
                  	{  $keyprev="";
-                 	   if (mysql_num_rows($this->ipsclass->DB->query("select * from ibf_sh_log where comanda='".$naz."' order by time"))!=0)
+                 	   if (mysql_num_rows($this->ipsclass->DB->query("select * from sh_log where comanda='".$naz."' order by time"))!=0)
                  	   {
                  	     $res=$res.'<table cellspacing="1" class="borderwrap" style={width:auto;} align="center"><tr><td align="center" colspan="3" class="maintitle">'.$naz.'</td></tr>';
                  	     $res=$res.'<tr><th align="center">Время</th><th align="center" >Ключ</th><th>Автор</th></tr>';
@@ -254,11 +254,11 @@ class module
                  	   }
                  	 }
                  	 $res.='</div>';
-                 	$this->ipsclass->DB->query("select * from ibf_sh_games WHERE status='т'");
+                 	$this->ipsclass->DB->query("select * from sh_games WHERE status='т'");
                  	$frows = $this->ipsclass->DB->fetch_row($fquery);
-                 	$this->ipsclass->DB->query("update  ibf_sh_games set g_name='<a href=\"./index.php?act=module&module=shgames\&cmd=disp\&id=".$frows['n']."\">".$frows['g_name']."</a>' WHERE status='т'");
-                 	$this->ipsclass->DB->query("update  ibf_sh_games set logs='".addslashes($res)."' WHERE status='т'");
-                 	$this->ipsclass->DB->query("update  ibf_sh_games set status='з' WHERE status='т'");
+                 	$this->ipsclass->DB->query("update  sh_games set g_name='<a href=\"./index.php?act=module&module=shgames\&cmd=disp\&id=".$frows['n']."\">".$frows['g_name']."</a>' WHERE status='т'");
+                 	$this->ipsclass->DB->query("update  sh_games set logs='".addslashes($res)."' WHERE status='т'");
+                 	$this->ipsclass->DB->query("update  sh_games set status='з' WHERE status='т'");
                  	$this->result="Опубликовано";
                  	header('Location:./index.php?act=module&module=shgames&cmd=disp&id='.$frows['n']);
                  }
@@ -276,7 +276,7 @@ class module
                       $id="";
                  }
                  $res="";
-                 $this->ipsclass->DB->query("select * from ibf_sh_games where n='".$id."'");
+                 $this->ipsclass->DB->query("select * from sh_games where n='".$id."'");
                  while ($frows = $this->ipsclass->DB->fetch_row($fquery))
                  {                 	$res.='<script>
                  	function showlogs(ref,di,wh)

@@ -57,10 +57,10 @@ class module
 		//=====================================
        if ((isset($this->ipsclass->input['hsh']))&($this->ipsclass->input['hsh']!=''))
        {
-       	 $this->ipsclass->DB->query("select * from ibf_sh_igroki WHERE nick='".$this->ipsclass->member['name']."'");
+       	 $this->ipsclass->DB->query("select * from sh_igroki WHERE nick='".$this->ipsclass->member['name']."'");
        	 $frows = $this->ipsclass->DB->fetch_row($fquery);
        	 $komanda=$frows['komanda'];
-       	 $this->ipsclass->DB->query("UPDATE ibf_sh_admin_msg SET readed=concat(readed,',','".$komanda."') WHERE (hash='".strip_tags($this->ipsclass->input['hsh'])."')&(((komand='все')|(FIND_IN_SET('".$komanda."',komand)!=0))&(FIND_IN_SET('".$komanda."',readed)=0))");
+       	 $this->ipsclass->DB->query("UPDATE sh_admin_msg SET readed=concat(readed,',','".$komanda."') WHERE (hash='".strip_tags($this->ipsclass->input['hsh'])."')&(((komand='все')|(FIND_IN_SET('".$komanda."',komand)!=0))&(FIND_IN_SET('".$komanda."',readed)=0))");
        }
        header('Location:./index.php?act=module&module=shvatka');
 	   exit();

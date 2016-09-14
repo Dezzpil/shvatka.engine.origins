@@ -133,7 +133,7 @@ class module
             $z=0;                                                                           /* Поправка времени в часах */
             $z=$z*3600;
             $zvaniya=array(1=>'Капитан', 2=>'Мозг', 3=>'Полевой', 4=>'Бегунок', 5=>'Радист', 6=>'Радистка', 7=>'Властелин фонарика', 8=>'Водитель', 9=>'Водила', 10=>'Герой асфальта', 11=>'Человек-компас', 12=>'Экстрасенс', 13=>'Грузчик', 14=>'Грузчица', 15=>'Мобильный мозг', 16=>'Доктор', 17=>'Почти СэнСэй', 18=>'Сапёр', 19=>'Спонсор', 20=>'Клоун',21=>'Рекрут',22=>'Стажер',23=>'НаёМник',24=>'СэнСэй');
-            if (mysql_num_rows($this->ipsclass->DB->query("select * from ibf_sh_igroki WHERE (nick='".$this->ipsclass->member['name']."')and(status_in_cmd='Капитан')")))
+            if (mysql_num_rows($this->ipsclass->DB->query("select * from sh_igroki WHERE (nick='".$this->ipsclass->member['name']."')and(status_in_cmd='Капитан')")))
             {
                  $chisla=array('0','1','2','3','4','5','6','7','8','9');
                  $res="<SCRIPT LANGUAGE=\"JavaScript\">
@@ -174,45 +174,45 @@ class module
                  	      $res.='<font size=4 color=red><b><center>Капитан не может поменять себе звание!<br>Можно назначить другого капитаном.</ctnter></b></font>';
                  	      break;
                  	    case 1:
-                 	      $res.='<font size=4 color=red><b><center>Теперь вы не капитан - покиньте капитанский мостик!</ctnter></b></font>';                 	  	  $this->ipsclass->DB->query("update ibf_sh_igroki set status_in_cmd='Полевой' WHERE (status_in_cmd='Капитан')and(komanda='".$komanda."')");
-                 	      $this->ipsclass->DB->query("update ibf_sh_igroki set status_in_cmd='Капитан' WHERE (n=".$iid.")and(komanda='".$komanda."')");
+                 	      $res.='<font size=4 color=red><b><center>Теперь вы не капитан - покиньте капитанский мостик!</ctnter></b></font>';                 	  	  $this->ipsclass->DB->query("update sh_igroki set status_in_cmd='Полевой' WHERE (status_in_cmd='Капитан')and(komanda='".$komanda."')");
+                 	      $this->ipsclass->DB->query("update sh_igroki set status_in_cmd='Капитан' WHERE (n=".$iid.")and(komanda='".$komanda."')");
                  	  	  break;
                  	    default:                 	  	  if (in_array($zvan,array_keys($zvaniya)))
-                 	  	  $this->ipsclass->DB->query("update ibf_sh_igroki set status_in_cmd='".$zvaniya[$zvan]."' WHERE (n=".$iid.")and(komanda='".$komanda."')");
+                 	  	  $this->ipsclass->DB->query("update sh_igroki set status_in_cmd='".$zvaniya[$zvan]."' WHERE (n=".$iid.")and(komanda='".$komanda."')");
                  	  	  else
                  	  	  $res.='<font size=4 color=red><b><center>Такого звания нет!</ctnter></b></font>';
                  	  	  break;
                  	  }                 }
                  $res=$res."<div class=\"borderwrap\"><center class=\"maintitle\"><b>Капитанский мостик команды ".$komanda."</b></center>";
-                 $this->ipsclass->DB->query("select * from ibf_sh_comands WHERE nazvanie='".$komanda."'");
+                 $this->ipsclass->DB->query("select * from sh_comands WHERE nazvanie='".$komanda."'");
                  $frows = $this->ipsclass->DB->fetch_row($fquery);
                  $id_team=$frows['n'];
                  if ($de!="")
                  {
-                       $this->ipsclass->DB->query("select * from ibf_sh_igroki WHERE n=".$de);
+                       $this->ipsclass->DB->query("select * from sh_igroki WHERE n=".$de);
                        $frows = $this->ipsclass->DB->fetch_row($fquery);
                        if ($frows['komanda']==$komanda)
                        {
-                            $this->ipsclass->DB->query("update ibf_members  set mgroup='3'WHERE name='".$frows['nick']."'");
-                            $this->ipsclass->DB->query("update ibf_sh_igroki set komanda='Не в команде', status_in_cmd='' WHERE n=".$de);
+                            $this->ipsclass->DB->query("update members  set mgroup='3'WHERE name='".$frows['nick']."'");
+                            $this->ipsclass->DB->query("update sh_igroki set komanda='Не в команде', status_in_cmd='' WHERE n=".$de);
                        }
                        else
                        {
                             $res=$res.'<br>Не удалось исключить! Наверное этот игрок не в вашей команде!<br>';
                        }
                  }
-                 if (($ye!="")and(mysql_num_rows($this->ipsclass->DB->query("select * from ibf_sh_recrut WHERE n=".$ye))!=0))
+                 if (($ye!="")and(mysql_num_rows($this->ipsclass->DB->query("select * from sh_recrut WHERE n=".$ye))!=0))
                  {
                        $frows = $this->ipsclass->DB->fetch_row($fquery);
                        $kto=$frows['kto'];
-                       if (mysql_num_rows($this->ipsclass->DB->query("select * from ibf_sh_igroki WHERE (nick='".$kto."')and(komanda='".$komanda."')")))
+                       if (mysql_num_rows($this->ipsclass->DB->query("select * from sh_igroki WHERE (nick='".$kto."')and(komanda='".$komanda."')")))
                        {
                             $res=$res."<br>Этот игрок уже зачилен в вашу команду.<br>";
-                            $this->ipsclass->DB->query("delete from ibf_sh_recrut WHERE n=".$ye);
+                            $this->ipsclass->DB->query("delete from sh_recrut WHERE n=".$ye);
                        }
                        else
                        {
-                            $this->ipsclass->DB->query("select * from ibf_sh_igroki WHERE (nick='".$kto."')");
+                            $this->ipsclass->DB->query("select * from sh_igroki WHERE (nick='".$kto."')");
                             $frows = $this->ipsclass->DB->fetch_row($fquery);
                             if (($frows['n']!="")and($frows['komanda']!="Не в команде"))
                             {
@@ -220,29 +220,29 @@ class module
                             }
                             else
                             {
-                                 if (mysql_num_rows($this->ipsclass->DB->query("select * from ibf_groups WHERE g_title='".$komanda."'")))
+                                 if (mysql_num_rows($this->ipsclass->DB->query("select * from groups WHERE g_title='".$komanda."'")))
                                  {
                                       $fr = $this->ipsclass->DB->fetch_row($fquery);
                                  }
-                                 $this->ipsclass->DB->query("update ibf_members  set mgroup='".$fr['g_id']."'WHERE name='".$kto."'");
+                                 $this->ipsclass->DB->query("update members  set mgroup='".$fr['g_id']."'WHERE name='".$kto."'");
                                  if (($frows['n']!="")and($frows['komanda']=="Не в команде"))
                                  {
-                                      $this->ipsclass->DB->query("update ibf_sh_igroki set komanda='".$komanda."', status_in_cmd='Полевой' WHERE nick='".$kto."'");
-                                      $this->ipsclass->DB->query("delete from ibf_sh_recrut WHERE n=".$ye);
+                                      $this->ipsclass->DB->query("update sh_igroki set komanda='".$komanda."', status_in_cmd='Полевой' WHERE nick='".$kto."'");
+                                      $this->ipsclass->DB->query("delete from sh_recrut WHERE n=".$ye);
                                  }
                                  else
                                  {
-                                      $this->ipsclass->DB->query("INSERT INTO ibf_sh_igroki (nick, komanda) values('".$kto."', '".$komanda."')");
-                                      $this->ipsclass->DB->query("delete from ibf_sh_recrut WHERE n=".$ye);
+                                      $this->ipsclass->DB->query("INSERT INTO sh_igroki (nick, komanda) values('".$kto."', '".$komanda."')");
+                                      $this->ipsclass->DB->query("delete from sh_recrut WHERE n=".$ye);
                                  }
                             }
                        }
                  }
-                 if (($cn!="")and(mysql_num_rows($this->ipsclass->DB->query("select * from ibf_sh_recrut WHERE (n=".$cn.")and(kuda=".$id_team.")"))!=0))
+                 if (($cn!="")and(mysql_num_rows($this->ipsclass->DB->query("select * from sh_recrut WHERE (n=".$cn.")and(kuda=".$id_team.")"))!=0))
                  {
-                         $this->ipsclass->DB->query("update ibf_sh_recrut set otvet='Капитан вам отказал, отзовите свою заявку.' WHERE n=".$cn);
+                         $this->ipsclass->DB->query("update sh_recrut set otvet='Капитан вам отказал, отзовите свою заявку.' WHERE n=".$cn);
                  }
-                 $this->ipsclass->DB->query("select * from ibf_sh_igroki WHERE komanda='".$komanda."'");
+                 $this->ipsclass->DB->query("select * from sh_igroki WHERE komanda='".$komanda."'");
                  $res=$res."<br><TABLE cellspacing=\"1\" style={width:auto;} class=\"borderwrap\" align=\"center\"><tr><th COLSPAN=3>Ваша команда</th></tr>";
                  while ($frows = $this->ipsclass->DB->fetch_row($fquery))
                  {
@@ -263,7 +263,7 @@ class module
                        $res.='</select></form></td><td class="row1"><center><a href="./index.php?act=module&module=shvatka&cmd=cap&del='.($frows['n']).'"><font size=1 color=red>Исключить</font></center></td></tr>';
                  }
                  $res=$res."</table ><br><TABLE cellspacing=\"1\" style={width:auto;} class=\"borderwrap\" align=\"center\"><tr><th COLSPAN=2>Заявки в вашу команду.</th></tr>";
-                 $this->ipsclass->DB->query("select * from ibf_sh_recrut  WHERE kuda='".$id_team."'");
+                 $this->ipsclass->DB->query("select * from sh_recrut  WHERE kuda='".$id_team."'");
                  while ($frows = $this->ipsclass->DB->fetch_row($fquery))
                  {
                        if ($frows['otvet']!="Капитан вам отказал, отзовите свою заявку.")
@@ -274,21 +274,21 @@ class module
                  }
                  $res=$res."</table><br>";
                  $res.='<font size=2 color=red><center><br>Внимание! Смена звания у игрока происходит автоматически, как только вы изменили его в форме.<br>При назначении нового капитана, старый приобретает звание "Полевой" и теряет доступ на капитанский мостик.<br>Капитан не может поменять своё звание!<br>Будьте внимательны!!!</center></font></div>';
-                 $this->ipsclass->DB->query("select * from ibf_sh_games WHERE status='п'");
+                 $this->ipsclass->DB->query("select * from sh_games WHERE status='п'");
                  $frows = $this->ipsclass->DB->fetch_row($fquery);
                  if ($frows['n']!="")
                  {
                    $g_id=$frows['n'];
                    if (strtotime($frows['dt_g'])<=($z+(strtotime("now"))))
                    {
-                 	  $this->ipsclass->DB->query("select * from ibf_sh_comands WHERE nazvanie='".$komanda."'");
+                 	  $this->ipsclass->DB->query("select * from sh_comands WHERE nazvanie='".$komanda."'");
                       $frows = $this->ipsclass->DB->fetch_row($fquery);
                       if ($frows['dengi'])
                       {                        	if ($this->ipsclass->input['quit']=='34523422342323244234543')
-                    	    {                               $this->ipsclass->DB->query("update ibf_sh_comands set uroven=0, podskazka=0, dengi=0, dt_ur='".(date('Y-m-d H:i:s',($z+strtotime("now"))))."', cmp_games='".$frows['cmp_games']."<s>".$g_id."</s> ' WHERE nazvanie='".$komanda."'");
-                               $this->ipsclass->DB->query("update ibf_sh_igroki set ch_dengi=0 WHERE (ch_dengi=1)and(komanda='".$komanda."')");
-                               if (mysql_num_rows($this->ipsclass->DB->query("select * from ibf_sh_comands WHERE dengi=1"))==0)
-                               {$this->ipsclass->DB->query("update  ibf_sh_games set status='т' WHERE status='п'");}
+                    	    {                               $this->ipsclass->DB->query("update sh_comands set uroven=0, podskazka=0, dengi=0, dt_ur='".(date('Y-m-d H:i:s',($z+strtotime("now"))))."', cmp_games='".$frows['cmp_games']."<s>".$g_id."</s> ' WHERE nazvanie='".$komanda."'");
+                               $this->ipsclass->DB->query("update sh_igroki set ch_dengi=0 WHERE (ch_dengi=1)and(komanda='".$komanda."')");
+                               if (mysql_num_rows($this->ipsclass->DB->query("select * from sh_comands WHERE dengi=1"))==0)
+                               {$this->ipsclass->DB->query("update  sh_games set status='т' WHERE status='п'");}
                                header('Location:./index.php?act=module&module=shvatka&cmd=cap');                    	    }
                     	    else
                     	    {
@@ -338,19 +338,19 @@ class module
             {
                if ($ku!="")
                {
-                   if ((mysql_num_rows($this->ipsclass->DB->query("select * from ibf_sh_recrut WHERE (kuda='".$ku."')and(kto='".($this->ipsclass->member['name'])."')"))==0)and(mysql_num_rows($this->ipsclass->DB->query("select * from ibf_sh_comands WHERE n=".$ku))!=0))
-                   {                   	  if (mysql_num_rows($this->ipsclass->DB->query("select * from ibf_sh_recrut"))==0)
+                   if ((mysql_num_rows($this->ipsclass->DB->query("select * from sh_recrut WHERE (kuda='".$ku."')and(kto='".($this->ipsclass->member['name'])."')"))==0)and(mysql_num_rows($this->ipsclass->DB->query("select * from sh_comands WHERE n=".$ku))!=0))
+                   {                   	  if (mysql_num_rows($this->ipsclass->DB->query("select * from sh_recrut"))==0)
                    	  {
-                   	  	 $this->ipsclass->DB->query("ALTER TABLE ibf_sh_recrut PACK_KEYS =0 CHECKSUM =0 DELAY_KEY_WRITE =0 AUTO_INCREMENT =1");                   	  }                   	  $this->ipsclass->DB->query("INSERT INTO ibf_sh_recrut(kto, kuda) values('".$this->ipsclass->member['name']."', '".$ku."')");
+                   	  	 $this->ipsclass->DB->query("ALTER TABLE sh_recrut PACK_KEYS =0 CHECKSUM =0 DELAY_KEY_WRITE =0 AUTO_INCREMENT =1");                   	  }                   	  $this->ipsclass->DB->query("INSERT INTO sh_recrut(kto, kuda) values('".$this->ipsclass->member['name']."', '".$ku."')");
                    }
                    else
                    {$res=$res."Либо вы уже подали заявку в эту команду, либо такой команды не существует!<br>";}
                }
                if ($cn!="")
                {
-                   if ((mysql_num_rows($this->ipsclass->DB->query("select * from ibf_sh_recrut WHERE n=".$cn))!=0))
+                   if ((mysql_num_rows($this->ipsclass->DB->query("select * from sh_recrut WHERE n=".$cn))!=0))
                    {
-                      $this->ipsclass->DB->query("DELETE FROM ibf_sh_recrut WHERE n=".$cn);
+                      $this->ipsclass->DB->query("DELETE FROM sh_recrut WHERE n=".$cn);
                    }
                    else
                    {$res=$res."Такой заявки нет!<br>";}
@@ -360,7 +360,7 @@ class module
                $res=$res.'Куда хотите подать заявку, '.$this->ipsclass->member['name'].' ?<br><Form action="./index.php" method="post">
 <input type=HIDDEN name="act" value="module">Команда: <input type=HIDDEN name="module" value="shvatka">
 <input type=HIDDEN name="cmd" value="nmem"><SELECT name="kuda">';
-               $this->ipsclass->DB->query("select * from ibf_sh_comands");
+               $this->ipsclass->DB->query("select * from sh_comands");
                $cm_array=array();
                while ($frows = $this->ipsclass->DB->fetch_row($fquery))
                {
@@ -368,7 +368,7 @@ class module
                    $res=$res."<OPTION value='".$frows['n']."'>".$cm_array[$frows['n']];
                }
                $res=$res."</option></select><input type=submit value=' Подать заявку ' style='background:#D2D0D0;border:1px;border:outset;border-color:#ffffff'><br></Form>";
-               if (mysql_num_rows($this->ipsclass->DB->query("select * from ibf_sh_recrut WHERE kto='".$this->ipsclass->member['name']."'"))!=0)
+               if (mysql_num_rows($this->ipsclass->DB->query("select * from sh_recrut WHERE kto='".$this->ipsclass->member['name']."'"))!=0)
                {
                    $res=$res."<TABLE cellspacing=\"1\" style={width:auto;} class=\"borderwrap\"><th COLSPAN=3><b>Вы подали заявки в следующие команды:</b></th>";
                    while ($frows = $this->ipsclass->DB->fetch_row($fquery))
@@ -397,13 +397,13 @@ class module
                 <div id=\"userlinks\">
                 <p class=\"home\"><b>Управление СХВАТКОЙ:</b></p>
                 <p>";
-            $qqq=$this->ipsclass->DB->query("select field_4 from ibf_pfields_content where member_id=".$this->ipsclass->member['id']."");
+            $qqq=$this->ipsclass->DB->query("select field_4 from pfields_content where member_id=".$this->ipsclass->member['id']."");
             $fff = $this->ipsclass->DB->fetch_row($qqq);
             if (( $this->ipsclass->member['mgroup'] == $this->ipsclass->vars['admin_group'] )or($fff['field_4']=='y'))
             {
                 $res.= "<a href='{$this->ipsclass->base_url}act=module&module=reps'>Админцентр Схватки</a> &middot;&nbsp;";
             }
-            $this->ipsclass->DB->query("select * from ibf_sh_igroki WHERE nick='".$this->ipsclass->member['name']."'");
+            $this->ipsclass->DB->query("select * from sh_igroki WHERE nick='".$this->ipsclass->member['name']."'");
             $frows = $this->ipsclass->DB->fetch_row($fquery);
             if ($frows['status_in_cmd']=='Капитан') $res.="<a href='{$this->ipsclass->base_url}act=module&module=shvatka&cmd=cap'>Капитанский мостик</a> &middot;&nbsp;";
             $res.="<a href='{$this->ipsclass->base_url}act=module&module=shvatka&cmd=nmem'>Хочу в команду</a> &middot;&nbsp;
@@ -416,14 +416,14 @@ class module
             $lev=0;
             $podskazka=0;
             $dtcom="";
-            $this->ipsclass->DB->query("select * from ibf_sh_igroki WHERE nick='".$this->ipsclass->member['name']."'");
+            $this->ipsclass->DB->query("select * from sh_igroki WHERE nick='".$this->ipsclass->member['name']."'");
             $frows = $this->ipsclass->DB->fetch_row($fquery);
                 if (( $frows['n'] == "" )or($frows['komanda'] == "Не в команде"))            /* Смотрим зачислен ли чел к какую-нить команду */
                 {
                   if ($this->ipsclass->member['id']!="")
                   {
                        $res=$res."Вы не зачисленные ни в одну из команд.<br>";
-                       $this->ipsclass->DB->query("select * from ibf_sh_games WHERE status='п'");
+                       $this->ipsclass->DB->query("select * from sh_games WHERE status='п'");
                        $frows = $this->ipsclass->DB->fetch_row($fquery);
                        if ($frows['n']!="")                                                   /* Смотрим есть ли предстоящая или текущая игра */
                        {
@@ -473,7 +473,7 @@ window.setTimeout("CountDown()",1000);
 CountDown()
 </SCRIPT>
 EOF;
-                                $this->ipsclass->DB->query("select * from ibf_sh_comands WHERE dengi=1");
+                                $this->ipsclass->DB->query("select * from sh_comands WHERE dengi=1");
                                 $res=$res."<center><br><TABLE cellspacing=\"1\" style={width:auto;} class=\"borderwrap\">
 <tr><td class=\"maintitle\" align=\"center\" colspan=\"2\">Заявленные команды</td></tr><tr><th align=\"center\"><b>Название</b></th><th align=\"center\"><b>Очки</b></th></tr>";
                                 while ($frows = $this->ipsclass->DB->fetch_row($fquery))
@@ -481,7 +481,7 @@ EOF;
                                        $res=$res."<tr class=\"ipbtable\"><td class=\"row1\"><b>".$frows['nazvanie']."</b></td><td class=\"row1\"> ".$frows['ochki']."</td></tr>";
                                 }
                                 $res=$res."</table></center><br>";
-                                $this->ipsclass->DB->query("select * from ibf_sh_igroki WHERE ch_dengi=1 order by komanda");
+                                $this->ipsclass->DB->query("select * from sh_igroki WHERE ch_dengi=1 order by komanda");
                                 $res=$res."<center><TABLE cellspacing=\"1\" style={width:auto;} class=\"borderwrap\"><tr><td class=\"maintitle\" align=\"center\" colspan=\"3\">Игроки сделавшие взносы</td></tr>
 <tr><th align=\"center\"><b>Участник</b></th><th align=\"center\"><b>Команда</b></th><th align=\"center\"><b>Очки</b></td></tr>";
                                 while ($frows = $this->ipsclass->DB->fetch_row($fquery))
@@ -511,7 +511,7 @@ EOF;
                   $chel=$frows['ch_dengi'];                                              /* регистрация на игру */
                   $komanda = $frows['komanda'];                                          /* название команды */
 //                        $res=$frows['n'].'<br>'.$frows['nick'].'<br>'.$frows['komanda'].'<br>'.$frows['status_in_cmd'].'<br>'.$frows['ochki'].'<br>' ;
-                  $this->ipsclass->DB->query("select * from ibf_sh_games WHERE status='п'");
+                  $this->ipsclass->DB->query("select * from sh_games WHERE status='п'");
                   $frows = $this->ipsclass->DB->fetch_row($fquery);
                   $tmg=strtotime($frows['dt_g']);
                   $g_id=$frows['n'];
@@ -562,7 +562,7 @@ window.setTimeout("CountDown()",1000);
 CountDown()
 </SCRIPT>
 EOF;
-                          $this->ipsclass->DB->query("select * from ibf_sh_comands WHERE dengi=1");
+                          $this->ipsclass->DB->query("select * from sh_comands WHERE dengi=1");
                           $res=$res."<center><br><TABLE cellspacing=\"1\" style={width:auto;} class=\"borderwrap\">
 <tr><td class=\"maintitle\" align=\"center\" colspan=\"2\">Заявленные команды</td></tr><tr><th align=\"center\"><b>Название</b></th><th align=\"center\"><b>Очки</b></th></tr>";
                           while ($frows = $this->ipsclass->DB->fetch_row($fquery))
@@ -570,7 +570,7 @@ EOF;
                                $res=$res."<tr class=\"ipbtable\"><td class=\"row1\"><b>".$frows['nazvanie']."</b></td><td class=\"row1\"> ".$frows['ochki']."</td></tr>";
                           }
                           $res=$res."</table></center><br>";
-                          $this->ipsclass->DB->query("select * from ibf_sh_igroki WHERE ch_dengi=1 order by komanda");
+                          $this->ipsclass->DB->query("select * from sh_igroki WHERE ch_dengi=1 order by komanda");
                           $res=$res."<center><TABLE cellspacing=\"1\" style={width:auto;} class=\"borderwrap\"><tr><td class=\"maintitle\" align=\"center\" colspan=\"3\">Игроки сделавшие взносы</td></tr>
 <tr><th align=\"center\"><b>Участник</b></th><th align=\"center\"><b>Команда</b></th><th align=\"center\"><b>Очки</b></td></tr>";
                           while ($frows = $this->ipsclass->DB->fetch_row($fquery))
@@ -582,7 +582,7 @@ EOF;
                       else
                       {
      //                   $res=$res.'Игра началась!<br>';
-                          $this->ipsclass->DB->query("select * from ibf_sh_comands WHERE nazvanie='".$komanda."'");
+                          $this->ipsclass->DB->query("select * from sh_comands WHERE nazvanie='".$komanda."'");
                           $frows = $this->ipsclass->DB->fetch_row($fquery);
                           $lev=$frows['uroven'];                                         /* уровень на котором находится команда */
                           $podskazka=$frows['podskazka'];                                /* номер подсказки команды */
@@ -595,19 +595,19 @@ EOF;
                                    $lev=1;
                                    $podskazka=0;
                                    $dtcom=date('Y-m-d H:i:s',($z+strtotime("now")));
-                                   $this->ipsclass->DB->query("update ibf_sh_comands set uroven=1, podskazka=0, dt_ur='".$dtcom."' WHERE nazvanie='".$komanda."'");
+                                   $this->ipsclass->DB->query("update sh_comands set uroven=1, podskazka=0, dt_ur='".$dtcom."' WHERE nazvanie='".$komanda."'");
                                }
-                               $this->ipsclass->DB->query("select * from ibf_sh_game WHERE (uroven=". $lev.")and(n_podskazki=0)");
+                               $this->ipsclass->DB->query("select * from sh_game WHERE (uroven=". $lev.")and(n_podskazki=0)");
                                $frows = $this->ipsclass->DB->fetch_row($fquery);
                                $level_b_key=$frows['b_keyw'];
                                if (($k!="")or($bk!=""))                                               /* Если ключ введён - пишем лог и проверяем ключ, если нет - смотрим пришло ли время для подсказки*/
                                {
-                                   /*$this->ipsclass->DB->query("select * from ibf_sh_log WHERE n=(select MAX(n) from ibf_sh_log)");
+                                   /*$this->ipsclass->DB->query("select * from sh_log WHERE n=(select MAX(n) from sh_log)");
                                    $frows1 = $this->ipsclass->DB->fetch_row($fquery);
-                                   $this->ipsclass->DB->query("INSERT INTO ibf_sh_log values(".($frows1['n']+1).",'".$komanda."','".date('Y-m-d H:i:s')."','".$k."')");  */
+                                   $this->ipsclass->DB->query("INSERT INTO sh_log values(".($frows1['n']+1).",'".$komanda."','".date('Y-m-d H:i:s')."','".$k."')");  */
                                    if (($k!=$frows['keyw'])or($level_b_key!=$bk))
                                    {
-                                             $this->ipsclass->DB->query("INSERT INTO ibf_sh_log (comanda, time, keytext, autor) values('".$komanda."','".date('Y-m-d H:i:s',($z+(strtotime("now"))))."','".str_replace(" ","&nbsp;",htmlspecialchars($k.$bk))."','".$this->ipsclass->member['name']."')");
+                                             $this->ipsclass->DB->query("INSERT INTO sh_log (comanda, time, keytext, autor) values('".$komanda."','".date('Y-m-d H:i:s',($z+(strtotime("now"))))."','".str_replace(" ","&nbsp;",htmlspecialchars($k.$bk))."','".$this->ipsclass->member['name']."')");
                                              /*if ($this->ipsclass->input['lofver']==1)
                                              header('Location:./index.php?act=module&module=shvatka&lofver=1');
                                              else
@@ -615,7 +615,7 @@ EOF;
                                    }
                                    else
                                    {
-                                             $this->ipsclass->DB->query("INSERT INTO ibf_sh_log (comanda, time, keytext, autor, levdone) values('".$komanda."','".date('Y-m-d H:i:s',($z+(strtotime("now"))))."','".str_replace(" ","&nbsp;",htmlspecialchars($k.$bk))."','".$this->ipsclass->member['name']."','".$lev."')");
+                                             $this->ipsclass->DB->query("INSERT INTO sh_log (comanda, time, keytext, autor, levdone) values('".$komanda."','".date('Y-m-d H:i:s',($z+(strtotime("now"))))."','".str_replace(" ","&nbsp;",htmlspecialchars($k.$bk))."','".$this->ipsclass->member['name']."','".$lev."')");
                                    }
 
                                }
@@ -624,36 +624,36 @@ EOF;
  //                                $res=$res.'Ключ подошел. Переход на следующий уровень'.'<br>';
                                    $lev=$lev+1;
                                    $podskazka=0;
-                                   $this->ipsclass->DB->query("select * from ibf_sh_game WHERE (uroven=".$lev.")and(n_podskazki=0)");
+                                   $this->ipsclass->DB->query("select * from sh_game WHERE (uroven=".$lev.")and(n_podskazki=0)");
                                    $frows = $this->ipsclass->DB->fetch_row($fquery);
                                    $level_b_key=$frows['b_keyw'];
                                    $ltn=date('Y-m-d H:i:s',($z+strtotime("now")));
                                    if ($frows['n']!="")
                                    {
-                                        $this->ipsclass->DB->query("update ibf_sh_comands set uroven=".$lev.", podskazka=".$podskazka.", dt_ur='".$ltn."' WHERE nazvanie='".$komanda."'");
+                                        $this->ipsclass->DB->query("update sh_comands set uroven=".$lev.", podskazka=".$podskazka.", dt_ur='".$ltn."' WHERE nazvanie='".$komanda."'");
                                         $dtcom=$ltn;
                                    }
                                    else
                                    {
-                                        $this->ipsclass->DB->query("select * from ibf_sh_comands WHERE nazvanie='".$komanda."'");
+                                        $this->ipsclass->DB->query("select * from sh_comands WHERE nazvanie='".$komanda."'");
                                         $frows = $this->ipsclass->DB->fetch_row($fquery);
-                                        $this->ipsclass->DB->query("update  ibf_sh_comands set uroven=0, podskazka=0, dengi=0, dt_ur='".$ltn."', cmp_games='".$frows['cmp_games'].$g_id." ' WHERE nazvanie='".$komanda."'");
+                                        $this->ipsclass->DB->query("update  sh_comands set uroven=0, podskazka=0, dengi=0, dt_ur='".$ltn."', cmp_games='".$frows['cmp_games'].$g_id." ' WHERE nazvanie='".$komanda."'");
                                         $res='Поздравляем. Игра пройдена за '.sectostr(strtotime($ltn)-$tmg);
                                         $gs=array();
-                                        $this->ipsclass->DB->query("select * from ibf_sh_igroki WHERE (ch_dengi=1)and(komanda='".$komanda."')");
+                                        $this->ipsclass->DB->query("select * from sh_igroki WHERE (ch_dengi=1)and(komanda='".$komanda."')");
                                         while ($frows = $this->ipsclass->DB->fetch_row($fquery))
                                         {                                        	 $gs[$frows['n']]=$frows['games'].$g_id;
                                         }
                                         foreach ($gs as $nig=>$gm)
                                         {
-                                             $this->ipsclass->DB->query("update  ibf_sh_igroki set ch_dengi=0, games='".$gm." ' WHERE n='".$nig."'");
+                                             $this->ipsclass->DB->query("update  sh_igroki set ch_dengi=0, games='".$gm." ' WHERE n='".$nig."'");
                                         }
-                                        $this->ipsclass->DB->query("select * from ibf_sh_games WHERE n=".$g_id);
+                                        $this->ipsclass->DB->query("select * from sh_games WHERE n=".$g_id);
                                         $frows = $this->ipsclass->DB->fetch_row($fquery);
-                                        $this->ipsclass->DB->query("update  ibf_sh_games set pedistal='".$frows['pedistal'].$komanda."<br>' WHERE n=".$g_id);
+                                        $this->ipsclass->DB->query("update  sh_games set pedistal='".$frows['pedistal'].$komanda."<br>' WHERE n=".$g_id);
                                         $gameover=true;
-                                        if (mysql_num_rows($this->ipsclass->DB->query("select * from ibf_sh_comands WHERE dengi=1"))==0)
-                                        {$this->ipsclass->DB->query("update  ibf_sh_games set status='т' WHERE status='п'");}
+                                        if (mysql_num_rows($this->ipsclass->DB->query("select * from sh_comands WHERE dengi=1"))==0)
+                                        {$this->ipsclass->DB->query("update  sh_games set status='т' WHERE status='п'");}
 
                                    }
                                }
@@ -667,7 +667,7 @@ EOF;
                                    {
                                         for ($i=1;$i<= $podskazka;$i++)
                                         {
-                                             $this->ipsclass->DB->query("select * from ibf_sh_game WHERE (uroven=". $lev.")and(n_podskazki=".$i.")");
+                                             $this->ipsclass->DB->query("select * from sh_game WHERE (uroven=". $lev.")and(n_podskazki=".$i.")");
                                              $frows = $this->ipsclass->DB->fetch_row($fquery);
                                              $res=$res.'<b>Подсказка '.$i.': </b>'.$frows['text'].'<br>';
                                         }
@@ -675,11 +675,11 @@ EOF;
                                    if (($frows['p_time']!=0)and(((60*$frows['p_time'])+strtotime($dtcom))<=($z+(strtotime("now")))))
                                    {
                                         $podskazka=$podskazka+1;
-                                        $this->ipsclass->DB->query("select * from ibf_sh_game WHERE (uroven=". $lev.")and(n_podskazki=".$podskazka.")");
+                                        $this->ipsclass->DB->query("select * from sh_game WHERE (uroven=". $lev.")and(n_podskazki=".$podskazka.")");
                                         $frows = $this->ipsclass->DB->fetch_row($fquery);
                                         if ($frows['n']!="")
                                         {
-                                             $this->ipsclass->DB->query("update ibf_sh_comands set podskazka=".$podskazka." WHERE nazvanie='".$komanda."'");
+                                             $this->ipsclass->DB->query("update sh_comands set podskazka=".$podskazka." WHERE nazvanie='".$komanda."'");
                                         }
                                         $res=$res.'<b>Подсказка '.$podskazka.': </b>'.$frows['text'].'<br>';
                                    }
@@ -713,7 +713,7 @@ $res.='<br><input type=submit value="  Проверить ключ/наличи�
                       $res=$res.'Дата предстоящей игры пока не определена.<br><br>';
                   }
 	              $adm_msg='';
-	              $msg_q=$this->ipsclass->DB->query("select * from ibf_sh_admin_msg WHERE ((komand='все')|(FIND_IN_SET('".$komanda."',komand)!=0))&((endtime>='".mktime()."')&(FIND_IN_SET('".$komanda."',readed)=0))");
+	              $msg_q=$this->ipsclass->DB->query("select * from sh_admin_msg WHERE ((komand='все')|(FIND_IN_SET('".$komanda."',komand)!=0))&((endtime>='".mktime()."')&(FIND_IN_SET('".$komanda."',readed)=0))");
 	              while ($frows = $this->ipsclass->DB->fetch_row($msg_q))
 	              {
 	             	if ($frows['komand']=='все') {$color='#EE634F'; $komu='<i><u>всех</u></i> команд';} else {$color='#67ED50'; $komu='команды <i><u>'.$komanda.'</u></i>';}

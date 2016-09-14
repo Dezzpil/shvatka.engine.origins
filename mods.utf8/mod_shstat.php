@@ -128,13 +128,13 @@ class module
                       $id="";
                  }
                  $comd=array();
-                 if (($id!="")and($this->ipsclass->DB->query("select * from ibf_sh_comands where n='".$id."' order by ochki DESC, nazvanie")))
+                 if (($id!="")and($this->ipsclass->DB->query("select * from sh_comands where n='".$id."' order by ochki DESC, nazvanie")))
                  {
-                     $this->ipsclass->DB->query("select * from ibf_sh_comands where n='".$id."'");
+                     $this->ipsclass->DB->query("select * from sh_comands where n='".$id."'");
                  }
                  else
                  {
-                     $this->ipsclass->DB->query("select * from ibf_sh_comands order by ochki DESC, nazvanie");
+                     $this->ipsclass->DB->query("select * from sh_comands order by ochki DESC, nazvanie");
                  }
                  while ($frows = $this->ipsclass->DB->fetch_row($fquery))
                  {
@@ -144,11 +144,11 @@ class module
                  foreach ($comd as $n=>$naz)
                  {
                     $res=$res.'<table cellspacing="1" class="borderwrap" style={width:auto;} align="center"><tr><td align="center" colspan="4" class="maintitle">'.$naz.'</td></tr>';
-                    $fq=$this->ipsclass->DB->query("select * from ibf_sh_igroki where komanda='".$naz."' order by ochki DESC, nick");
+                    $fq=$this->ipsclass->DB->query("select * from sh_igroki where komanda='".$naz."' order by ochki DESC, nick");
                     $res=$res.'<tr><th align="center">Ник</th><th align="center" >Статус</th><th align="center" >Очки</th><th align="center">Порядковый номер<br> сыграных игр</th></tr>';
                     while ($frows = $this->ipsclass->DB->fetch_row($fq))
                     {
-                       $usID=$this->ipsclass->DB->fetch_row($this->ipsclass->DB->query("select * from ibf_members where name='".($frows['nick'])."'"));
+                       $usID=$this->ipsclass->DB->fetch_row($this->ipsclass->DB->query("select * from members where name='".($frows['nick'])."'"));
                        $res=$res."<tr class='ipbtable'><td class=\"row1\"><b><a href=\"{$this->ipsclass->base_url}showuser=".$usID['id']."\">".($frows['nick'])."</a></b></td><td class=\"row2\" align=\"center\">".($frows['status_in_cmd'])."</td><td class=\"row2\" align=\"center\">".($frows['ochki'])."</td><td class=\"row2\" align=\"center\">".($frows['games'])."</td></tr>";
                     }
                     $res=$res.'</TABLE><br>';
@@ -161,7 +161,7 @@ class module
 
                  $res="";
                  $ms=1;
-                 $this->ipsclass->DB->query("select * from ibf_sh_comands order by ochki DESC, nazvanie");
+                 $this->ipsclass->DB->query("select * from sh_comands order by ochki DESC, nazvanie");
                  $res=$res.'<table cellspacing="1" class="borderwrap" style={width:auto;} align="center"><tr><td align="center" colspan="4" class="maintitle">Статистика по командам</td></tr>';
                  $res=$res."<tr class=\"ipbtable\"><th>Место</th><th width=\"50%\">Название</th><th align=\"center\" >Очки</th><th align=\"center\" >Игры</th></tr>";
                  while (($frows = $this->ipsclass->DB->fetch_row($fquery))and($ms!=$cntcm+1))
@@ -227,7 +227,7 @@ class module
                  }
 
                  </script>';
-                 $this->ipsclass->DB->query("select * from ibf_sh_games where status!='п'");
+                 $this->ipsclass->DB->query("select * from sh_games where status!='п'");
                  $res=$res.'<table cellspacing="1" class="borderwrap" style={width:auto;} align="center"><tr><td align="center" colspan="4" class="maintitle">Прошедшие игры</td></tr>';
                  $res=$res."<tr width=\"auto\" class=\"ipbtable\"><th align=\"center\">№</th><th width=\"50%\" align=\"center\" >Название</th><th align=\"center\" >Пъедестал</th></tr>";
                  while ($frows = $this->ipsclass->DB->fetch_row($fquery))

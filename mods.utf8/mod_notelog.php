@@ -109,7 +109,7 @@ class module
                  $ipp=30;
                  if (isset($this->ipsclass->input['pg'])) $pg=htmlspecialchars($this->ipsclass->input['pg']);
                  if (isset($this->ipsclass->input['sort'])and(in_array($this->ipsclass->input['sort'],array('1','2','3','4','5','6','7','8'))))$sort=$this->ipsclass->input['sort'];
-                 $tmpst="select * from ibf_sh_log_ochkov where komand='1' order by ".$sort_arr[$sort];
+                 $tmpst="select * from sh_log_ochkov where komand='1' order by ".$sort_arr[$sort];
                  if (($sort%2)==0) $tmpst=$tmpst." DESC";
                  $this->ipsclass->DB->query($tmpst);
                  $pcountk=$this->ipsclass->DB->get_num_rows();
@@ -166,7 +166,7 @@ class module
                  	$i++;
                  }
 
-                 $tmpst="select * from ibf_sh_log_ochkov where komand='0' order by ".$sort_arr[$sort];
+                 $tmpst="select * from sh_log_ochkov where komand='0' order by ".$sort_arr[$sort];
                  if (($sort%2)==0) $tmpst=$tmpst." DESC";
                  $this->ipsclass->DB->query($tmpst);
                  $pcounti=$this->ipsclass->DB->get_num_rows();
