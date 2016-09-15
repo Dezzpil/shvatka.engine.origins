@@ -1,0 +1,24 @@
+{
+    "name": "shvatka/engine",
+    "description": "Engine of game Shvatka, made as modules for IPB ~2 in 2006 year",
+    "type": "application",
+    "license": "GPL-3.0",
+    "authors": [
+        {
+            "name": "Roman Shtorm",
+            "email": "admin@shvatka.ru"
+        },
+        {
+            "name": "Nikita Dezzpil Orlov",
+            "email": "nikita@shvatka.ru"
+        }
+    ],
+    "require": {},
+    
+    "autoload" : {
+        "psr-4": {
+            "App\\": "app/",
+            "Shvatka\\": "shvatka/"
+        }
+    }
+}

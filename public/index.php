@@ -1,10 +1,31 @@
 <?php
 
-/* 
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+error_reporting(E_ALL);
+
+$loader = require __DIR__ . '/../vendor/autoload.php';
+
+/**
+ * Список используемых таблиц (тех, что без префикса sh_)
+ * admin_logs         - mod_reps.php:264
+ * pfields_content    - mod_shvatka.php:401
  */
 
-echo "Hello, World! ";
-echo "Oh, boy!";
+$adapter = new App\Adapter\IPSClass($_REQUEST);
+$adapter->setDB(\App\Adapter\DB::getInstance());
+$adapter->setPrinter(App\Adapter\Printer::getInstance());
+
+$mod = new Shvatka\Shvatka;
+$mod->ipsclass = $adapter;
+$mod->run_module();
+
+exit();
+
+/**
+ * try cmd=cap
+ * 
+ * cnc=
+ * del=
+ * yes=
+ * 
+ */
+

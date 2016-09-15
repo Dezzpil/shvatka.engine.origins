@@ -1,389 +1,366 @@
 <?php
-/*
-+--------------------------------------------------------------------------
-|   Invision Power Board v2.1.2
-|   =============================================
-|   by Matthew Mecham
-|   (c) 2001 - 2005 Invision Power Services, Inc.
-|   http://www.invisionpower.com
-|   =============================================
-|   Web: http://www.invisionboard.com
-|   Time: Fri, 14 Oct 2005 18:51:31 GMT
-|   Release: 50690ede8a42052b7a1400c0a925a711
-|   Licence Info: http://www.invisionboard.com/?license
-+---------------------------------------------------------------------------
-|   > $Date: 2005-10-10 14:03:20 +0100 (Mon, 10 Oct 2005) $
-|   > $Revision: 22 $
-|   > $Author: matt $
-+---------------------------------------------------------------------------
-|
-|   > MODULE FILE (EXAMPLE)
-|   > Module written by Matt Mecham
-|   > Date started: Thu 14th April 2005 (17:59)
-|
-+--------------------------------------------------------------------------
-*/
+namespace Shvatka;
 
-//=====================================
-// Define class, this must be the same
-// in all modules
-//=====================================
-if ( ! defined( 'IN_IPB' ) )
+class Shvatka
 {
-        print "<h1>НЕ ЛЕЗЬ КУДА НЕ НАДО</h1>Этот файл так нифига не вызовеш. Заходи через форум.";
-        exit();
-}
+    //=====================================
+    // Define vars if required
+    //=====================================
 
+    var $ipsclass;
+    var $class  = "";
+    var $module = "";
+    var $html   = "";
 
-class module
-{
-        //=====================================
-        // Define vars if required
-        //=====================================
+    var $result = "";
 
-        var $ipsclass;
-        var $class  = "";
-        var $module = "";
-        var $html   = "";
+    //=====================================
+    // Constructer, called and run by IPB
+    //=====================================
 
-        var $result = "";
-
-        //=====================================
-        // Constructer, called and run by IPB
-        //=====================================
-
-        function run_module()
+    function run_module()
+    {
+        function parsdig($st)
         {
-            function parsdig($st)
+            $chisla=array('0','1','2','3','4','5','6','7','8','9');
+            $ya=true;            	for ($i=0; $i<strlen($st); $i++)
             {
-                $chisla=array('0','1','2','3','4','5','6','7','8','9');
-                $ya=true;            	for ($i=0; $i<strlen($st); $i++)
-            	{
-                    if (!in_array(substr($st,$i,1),$chisla))
-                    {                    	$ya=false;
-                    	break;
-                    }
-             	}
-             	return $ya;
+                if (!in_array(substr($st,$i,1),$chisla))
+                {                    	$ya=false;
+                    break;
+                }
             }
-            function sectostr($secs)
-            {
-                $st="";
-                $tmp=floor($secs / 86400);
-                if ($tmp>0) {$st='<span id=\'days\'>'.$tmp.'</span> д. ';}
-                $tmp2=floor(($secs - ($tmp*86400))/3600);
-                if ($tmp2>0) {$st=$st.'<span id=\'hours\'>'.$tmp2.'</span> ч. ';}
-                $tmp3=floor(($secs - ($tmp*86400) - ($tmp2*3600))/60);
-                if ($tmp3>0) {$st=$st.'<span id=\'mins\'>'.$tmp3.'</span> м. ';}
-                $tmp=floor($secs - ($tmp*86400) - ($tmp2*3600)-($tmp3*60));
-                if ($tmp>0) {$st=$st.'<span id=\'secs\'>'.$tmp.'</span> сек. ';}
-                return $st;
-            }
-                //=====================================
-                // Do any set up here, like load lang
-                // skin files, etc
-                //=====================================
-
-                  $this->ipsclass->load_language('lang_boards');
-                  $this->ipsclass->load_template('skin_boards');
-
-                //=====================================
-                // Set up structure
-                //=====================================
-
-                switch( $this->ipsclass->input['cmd'] )
-                {
-                  case 'sh':
-                       $this->do_game($this->ipsclass->input['keyw'],$this->ipsclass->input['b_keyw']);
-                       break;
-                  case 'cap':
-                        $this->cap($this->ipsclass->input['cnc'],$this->ipsclass->input['del'],$this->ipsclass->input['yes']);
-                        break;
-                  case 'nmem':
-                        $this->nmem($this->ipsclass->input['kuda'],$this->ipsclass->input['cnc']);
-                        break;
-                  default:
-                        $this->do_game("","");
-                        break;
-                }
-                if ($this->ipsclass->input['lofver']!=1)
-                {
-                    $html=$html.'<font size=2>'.$this->result.'</font>';
-                    $this->ipsclass->print->add_output( $html );
-                    $this->nav[] = "<a href='{$this->ipsclass->base_url}act=module&module=shvatka'>СХВАТКА</a>";
-                    $this->ipsclass->print->do_output(array(OVERRIDE => 0, TITLE => 'СХВАТКА', NAV => $this->nav));
-                }
-                else
-                {
-                   echo('<html><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1251" /><title>Схваточка</title></head><body><font size=2>'.$this->result.'</font></body></html>');
-                }
-
-                exit();
+            return $ya;
         }
 
-        //------------------------------------------
-        // do_something
-        //
-        // Test sub, show if admin or not..
-        //
-        //------------------------------------------
+        function sectostr($secs)
+        {
+            $st="";
+            $tmp=floor($secs / 86400);
+            if ($tmp>0) {$st='<span id=\'days\'>'.$tmp.'</span> д. ';}
+            $tmp2=floor(($secs - ($tmp*86400))/3600);
+            if ($tmp2>0) {$st=$st.'<span id=\'hours\'>'.$tmp2.'</span> ч. ';}
+            $tmp3=floor(($secs - ($tmp*86400) - ($tmp2*3600))/60);
+            if ($tmp3>0) {$st=$st.'<span id=\'mins\'>'.$tmp3.'</span> м. ';}
+            $tmp=floor($secs - ($tmp*86400) - ($tmp2*3600)-($tmp3*60));
+            if ($tmp>0) {$st=$st.'<span id=\'secs\'>'.$tmp.'</span> сек. ';}
+            return $st;
+        }
 
-      function cap($cn,$de,$ye)
-      {
-            $z=0;                                                                           /* Поправка времени в часах */
-            $z=$z*3600;
-            $zvaniya=array(1=>'Капитан', 2=>'Мозг', 3=>'Полевой', 4=>'Бегунок', 5=>'Радист', 6=>'Радистка', 7=>'Властелин фонарика', 8=>'Водитель', 9=>'Водила', 10=>'Герой асфальта', 11=>'Человек-компас', 12=>'Экстрасенс', 13=>'Грузчик', 14=>'Грузчица', 15=>'Мобильный мозг', 16=>'Доктор', 17=>'Почти СэнСэй', 18=>'Сапёр', 19=>'Спонсор', 20=>'Клоун',21=>'Рекрут',22=>'Стажер',23=>'НаёМник',24=>'СэнСэй');
-            if (mysql_num_rows($this->ipsclass->DB->query("select * from sh_igroki WHERE (nick='".$this->ipsclass->member['name']."')and(status_in_cmd='Капитан')")))
+            //=====================================
+            // Do any set up here, like load lang
+            // skin files, etc
+            //=====================================
+
+              //$this->ipsclass->load_language('lang_boards');
+              //$this->ipsclass->load_template('skin_boards');
+
+            //=====================================
+            // Set up structure
+            //=====================================
+
+            switch( $this->ipsclass->input['cmd'] )
             {
-                 $chisla=array('0','1','2','3','4','5','6','7','8','9');
-                 $res="<SCRIPT LANGUAGE=\"JavaScript\">
-                            	function flashhere()
-                            	{
-                            		if (document.getElementById(\"here\").style.color!='rgb(255,0,0)')
-                            		{                            			document.getElementById(\"here\").style.color='rgb(255,0,0)';
-                            			self.setTimeout(\"flashhere()\",1500);
-                            		}
-                            		else
-                            		{                            			document.getElementById(\"here\").style.color='rgb(0,0,0)';
-                            			self.setTimeout(\"flashhere()\",100);
-                            		}
-                            	}
-                            	function quitconfirm()
-                            	{                            		if (confirm(\"Вы действительно хотите покинуть игру?\"))
-                            		{document.getElementById(\"action\").submit();}
-                            	}
-                            	</SCRIPT>";
-                 if (((($cn!="")and(!parsdig($cn)))or(($de!="")and(!parsdig($de))))or(($ye!="")and(!parsdig($ye))))
-                 {
-                      $res="<font color=red>Запрос не прошел, в запросе использованы недопустимые символы. </font><br><br>";
-                      $cn="";
-                      $de="";
-                      $ye="";
-                 }
-                 $frows = $this->ipsclass->DB->fetch_row($fquery);
-                 $komanda=$frows['komanda'];
-                 $iid=$this->ipsclass->input['iid'];
-                 $zvan=$this->ipsclass->input['zvan'];
-                 if  ((($iid!="")and(parsdig($iid)))or(($zvan!="")and(parsdig($zvan))))
-                 {
-                 	  if ($iid==$frows['n'])
-                 	  {$zvan=-1;}
-                 	  switch ($zvan)
-                 	  {
-                 	    case -1:
-                 	      $res.='<font size=4 color=red><b><center>Капитан не может поменять себе звание!<br>Можно назначить другого капитаном.</ctnter></b></font>';
-                 	      break;
-                 	    case 1:
-                 	      $res.='<font size=4 color=red><b><center>Теперь вы не капитан - покиньте капитанский мостик!</ctnter></b></font>';                 	  	  $this->ipsclass->DB->query("update sh_igroki set status_in_cmd='Полевой' WHERE (status_in_cmd='Капитан')and(komanda='".$komanda."')");
-                 	      $this->ipsclass->DB->query("update sh_igroki set status_in_cmd='Капитан' WHERE (n=".$iid.")and(komanda='".$komanda."')");
-                 	  	  break;
-                 	    default:                 	  	  if (in_array($zvan,array_keys($zvaniya)))
-                 	  	  $this->ipsclass->DB->query("update sh_igroki set status_in_cmd='".$zvaniya[$zvan]."' WHERE (n=".$iid.")and(komanda='".$komanda."')");
-                 	  	  else
-                 	  	  $res.='<font size=4 color=red><b><center>Такого звания нет!</ctnter></b></font>';
-                 	  	  break;
-                 	  }                 }
-                 $res=$res."<div class=\"borderwrap\"><center class=\"maintitle\"><b>Капитанский мостик команды ".$komanda."</b></center>";
-                 $this->ipsclass->DB->query("select * from sh_comands WHERE nazvanie='".$komanda."'");
-                 $frows = $this->ipsclass->DB->fetch_row($fquery);
-                 $id_team=$frows['n'];
-                 if ($de!="")
-                 {
-                       $this->ipsclass->DB->query("select * from sh_igroki WHERE n=".$de);
-                       $frows = $this->ipsclass->DB->fetch_row($fquery);
-                       if ($frows['komanda']==$komanda)
-                       {
-                            $this->ipsclass->DB->query("update members  set mgroup='3'WHERE name='".$frows['nick']."'");
-                            $this->ipsclass->DB->query("update sh_igroki set komanda='Не в команде', status_in_cmd='' WHERE n=".$de);
-                       }
-                       else
-                       {
-                            $res=$res.'<br>Не удалось исключить! Наверное этот игрок не в вашей команде!<br>';
-                       }
-                 }
-                 if (($ye!="")and(mysql_num_rows($this->ipsclass->DB->query("select * from sh_recrut WHERE n=".$ye))!=0))
-                 {
-                       $frows = $this->ipsclass->DB->fetch_row($fquery);
-                       $kto=$frows['kto'];
-                       if (mysql_num_rows($this->ipsclass->DB->query("select * from sh_igroki WHERE (nick='".$kto."')and(komanda='".$komanda."')")))
-                       {
-                            $res=$res."<br>Этот игрок уже зачилен в вашу команду.<br>";
-                            $this->ipsclass->DB->query("delete from sh_recrut WHERE n=".$ye);
-                       }
-                       else
-                       {
-                            $this->ipsclass->DB->query("select * from sh_igroki WHERE (nick='".$kto."')");
-                            $frows = $this->ipsclass->DB->fetch_row($fquery);
-                            if (($frows['n']!="")and($frows['komanda']!="Не в команде"))
-                            {
-                                 $res=$res."<br>Этот игрок в другой команде и не может быть зачислен в вашу команду, пока не уйдёт оттуда.<br>";
-                            }
-                            else
-                            {
-                                 if (mysql_num_rows($this->ipsclass->DB->query("select * from groups WHERE g_title='".$komanda."'")))
-                                 {
-                                      $fr = $this->ipsclass->DB->fetch_row($fquery);
-                                 }
-                                 $this->ipsclass->DB->query("update members  set mgroup='".$fr['g_id']."'WHERE name='".$kto."'");
-                                 if (($frows['n']!="")and($frows['komanda']=="Не в команде"))
-                                 {
-                                      $this->ipsclass->DB->query("update sh_igroki set komanda='".$komanda."', status_in_cmd='Полевой' WHERE nick='".$kto."'");
-                                      $this->ipsclass->DB->query("delete from sh_recrut WHERE n=".$ye);
-                                 }
-                                 else
-                                 {
-                                      $this->ipsclass->DB->query("INSERT INTO sh_igroki (nick, komanda) values('".$kto."', '".$komanda."')");
-                                      $this->ipsclass->DB->query("delete from sh_recrut WHERE n=".$ye);
-                                 }
-                            }
-                       }
-                 }
-                 if (($cn!="")and(mysql_num_rows($this->ipsclass->DB->query("select * from sh_recrut WHERE (n=".$cn.")and(kuda=".$id_team.")"))!=0))
-                 {
-                         $this->ipsclass->DB->query("update sh_recrut set otvet='Капитан вам отказал, отзовите свою заявку.' WHERE n=".$cn);
-                 }
-                 $this->ipsclass->DB->query("select * from sh_igroki WHERE komanda='".$komanda."'");
-                 $res=$res."<br><TABLE cellspacing=\"1\" style={width:auto;} class=\"borderwrap\" align=\"center\"><tr><th COLSPAN=3>Ваша команда</th></tr>";
-                 while ($frows = $this->ipsclass->DB->fetch_row($fquery))
-                 {
-                       $res=$res.'<tr class="ipbtable"><td class="row1"><b>'.($frows['nick']).'</b></center></td><td class="row1"><form  action="./index.php" method="post">
+              case 'sh':
+                   $this->do_game($this->ipsclass->input['keyw'],$this->ipsclass->input['b_keyw']);
+                   break;
+              case 'cap':
+                    $this->cap($this->ipsclass->input['cnc'],$this->ipsclass->input['del'],$this->ipsclass->input['yes']);
+                    break;
+              case 'nmem':
+                    $this->nmem($this->ipsclass->input['kuda'],$this->ipsclass->input['cnc']);
+                    break;
+              default:
+                    $this->do_game("","");
+                    break;
+            }
+            if ($this->ipsclass->input['lofver']!=1)
+            {
+                $html=$html.'<font size=2>'.$this->result.'</font>';
+                $this->ipsclass->print->add_output( $html );
+                $this->nav[] = "<a href='{$this->ipsclass->base_url}act=module&module=shvatka'>СХВАТКА</a>";
+                $this->ipsclass->print->do_output(array('OVERRIDE' => 0, 'TITLE' => 'СХВАТКА', 'NAV' => $this->nav));
+            }
+            else
+            {
+               echo('<html><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1251" /><title>Схваточка</title></head><body><font size=2>'.$this->result.'</font></body></html>');
+            }
+
+            exit();
+    }
+
+    /**
+     * 
+     * @param string $cn 
+     * @param string $de
+     * @param string $ye
+     */
+    function cap($cn,$de,$ye)
+    {
+          $z=0;                                                                           /* Поправка времени в часах */
+          $z=$z*3600;
+          $zvaniya=array(1=>'Капитан', 2=>'Мозг', 3=>'Полевой', 4=>'Бегунок', 5=>'Радист', 6=>'Радистка', 7=>'Властелин фонарика', 8=>'Водитель', 9=>'Водила', 10=>'Герой асфальта', 11=>'Человек-компас', 12=>'Экстрасенс', 13=>'Грузчик', 14=>'Грузчица', 15=>'Мобильный мозг', 16=>'Доктор', 17=>'Почти СэнСэй', 18=>'Сапёр', 19=>'Спонсор', 20=>'Клоун',21=>'Рекрут',22=>'Стажер',23=>'НаёМник',24=>'СэнСэй');
+          $this->ipsclass->DB->query("select * from sh_igroki WHERE (nick='".$this->ipsclass->member['name']."')and(status_in_cmd='Капитан')");
+          if ($this->ipsclass->DB->get_num_rows())
+          {
+               $chisla=array('0','1','2','3','4','5','6','7','8','9');
+               $res="<SCRIPT LANGUAGE=\"JavaScript\">
+                              function flashhere()
+                              {
+                                  if (document.getElementById(\"here\").style.color!='rgb(255,0,0)')
+                                  {
+                                      document.getElementById(\"here\").style.color='rgb(255,0,0)';
+                                      self.setTimeout(\"flashhere()\",1500);
+                                  }
+                                  else
+                                  {
+                                      document.getElementById(\"here\").style.color='rgb(0,0,0)';
+                                      self.setTimeout(\"flashhere()\",100);
+                                  }
+                              }
+                              function quitconfirm()
+                              {
+                                  if (confirm(\"Вы действительно хотите покинуть игру?\"))
+                                  {document.getElementById(\"action\").submit();}
+                              }
+                              </SCRIPT>";
+               if (((($cn!="")and(!parsdig($cn)))or(($de!="")and(!parsdig($de))))or(($ye!="")and(!parsdig($ye))))
+               {
+                    $res="<font color=red>Запрос не прошел, в запросе использованы недопустимые символы. </font><br><br>";
+                    $cn="";
+                    $de="";
+                    $ye="";
+               }
+               $frows = $this->ipsclass->DB->fetch_row($fquery);
+               $komanda=$frows['komanda'];
+               $iid=$this->ipsclass->input['iid'];
+               $zvan=$this->ipsclass->input['zvan'];
+               if  ((($iid!="")and(parsdig($iid)))or(($zvan!="")and(parsdig($zvan))))
+               {
+                    if ($iid==$frows['n'])
+                    {$zvan=-1;}
+                    switch ($zvan)
+                    {
+                      case -1:
+                        $res.='<font size=4 color=red><b><center>Капитан не может поменять себе звание!<br>Можно назначить другого капитаном.</ctnter></b></font>';
+                        break;
+                      case 1:
+                        $res.='<font size=4 color=red><b><center>Теперь вы не капитан - покиньте капитанский мостик!</ctnter></b></font>';                 	  	  $this->ipsclass->DB->query("update sh_igroki set status_in_cmd='Полевой' WHERE (status_in_cmd='Капитан')and(komanda='".$komanda."')");
+                        $this->ipsclass->DB->query("update sh_igroki set status_in_cmd='Капитан' WHERE (n=".$iid.")and(komanda='".$komanda."')");
+                        break;
+                      default:                 	  	  if (in_array($zvan,array_keys($zvaniya)))
+                        $this->ipsclass->DB->query("update sh_igroki set status_in_cmd='".$zvaniya[$zvan]."' WHERE (n=".$iid.")and(komanda='".$komanda."')");
+                        else
+                        $res.='<font size=4 color=red><b><center>Такого звания нет!</ctnter></b></font>';
+                        break;
+                    }                 }
+               $res=$res."<div class=\"borderwrap\"><center class=\"maintitle\"><b>Капитанский мостик команды ".$komanda."</b></center>";
+               $this->ipsclass->DB->query("select * from sh_comands WHERE nazvanie='".$komanda."'");
+               $frows = $this->ipsclass->DB->fetch_row($fquery);
+               $id_team=$frows['n'];
+               if ($de!="")
+               {
+                     $this->ipsclass->DB->query("select * from sh_igroki WHERE n=".$de);
+                     $frows = $this->ipsclass->DB->fetch_row($fquery);
+                     if ($frows['komanda']==$komanda)
+                     {
+                          $this->ipsclass->DB->query("update members  set mgroup='3'WHERE name='".$frows['nick']."'");
+                          $this->ipsclass->DB->query("update sh_igroki set komanda='Не в команде', status_in_cmd='' WHERE n=".$de);
+                     }
+                     else
+                     {
+                          $res=$res.'<br>Не удалось исключить! Наверное этот игрок не в вашей команде!<br>';
+                     }
+               }
+               if (($ye!="")and(mysql_num_rows($this->ipsclass->DB->query("select * from sh_recrut WHERE n=".$ye))!=0))
+               {
+                     $frows = $this->ipsclass->DB->fetch_row($fquery);
+                     $kto=$frows['kto'];
+                     if (mysql_num_rows($this->ipsclass->DB->query("select * from sh_igroki WHERE (nick='".$kto."')and(komanda='".$komanda."')")))
+                     {
+                          $res=$res."<br>Этот игрок уже зачилен в вашу команду.<br>";
+                          $this->ipsclass->DB->query("delete from sh_recrut WHERE n=".$ye);
+                     }
+                     else
+                     {
+                          $this->ipsclass->DB->query("select * from sh_igroki WHERE (nick='".$kto."')");
+                          $frows = $this->ipsclass->DB->fetch_row($fquery);
+                          if (($frows['n']!="")and($frows['komanda']!="Не в команде"))
+                          {
+                               $res=$res."<br>Этот игрок в другой команде и не может быть зачислен в вашу команду, пока не уйдёт оттуда.<br>";
+                          }
+                          else
+                          {
+                               if (mysql_num_rows($this->ipsclass->DB->query("select * from groups WHERE g_title='".$komanda."'")))
+                               {
+                                    $fr = $this->ipsclass->DB->fetch_row($fquery);
+                               }
+                               $this->ipsclass->DB->query("update members  set mgroup='".$fr['g_id']."'WHERE name='".$kto."'");
+                               if (($frows['n']!="")and($frows['komanda']=="Не в команде"))
+                               {
+                                    $this->ipsclass->DB->query("update sh_igroki set komanda='".$komanda."', status_in_cmd='Полевой' WHERE nick='".$kto."'");
+                                    $this->ipsclass->DB->query("delete from sh_recrut WHERE n=".$ye);
+                               }
+                               else
+                               {
+                                    $this->ipsclass->DB->query("INSERT INTO sh_igroki (nick, komanda) values('".$kto."', '".$komanda."')");
+                                    $this->ipsclass->DB->query("delete from sh_recrut WHERE n=".$ye);
+                               }
+                          }
+                     }
+               }
+               if (($cn!="")and(mysql_num_rows($this->ipsclass->DB->query("select * from sh_recrut WHERE (n=".$cn.")and(kuda=".$id_team.")"))!=0))
+               {
+                       $this->ipsclass->DB->query("update sh_recrut set otvet='Капитан вам отказал, отзовите свою заявку.' WHERE n=".$cn);
+               }
+               $this->ipsclass->DB->query("select * from sh_igroki WHERE komanda='".$komanda."'");
+               $res=$res."<br><TABLE cellspacing=\"1\" style={width:auto;} class=\"borderwrap\" align=\"center\"><tr><th COLSPAN=3>Ваша команда</th></tr>";
+               while ($frows = $this->ipsclass->DB->fetch_row($fquery))
+               {
+                     $res=$res.'<tr class="ipbtable"><td class="row1"><b>'.($frows['nick']).'</b></center></td><td class="row1"><form  action="./index.php" method="post">
 <input type=HIDDEN name="act" value="module">
 <input type=HIDDEN name="module" value="shvatka">
 <input type=HIDDEN name="cmd" value="cap">
 <input type=HIDDEN name="iid" value='.$frows['n'].'>
 <select name="zvan" onchange="submit()">';
-                       foreach ($zvaniya as $ind=>$zn)
-                       {                       	$res.='<option value='.$ind.' ';
-                       	if ($frows['status_in_cmd']==$zn)
-                       	  {$res.='selected';}
-                        if (!in_array($frows['status_in_cmd'], $zvaniya)) { if ($zn=='Полевой') {$res.='selected';}}
-                       	$res.='>'.$zn;
-                       }
+                     foreach ($zvaniya as $ind=>$zn)
+                     {                       	$res.='<option value='.$ind.' ';
+                      if ($frows['status_in_cmd']==$zn)
+                        {$res.='selected';}
+                      if (!in_array($frows['status_in_cmd'], $zvaniya)) { if ($zn=='Полевой') {$res.='selected';}}
+                      $res.='>'.$zn;
+                     }
 
-                       $res.='</select></form></td><td class="row1"><center><a href="./index.php?act=module&module=shvatka&cmd=cap&del='.($frows['n']).'"><font size=1 color=red>Исключить</font></center></td></tr>';
-                 }
-                 $res=$res."</table ><br><TABLE cellspacing=\"1\" style={width:auto;} class=\"borderwrap\" align=\"center\"><tr><th COLSPAN=2>Заявки в вашу команду.</th></tr>";
-                 $this->ipsclass->DB->query("select * from sh_recrut  WHERE kuda='".$id_team."'");
-                 while ($frows = $this->ipsclass->DB->fetch_row($fquery))
-                 {
-                       if ($frows['otvet']!="Капитан вам отказал, отзовите свою заявку.")
-                       {
-                             $res=$res."<tr class=\"ipbtable\"><td class=\"row1\"><center><b>".$frows['kto']."</b></center></td>";
-                             $res=$res.'<td class="row2"><center><a href="./index.php?act=module&module=shvatka&cmd=cap&yes='.($frows['n']).'"><font size=1 color=green>Принять</font></a>  <a href="./index.php?act=module&module=shvatka&cmd=cap&cnc='.($frows['n']).'"><font size=1 color=red>Отказать</font></a></center></td></tr>';
-                       }
-                 }
-                 $res=$res."</table><br>";
-                 $res.='<font size=2 color=red><center><br>Внимание! Смена звания у игрока происходит автоматически, как только вы изменили его в форме.<br>При назначении нового капитана, старый приобретает звание "Полевой" и теряет доступ на капитанский мостик.<br>Капитан не может поменять своё звание!<br>Будьте внимательны!!!</center></font></div>';
-                 $this->ipsclass->DB->query("select * from sh_games WHERE status='п'");
-                 $frows = $this->ipsclass->DB->fetch_row($fquery);
-                 if ($frows['n']!="")
-                 {
-                   $g_id=$frows['n'];
-                   if (strtotime($frows['dt_g'])<=($z+(strtotime("now"))))
-                   {
-                 	  $this->ipsclass->DB->query("select * from sh_comands WHERE nazvanie='".$komanda."'");
-                      $frows = $this->ipsclass->DB->fetch_row($fquery);
-                      if ($frows['dengi'])
-                      {                        	if ($this->ipsclass->input['quit']=='34523422342323244234543')
-                    	    {                               $this->ipsclass->DB->query("update sh_comands set uroven=0, podskazka=0, dengi=0, dt_ur='".(date('Y-m-d H:i:s',($z+strtotime("now"))))."', cmp_games='".$frows['cmp_games']."<s>".$g_id."</s> ' WHERE nazvanie='".$komanda."'");
-                               $this->ipsclass->DB->query("update sh_igroki set ch_dengi=0 WHERE (ch_dengi=1)and(komanda='".$komanda."')");
-                               if (mysql_num_rows($this->ipsclass->DB->query("select * from sh_comands WHERE dengi=1"))==0)
-                               {$this->ipsclass->DB->query("update  sh_games set status='т' WHERE status='п'");}
-                               header('Location:./index.php?act=module&module=shvatka&cmd=cap');                    	    }
-                    	    else
-                    	    {
-                            	$res.="<br><div align='center' style={width:auto;} id='here' class=\"borderwrap\"><br>Сейчас идёт игра. Если вы поняли, что ваша команда не хочет<br>или не может продолжать игру, то нажмите кнопку<br>
-                            	<form action=./index.php id='action' method='post'>
-                            	<input name=\"act\" type=\"hidden\" value=\"module\">
-                            	<input name=\"module\" type=\"hidden\" value=\"shvatka\">
-                            	<input name=\"cmd\" type=\"hidden\" value=\"cap\">
-                            	<input name=\"quit\" type=\"hidden\" value=\"34523422342323244234543\">
-                            	<input type=button value='Покинуть игру' onclick=\"quitconfirm()\"><br>
-                            	<table><tr><td align=\"left\" style={width:500px;}>Выход из игры означает:<br>                         
-                            	1. Иргоки и команда переводятся в статус \"несдавшие деньги\".<br>
-                            	2. Очки вашей команде и игрокам за эту игру не начисляются.<br>
-                            	3. Участие в игре игрокам команды не засчитывается.<br>
-                            	4. Участие в игре команде засчитывается как неполное (зачеркнутый номер игры в статистике команды)<br>
-                            	5. Доступ к текущей игре для вас закрывается.<br></td></tr></table>&nbsp;</div>
-                            	<SCRIPT LANGUAGE=\"JavaScript\">
-                            	self.setTimeout(\"flashhere()\",100);
-                            	</SCRIPT><br>";
-                      	    }
-                      }
-
-                   }
-                 }
-            }
-            else
-            {
-                 $res="Вы не капитан! Вам сюда нельзя!";
-            }
-            $this->result=$res;
-      }
-      function nmem($ku,$cn)
-      {
-            $chisla=array('0','1','2','3','4','5','6','7','8','9');
-            $res="";
-            if (($ku!="")and(!parsdig($ku)))
-            {
-               $res="Заявка не прошла, в запросе использованы недопустимые символы<br>";
-               $ku="";
-            }
-            if (($cn!="")and(!parsdig($cn)))
-            {
-               $res="Отмена заявки не прошла, в запросе использованы недопустимые символы<br>";
-               $cn="";
-            }
-            if ($this->ipsclass->member['id']!="")
-            {
-               if ($ku!="")
-               {
-                   if ((mysql_num_rows($this->ipsclass->DB->query("select * from sh_recrut WHERE (kuda='".$ku."')and(kto='".($this->ipsclass->member['name'])."')"))==0)and(mysql_num_rows($this->ipsclass->DB->query("select * from sh_comands WHERE n=".$ku))!=0))
-                   {                   	  if (mysql_num_rows($this->ipsclass->DB->query("select * from sh_recrut"))==0)
-                   	  {
-                   	  	 $this->ipsclass->DB->query("ALTER TABLE sh_recrut PACK_KEYS =0 CHECKSUM =0 DELAY_KEY_WRITE =0 AUTO_INCREMENT =1");                   	  }                   	  $this->ipsclass->DB->query("INSERT INTO sh_recrut(kto, kuda) values('".$this->ipsclass->member['name']."', '".$ku."')");
-                   }
-                   else
-                   {$res=$res."Либо вы уже подали заявку в эту команду, либо такой команды не существует!<br>";}
+                     $res.='</select></form></td><td class="row1"><center><a href="./index.php?act=module&module=shvatka&cmd=cap&del='.($frows['n']).'"><font size=1 color=red>Исключить</font></center></td></tr>';
                }
-               if ($cn!="")
-               {
-                   if ((mysql_num_rows($this->ipsclass->DB->query("select * from sh_recrut WHERE n=".$cn))!=0))
-                   {
-                      $this->ipsclass->DB->query("DELETE FROM sh_recrut WHERE n=".$cn);
-                   }
-                   else
-                   {$res=$res."Такой заявки нет!<br>";}
-               }
-
-
-               $res=$res.'Куда хотите подать заявку, '.$this->ipsclass->member['name'].' ?<br><Form action="./index.php" method="post">
-<input type=HIDDEN name="act" value="module">Команда: <input type=HIDDEN name="module" value="shvatka">
-<input type=HIDDEN name="cmd" value="nmem"><SELECT name="kuda">';
-               $this->ipsclass->DB->query("select * from sh_comands");
-               $cm_array=array();
+               $res=$res."</table ><br><TABLE cellspacing=\"1\" style={width:auto;} class=\"borderwrap\" align=\"center\"><tr><th COLSPAN=2>Заявки в вашу команду.</th></tr>";
+               $this->ipsclass->DB->query("select * from sh_recrut  WHERE kuda='".$id_team."'");
                while ($frows = $this->ipsclass->DB->fetch_row($fquery))
                {
-                   $cm_array[$frows['n']]=$frows['nazvanie'];
-                   $res=$res."<OPTION value='".$frows['n']."'>".$cm_array[$frows['n']];
+                     if ($frows['otvet']!="Капитан вам отказал, отзовите свою заявку.")
+                     {
+                           $res=$res."<tr class=\"ipbtable\"><td class=\"row1\"><center><b>".$frows['kto']."</b></center></td>";
+                           $res=$res.'<td class="row2"><center><a href="./index.php?act=module&module=shvatka&cmd=cap&yes='.($frows['n']).'"><font size=1 color=green>Принять</font></a>  <a href="./index.php?act=module&module=shvatka&cmd=cap&cnc='.($frows['n']).'"><font size=1 color=red>Отказать</font></a></center></td></tr>';
+                     }
                }
-               $res=$res."</option></select><input type=submit value=' Подать заявку ' style='background:#D2D0D0;border:1px;border:outset;border-color:#ffffff'><br></Form>";
-               if (mysql_num_rows($this->ipsclass->DB->query("select * from sh_recrut WHERE kto='".$this->ipsclass->member['name']."'"))!=0)
+               $res=$res."</table><br>";
+               $res.='<font size=2 color=red><center><br>Внимание! Смена звания у игрока происходит автоматически, как только вы изменили его в форме.<br>При назначении нового капитана, старый приобретает звание "Полевой" и теряет доступ на капитанский мостик.<br>Капитан не может поменять своё звание!<br>Будьте внимательны!!!</center></font></div>';
+               $this->ipsclass->DB->query("select * from sh_games WHERE status='п'");
+               $frows = $this->ipsclass->DB->fetch_row($fquery);
+               if ($frows['n']!="")
                {
-                   $res=$res."<TABLE cellspacing=\"1\" style={width:auto;} class=\"borderwrap\"><th COLSPAN=3><b>Вы подали заявки в следующие команды:</b></th>";
-                   while ($frows = $this->ipsclass->DB->fetch_row($fquery))
-                   {
-                      $res=$res.'<tr class="ipbtable"><td class="row2"><b>'.$cm_array[$frows['kuda']].'</b></td><td class="row2"><center><a href="./index.php?act=module&module=shvatka&cmd=nmem&cnc='.($frows['n']).'"><font size=1 color=red>Отозвать заявку</font></a></td><td class="row2" style={font-style:italic}><blink><font size=1>   '.($frows['otvet']).'</font></blink></td></tr>';
-                   }
-                   $res=$res.'</table>';
+                 $g_id=$frows['n'];
+                 if (strtotime($frows['dt_g'])<=($z+(strtotime("now"))))
+                 {
+
+                    $this->ipsclass->DB->query("select * from sh_comands WHERE nazvanie='".$komanda."'");
+                    $frows = $this->ipsclass->DB->fetch_row($fquery);
+                    if ($frows['dengi'])
+                    {
+                          if ($this->ipsclass->input['quit']=='34523422342323244234543')
+                          {
+                             $this->ipsclass->DB->query("update sh_comands set uroven=0, podskazka=0, dengi=0, dt_ur='".(date('Y-m-d H:i:s',($z+strtotime("now"))))."', cmp_games='".$frows['cmp_games']."<s>".$g_id."</s> ' WHERE nazvanie='".$komanda."'");
+                             $this->ipsclass->DB->query("update sh_igroki set ch_dengi=0 WHERE (ch_dengi=1)and(komanda='".$komanda."')");
+                             if (mysql_num_rows($this->ipsclass->DB->query("select * from sh_comands WHERE dengi=1"))==0)
+                             {$this->ipsclass->DB->query("update  sh_games set status='т' WHERE status='п'");}
+                             header('Location:./index.php?act=module&module=shvatka&cmd=cap');
+                          }
+                          else
+                          {
+                              $res.="<br><div align='center' style={width:auto;} id='here' class=\"borderwrap\"><br>Сейчас идёт игра. Если вы поняли, что ваша команда не хочет<br>или не может продолжать игру, то нажмите кнопку<br>
+                              <form action=./index.php id='action' method='post'>
+                              <input name=\"act\" type=\"hidden\" value=\"module\">
+                              <input name=\"module\" type=\"hidden\" value=\"shvatka\">
+                              <input name=\"cmd\" type=\"hidden\" value=\"cap\">
+                              <input name=\"quit\" type=\"hidden\" value=\"34523422342323244234543\">
+                              <input type=button value='Покинуть игру' onclick=\"quitconfirm()\"><br>
+                              <table><tr><td align=\"left\" style={width:500px;}>Выход из игры означает:<br>                         
+                              1. Иргоки и команда переводятся в статус \"несдавшие деньги\".<br>
+                              2. Очки вашей команде и игрокам за эту игру не начисляются.<br>
+                              3. Участие в игре игрокам команды не засчитывается.<br>
+                              4. Участие в игре команде засчитывается как неполное (зачеркнутый номер игры в статистике команды)<br>
+                              5. Доступ к текущей игре для вас закрывается.<br></td></tr></table>&nbsp;</div>
+                              <SCRIPT LANGUAGE=\"JavaScript\">
+                              self.setTimeout(\"flashhere()\",100);
+                              </SCRIPT><br>";
+                          }
+                    }
+
+                 }
                }
-            }
-            else
-            {
-               $res='Вы не залогинились на форуме. Сначала залогинтесь на форуме!<br>';
-            }
-            $this->result=$res;
-      }
+          }
+          else
+          {
+               $res="Вы не капитан! Вам сюда нельзя!";
+          }
+          $this->result=$res;
+    }
+
+    function nmem($ku,$cn)
+    {
+          $chisla=array('0','1','2','3','4','5','6','7','8','9');
+          $res="";
+          if (($ku!="")and(!parsdig($ku)))
+          {
+             $res="Заявка не прошла, в запросе использованы недопустимые символы<br>";
+             $ku="";
+          }
+          if (($cn!="")and(!parsdig($cn)))
+          {
+             $res="Отмена заявки не прошла, в запросе использованы недопустимые символы<br>";
+             $cn="";
+          }
+          if ($this->ipsclass->member['id']!="")
+          {
+             if ($ku!="")
+             {
+                 if ((mysql_num_rows($this->ipsclass->DB->query("select * from sh_recrut WHERE (kuda='".$ku."')and(kto='".($this->ipsclass->member['name'])."')"))==0)and(mysql_num_rows($this->ipsclass->DB->query("select * from sh_comands WHERE n=".$ku))!=0))
+                 {                   	  if (mysql_num_rows($this->ipsclass->DB->query("select * from sh_recrut"))==0)
+                    {
+                       $this->ipsclass->DB->query("ALTER TABLE sh_recrut PACK_KEYS =0 CHECKSUM =0 DELAY_KEY_WRITE =0 AUTO_INCREMENT =1");                   	  }                   	  $this->ipsclass->DB->query("INSERT INTO sh_recrut(kto, kuda) values('".$this->ipsclass->member['name']."', '".$ku."')");
+                 }
+                 else
+                 {$res=$res."Либо вы уже подали заявку в эту команду, либо такой команды не существует!<br>";}
+             }
+             if ($cn!="")
+             {
+                 if ((mysql_num_rows($this->ipsclass->DB->query("select * from sh_recrut WHERE n=".$cn))!=0))
+                 {
+                    $this->ipsclass->DB->query("DELETE FROM sh_recrut WHERE n=".$cn);
+                 }
+                 else
+                 {$res=$res."Такой заявки нет!<br>";}
+             }
+
+
+             $res=$res.'Куда хотите подать заявку, '.$this->ipsclass->member['name'].' ?<br><Form action="./index.php" method="post">
+<input type=HIDDEN name="act" value="module">Команда: <input type=HIDDEN name="module" value="shvatka">
+<input type=HIDDEN name="cmd" value="nmem"><SELECT name="kuda">';
+             $this->ipsclass->DB->query("select * from sh_comands");
+             $cm_array=array();
+             while ($frows = $this->ipsclass->DB->fetch_row($fquery))
+             {
+                 $cm_array[$frows['n']]=$frows['nazvanie'];
+                 $res=$res."<OPTION value='".$frows['n']."'>".$cm_array[$frows['n']];
+             }
+             $res=$res."</option></select><input type=submit value=' Подать заявку ' style='background:#D2D0D0;border:1px;border:outset;border-color:#ffffff'><br></Form>";
+             if (mysql_num_rows($this->ipsclass->DB->query("select * from sh_recrut WHERE kto='".$this->ipsclass->member['name']."'"))!=0)
+             {
+                 $res=$res."<TABLE cellspacing=\"1\" style={width:auto;} class=\"borderwrap\"><th COLSPAN=3><b>Вы подали заявки в следующие команды:</b></th>";
+                 while ($frows = $this->ipsclass->DB->fetch_row($fquery))
+                 {
+                    $res=$res.'<tr class="ipbtable"><td class="row2"><b>'.$cm_array[$frows['kuda']].'</b></td><td class="row2"><center><a href="./index.php?act=module&module=shvatka&cmd=nmem&cnc='.($frows['n']).'"><font size=1 color=red>Отозвать заявку</font></a></td><td class="row2" style={font-style:italic}><blink><font size=1>   '.($frows['otvet']).'</font></blink></td></tr>';
+                 }
+                 $res=$res.'</table>';
+             }
+          }
+          else
+          {
+             $res='Вы не залогинились на форуме. Сначала залогинтесь на форуме!<br>';
+          }
+          $this->result=$res;
+    }
+
       function do_game($k,$bk)
       {
             $z=0;                                                                           /* Поправка времени в часах */
