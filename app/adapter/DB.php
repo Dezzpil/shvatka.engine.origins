@@ -42,35 +42,67 @@ class DB
     private function __construct()
     {
         // установить соединение
-        $this->_mysqli = new \mysqli(self::dbHost, self::dbUser, self::dbPass, self::dbName, self::dbPort);
+        $this->_mysqli = new \mysqli();
+        $this->_mysqli->connect(self::dbHost, self::dbUser, self::dbPass, self::dbName, self::dbPort);
+        $this->_mysqli->query('SET NAMES utf8');
     }
     
     /**
      * При SELECT сохраняет результат в объекте,
      * также как и возвращает его
      * @param string $sql
+     * @param boolean $escape Нужно ли экранировать символы?
      */
-    function query($sql)
+    function query($sql, $escape = false)
     {
-        //$sql = mysqli_real_escape_string($this->_mysqli, $sql);
-        $result = $this->_mysqli->query($sql);
-        if ($result === false) {
-            var_dump($sql);
-            var_dump($this->_mysqli->error);
-            die;
-            $result = [];
+        $data = [];
+        
+        if ($escape) {
+            $sql = mysqli_real_escape_string($this->_mysqli, $sql);
         }
-        $this->_fetchedResult = $this->_result = $result;
+        
+        /* @var $result \mysqli_result */
+        $result = $this->_mysqli->query($sql);
+        
+        /**
+         * @link http://php.net/manual/ru/mysqli.query.php
+         * Возвращает FALSE в случае неудачи. В случае успешного выполнения 
+         * запросов SELECT, SHOW, DESCRIBE или EXPLAIN mysqli_query() вернет 
+         * объект mysqli_result. Для остальных успешных запросов mysqli_query() 
+         * вернет TRUE.
+         */
+        if ($result === true) return $this->_result;
+        
+        if ($this->_mysqli->errno) {
+            var_dump($result, $this->_mysqli->errno, $this->_mysqli->error);
+            die;
+        }
+        
+        if ($result !== false) {
+            while ($row = $result->fetch_assoc()) {
+                $data[] = $row;
+            }
+            $result->free();
+        }
+        
+        var_dump($sql, $data);
+        
+        $this->_fetchedResult = $this->_result = $data;
         return $this->_result;
     }
     
+    
     /**
-     * 
+     * @param array Иногда может быть передан результат из query()
      * @return int
      */
-    function get_num_rows()
+    function get_num_rows($result = null)
     {
-        return count($this->_result);
+        if (!empty($result)) {
+            return count($result);
+        } else {
+            return count($this->_result);
+        }
     }
     
     /**

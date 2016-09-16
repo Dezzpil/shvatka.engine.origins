@@ -12,7 +12,7 @@ trait Singleton
     protected static $instance = null;
     
     /**
-     * @return DBAdapter
+     * @return static
      */
     public static function getInstance()
     {

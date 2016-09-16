@@ -1,178 +1,127 @@
 <?php
-/*
-+--------------------------------------------------------------------------
-|   Invision Power Board v2.1.2
-|   =============================================
-|   by Matthew Mecham
-|   (c) 2001 - 2005 Invision Power Services, Inc.
-|   http://www.invisionpower.com
-|   =============================================
-|   Web: http://www.invisionboard.com
-|   Time: Fri, 14 Oct 2005 18:51:31 GMT
-|   Release: 50690ede8a42052b7a1400c0a925a711
-|   Licence Info: http://www.invisionboard.com/?license
-+---------------------------------------------------------------------------
-|   > $Date: 2005-10-10 14:03:20 +0100 (Mon, 10 Oct 2005) $
-|   > $Revision: 22 $
-|   > $Author: matt $
-+---------------------------------------------------------------------------
-|
-|   > MODULE FILE (EXAMPLE)
-|   > Module written by Matt Mecham
-|   > Date started: Thu 14th April 2005 (17:59)
-|
-+--------------------------------------------------------------------------
-*/
+namespace Shvatka;
 
-//=====================================
-// Define class, this must be the same
-// in all modules
-//=====================================
-if ( ! defined( 'IN_IPB' ) )
+class Reps
 {
-        print "<h1>НЕ ЛЕЗЬ КУДА НЕ НАДО</h1>Этот файл так нифига не вызовеш. Заходи через форум.";
-        exit();
-}
+    var $ipsclass;
+    var $class  = "";
+    var $module = "";
+    var $html   = "";
+    var $result = "";
 
+    //=====================================
+    // Constructer, called and run by IPB
+    //=====================================
 
-class module
-{
-        //=====================================
-        // Define vars if required
-        //=====================================
-
-        var $ipsclass;
-        var $class  = "";
-        var $module = "";
-        var $html   = "";
-        var $result = "";
-
-        //=====================================
-        // Constructer, called and run by IPB
-        //=====================================
-
-        function run_module()
+    function run_module()
+    {
+        function sectostr($secs)
         {
-            function sectostr($secs)
-            {
-                $st="";
-                $tmp=floor($secs / 86400);
-                if ($tmp>0) {$st='<span id=\'days\'>'.$tmp.'</span> д. ';}
-                $tmp2=floor(($secs - ($tmp*86400))/3600);
-                if ($tmp2>0) {$st=$st.'<span id=\'hours\'>'.$tmp2.'</span> ч. ';}
-                $tmp3=floor(($secs - ($tmp*86400) - ($tmp2*3600))/60);
-                if ($tmp3>0) {$st=$st.'<span id=\'mins\'>'.$tmp3.'</span> м. ';}
-                $tmp=floor($secs - ($tmp*86400) - ($tmp2*3600)-($tmp3*60));
-                if ($tmp>0) {$st=$st.'<span id=\'secs\'>'.$tmp.'</span> сек. ';}
-                return $st;
-            }
-                //=====================================
-                // Do any set up here, like load lang
-                // skin files, etc
-                //=====================================
-
-                $this->ipsclass->load_language('lang_boards');
-                $this->ipsclass->load_template('skin_boards');
-
-                //=====================================
-                // Set up structure
-                //=====================================
-               $this->ipsclass->DB->query("select field_4 from pfields_content where member_id=".$this->ipsclass->member['id']."");
-               $frows = $this->ipsclass->DB->fetch_row($fquery);
-               if (( $this->ipsclass->member['mgroup'] == $this->ipsclass->vars['admin_group'] )or($frows['field_4']=='y'))
-               {
-                       $html=$html. "
-                       <script type=\"text/javascript\">
-						function confirmation()
-						{
-						var answer = confirm(\"Опубликовать текущую игру?\");
-						if (answer)
-						{
-							window.location = \"{$this->ipsclass->base_url}act=module&module=shgames&cmd=pub\";
-						}
-						else
-						{
-							alert(\"Хорошо, не будем!\")
-			   			}
-						}
-						</script>
-                       <div id=\"userlinks\">
-                       <p class=\"home\"><b>Администрирование Cхватки:</b></p>
-                       <p>
-                       <font color=red><b>Перед игрой:</b></font>
-                       <a href='{$this->ipsclass->base_url}act=module&module=reps&cmd=addg' title='Настройки предстоящей(текущей) игры.
-Здесь вы можете создать игру, удалить игру или отредактировать название, дату и время и призовой фонд игры.'>Настройки игры</a> &middot;
-                       <a href='{$this->ipsclass->base_url}act=module&module=reps&cmd=scn' title='Здесь вводится и редактируется сценарий. Можно использовать HTML.'>Редактор сценария</a> &middot;
-                       <a href='{$this->ipsclass->base_url}act=module&module=reps&cmd=deng' title='Здесь можно отметить кто зарегистрирован на предстоящую игру. Галочка есть - зарегистрирован.'>Зарегистрировать на игру</a><br>
-                       <font color=D2CB03><b>Во время игры:</b></font>
-                       <a href='{$this->ipsclass->base_url}act=module&module=reps&cmd=spy' title='Во время игры здесь можно смотреть какая команда на каком уровне и подсказке, и когда она начала этот уровнь.'>Шпиён</a> &middot;
-                       <a href='{$this->ipsclass->base_url}act=module&module=reps&cmd=exmsg' title='Во время игры здесь можно отправить ЭКСТРЕННЫЕ сообщения командам.'>Сообщение</a><br>
-                       <font color=green><b>После игры:</b></font>
-                       <a href='{$this->ipsclass->base_url}act=module&module=reps&cmd=tlevs' title='Здесь находится таблица завершения командами уровней с указанием времени и отставания от лидера.'>Финиш по уровням</a> &middot;
-                       <a href='{$this->ipsclass->base_url}act=module&module=reps&cmd=logs' title='Тут находятся логи игры.'>Логи</a> &middot;
-                       <a href='{$this->ipsclass->base_url}act=module&module=reps&cmd=ochki' title='Здесь начисляются очки. Очки добавляются к уже имеющимся. Чтобы снять очки нужно задать отрицательное число.'>Очки</a> &middot;
-                       <a href='JavaScript:confirmation();' title='Здесь можно опубликовать текущую завершенную игру(работает только со включенными JavaScript)'>Опубликовать игру</a>
-                       </p>
-                       </div>
-                       <br>
-                       ";
-                       switch( $this->ipsclass->input['cmd'] )
-                       {
-                               case 'logs':
-                                     $this->logs($this->ipsclass->input['id']);
-                                     break;
-                               case 'scn':
-                                     $this->scn();
-                                     break;
-                               case 'spy':
-                                     $this->spy();
-                                     break;
-                               case 'tlevs':
-                                     $this->tlevs();
-                                     break;
-                               case 'deng':
-                                     $this->deng();
-                                     break;
-                               case 'addg':
-                                     $this->addg();
-                                     break;
-                               case 'ochki':
-                                     $this->ochki();
-                                     break;
-                               case 'exmsg':
-                                     $this->admexmsg();
-                                     break;
-                               default:
-                                     $this->logs("");
-                                     break;
-                       }
-
-                       $html=$html.'<font size=2>'.$this->result.'</font>';
-                       $this->ipsclass->print->add_output( $html );
-                       $this->nav[] = "<a href='{$this->ipsclass->base_url}act=module&module=shvatka'>СХВАТКА</a>";
-                       $this->ipsclass->print->do_output(array(OVERRIDE => 0, TITLE => 'Админка игры', NAV => $this->nav));
-               }
-               else
-               {
-                       $html=$html."Вы не администратор";
-                       $this->ipsclass->print->add_output( $html );
-                       $this->ipsclass->print->do_output(array(OVERRIDE => 0, TITLE => 'Вы не администратор'));
-               }
-               exit();
+            $st="";
+            $tmp=floor($secs / 86400);
+            if ($tmp>0) {$st='<span id=\'days\'>'.$tmp.'</span> д. ';}
+            $tmp2=floor(($secs - ($tmp*86400))/3600);
+            if ($tmp2>0) {$st=$st.'<span id=\'hours\'>'.$tmp2.'</span> ч. ';}
+            $tmp3=floor(($secs - ($tmp*86400) - ($tmp2*3600))/60);
+            if ($tmp3>0) {$st=$st.'<span id=\'mins\'>'.$tmp3.'</span> м. ';}
+            $tmp=floor($secs - ($tmp*86400) - ($tmp2*3600)-($tmp3*60));
+            if ($tmp>0) {$st=$st.'<span id=\'secs\'>'.$tmp.'</span> сек. ';}
+            return $st;
         }
 
-        //------------------------------------------
-        // do_something
-        //
-        // Test sub, show if admin or not..
-        //
-        //------------------------------------------
+        $this->ipsclass->DB->query("select field_4 from pfields_content where member_id=".$this->ipsclass->member['id']."");
+        $frows = $this->ipsclass->DB->fetch_row($fquery);
+        if (( $this->ipsclass->member['mgroup'] == $this->ipsclass->vars['admin_group'] )or($frows['field_4']=='y'))
+        {
+                $html=$html. "
+                <script type=\"text/javascript\">
+                 function confirmation()
+                 {
+                 var answer = confirm(\"Опубликовать текущую игру?\");
+                 if (answer)
+                 {
+                     window.location = \"{$this->ipsclass->base_url}act=module&module=shgames&cmd=pub\";
+                 }
+                 else
+                 {
+                     alert(\"Хорошо, не будем!\")
+                 }
+                 }
+                 </script>
+                <div id=\"userlinks\">
+                <p class=\"home\"><b>Администрирование Cхватки:</b></p>
+                <p>
+                <font color=red><b>Перед игрой:</b></font>
+                <a href='{$this->ipsclass->base_url}act=module&module=reps&cmd=addg' title='Настройки предстоящей(текущей) игры.
+ Здесь вы можете создать игру, удалить игру или отредактировать название, дату и время и призовой фонд игры.'>Настройки игры</a> &middot;
+                <a href='{$this->ipsclass->base_url}act=module&module=reps&cmd=scn' title='Здесь вводится и редактируется сценарий. Можно использовать HTML.'>Редактор сценария</a> &middot;
+                <a href='{$this->ipsclass->base_url}act=module&module=reps&cmd=deng' title='Здесь можно отметить кто зарегистрирован на предстоящую игру. Галочка есть - зарегистрирован.'>Зарегистрировать на игру</a><br>
+                <font color=D2CB03><b>Во время игры:</b></font>
+                <a href='{$this->ipsclass->base_url}act=module&module=reps&cmd=spy' title='Во время игры здесь можно смотреть какая команда на каком уровне и подсказке, и когда она начала этот уровнь.'>Шпиён</a> &middot;
+                <a href='{$this->ipsclass->base_url}act=module&module=reps&cmd=exmsg' title='Во время игры здесь можно отправить ЭКСТРЕННЫЕ сообщения командам.'>Сообщение</a><br>
+                <font color=green><b>После игры:</b></font>
+                <a href='{$this->ipsclass->base_url}act=module&module=reps&cmd=tlevs' title='Здесь находится таблица завершения командами уровней с указанием времени и отставания от лидера.'>Финиш по уровням</a> &middot;
+                <a href='{$this->ipsclass->base_url}act=module&module=reps&cmd=logs' title='Тут находятся логи игры.'>Логи</a> &middot;
+                <a href='{$this->ipsclass->base_url}act=module&module=reps&cmd=ochki' title='Здесь начисляются очки. Очки добавляются к уже имеющимся. Чтобы снять очки нужно задать отрицательное число.'>Очки</a> &middot;
+                <a href='JavaScript:confirmation();' title='Здесь можно опубликовать текущую завершенную игру(работает только со включенными JavaScript)'>Опубликовать игру</a>
+                </p>
+                </div>
+                <br>
+                ";
+                switch( $this->ipsclass->input['cmd'] )
+                {
+                        case 'logs':
+                              $this->logs($this->ipsclass->input['id']);
+                              break;
+                        case 'scn':
+                              $this->scn();
+                              break;
+                        case 'spy':
+                              $this->spy();
+                              break;
+                        case 'tlevs':
+                              $this->tlevs();
+                              break;
+                        case 'deng':
+                              $this->deng();
+                              break;
+                        case 'addg':
+                              $this->addg();
+                              break;
+                        case 'ochki':
+                              $this->ochki();
+                              break;
+                        case 'exmsg':
+                              $this->admexmsg();
+                              break;
+                        default:
+                              $this->logs("");
+                              break;
+                }
+
+                $html=$html.'<font size=2>'.$this->result.'</font>';
+                $this->ipsclass->print->add_output( $html );
+                $this->nav[] = "<a href='{$this->ipsclass->base_url}act=module&module=shvatka'>СХВАТКА</a>";
+                $this->ipsclass->print->do_output(array('OVERRIDE' => 0, 'TITLE' => 'Админка игры', 'NAV' => $this->nav));
+        }
+        else
+        {
+            $html=$html."Вы не администратор";
+            $this->ipsclass->print->add_output( $html );
+            $this->ipsclass->print->do_output(array('OVERRIDE' => 0, 'TITLE' => 'Вы не администратор'));
+        }
+        exit();
+    }
+
       function admexmsg()
-      {      	    $res='';
+      {
+      	    $res='';
       	    if ((isset($this->ipsclass->input['msgtxt'])and($this->ipsclass->input['msgtxt'])!=''))
-      	    {	           {
+      	    {
+	           {
 	              if (isset($this->ipsclass->input['ig'])&(isset($this->ipsclass->input['msgexptm'])))
-	               {                     $this->ipsclass->DB->query("INSERT INTO sh_admin_msg (msg, starttime, endtime,  komand,  autor, hash) VALUES ('".($this->ipsclass->input['msgtxt'])."','".(mktime())."','".(mktime()+($this->ipsclass->input['msgexptm']*60))."','".(implode ( ',',  $this->ipsclass->input['ig']))."','".($this->ipsclass->member['name'])."','".(md5( $this->ipsclass->input['msgtxt']))."')");
+	               {
+                     $this->ipsclass->DB->query("INSERT INTO sh_admin_msg (msg, starttime, endtime,  komand,  autor, hash) VALUES ('".($this->ipsclass->input['msgtxt'])."','".(mktime())."','".(mktime()+($this->ipsclass->input['msgexptm']*60))."','".(implode ( ',',  $this->ipsclass->input['ig']))."','".($this->ipsclass->member['name'])."','".(md5( $this->ipsclass->input['msgtxt']))."')");
 	                 $res.='<br>Сообщение отправлено.';
 	               }
 
@@ -182,10 +131,11 @@ class module
 <input name="act" type="hidden" value="module">
 <input name="module" type="hidden" value="reps">
 <input name="cmd" type="hidden" value="exmsg">';
-            $size=mysql_num_rows($this->ipsclass->DB->query("select * from sh_comands where dengi=1"));
+            $size=count($this->ipsclass->DB->query("select * from sh_comands where dengi=1"));
             $res.='<TABLE><tr><td><i>Выберите команды, для которых<br>предназначено сообщение:</i></td><td style="vertical-align:bottom;" align="center"><i>Текст сообщения</i></td></tr><tr><td style="vertical-align:top;"><select style="width:100%;" multiple size="'.$size.'" name="ig[]">';
             while ($frows = $this->ipsclass->DB->fetch_row($fquery))
-            {      	       $res.='<option value="'.$frows['nazvanie'].'">'.$frows['nazvanie'].'</option>';
+            {
+      	       $res.='<option value="'.$frows['nazvanie'].'">'.$frows['nazvanie'].'</option>';
       	    }
       	    $res.='</select></td><td><textarea name="msgtxt" rows=5 cols=50 wrap="off"></textarea></td></tr><tr><td align="center" colspan=2>Время существования сообщения в минутах:<input name="msgexptm" type="text" value="3"></td></tr><tr><td align="center" colspan=2><input type="submit" value="Послать сообщение"></td></tr></table></form>';
             $this->result=$res;
@@ -218,7 +168,7 @@ class module
                  {$res=$res.$mv.'<div class="borderwrap"><div class="maintitle" align="center">Логи</div><br>';}
                  foreach ($comd as $n=>$naz)
                  {  $keyprev="";
-                    if (mysql_num_rows($this->ipsclass->DB->query("select * from sh_log where comanda='".$naz."' order by time"))!=0)
+                    if (count($this->ipsclass->DB->query("select * from sh_log where comanda='".$naz."' order by time"))!=0)
                     { if ($mv)
                       {$res=$res.'<table cellspacing="1" class="borderwrap" style={width:auto;}><tr><td align="center" colspan="3" class="maintitle">'.$naz.'</td></tr>';}
                       else
@@ -432,15 +382,16 @@ $res.='</center></td></tr></table></div>';
                  }
                  $this->result=$res;
       }
-      function addg()
-      {
-               $res="";
-               if ($this->ipsclass->input['y']=="")
-               {
-                   if (mysql_num_rows($this->ipsclass->DB->query("select * from sh_games where status='п'"))!=0)
-                   { // редактирование данных игры
-                     $frows = $this->ipsclass->DB->fetch_row($fquery);
-                     $res.='<center><form action="./index.php">
+      
+    function addg()
+    {
+        $res="";
+        if ($this->ipsclass->input['y']=="")
+        {
+            if (count($this->ipsclass->DB->query("select * from sh_games where status='п'"))!=0)
+            { // редактирование данных игры
+              $frows = $this->ipsclass->DB->fetch_row($fquery);
+              $res.='<center><form action="./index.php">
 <input name="act" type="hidden" value="module">
 <input name="module" type="hidden" value="reps">
 <input name="cmd" type="hidden" value="addg">
@@ -460,10 +411,10 @@ $res.='</center></td></tr></table></div>';
 <input name="y" type="hidden" value="1">
 <input type="submit" value="Удалить игру" style={background:#ff9090;border:1px;border:outset;border-color:#ffffff;font-size:11px;}><br></b>
 </form><font color=red size=1>После удаления игры все команды и игроки переводятся в состояние "деньги НЕ сдал" </font></center>';
-                   }
-                   else
-                   { // добавление новой игры
-                       $res.='<center><form action="./index.php">
+            }
+            else
+            { // добавление новой игры
+                $res.='<center><form action="./index.php">
 <input name="act" type="hidden" value="module">
 <input name="module" type="hidden" value="reps">
 <input name="cmd" type="hidden" value="addg">
@@ -474,39 +425,40 @@ $res.='</center></td></tr></table></div>';
 <input type="submit" value="Создать игру" style={background:#D2D0D0;border:1px;border:outset;border-color:#ffffff;font-size:11px;}><br>
 </form>
 <font color=red size=1>После создания новой игры логи предыдущей игры, а также даты и времена окончания командами педыдущей игры будут стёрты. Если их не запостили пердыдущие организаторы, сделайте это вы. </font></center>';
-                   }
-               }
-               else
-               {  //обработка прееданных данных
-                   if ($this->ipsclass->input['delg']!="1")
-                   {  //ввод данных игры
-                       if (mysql_num_rows($this->ipsclass->DB->query("select * from sh_games where status='п'"))!=0)
-                       {
-                             $this->ipsclass->DB->query("update sh_games set g_name='".($this->ipsclass->input['gn'])."', dt_g='".($this->ipsclass->input['gt'])."', fond='".($this->ipsclass->input['gf'])."' where status='п'");
-                             $res.='Изменения в настройки игры внесены.<br><br>';
-                       }
-                       else
-                       {
-                             $this->ipsclass->DB->query("update  sh_comands set uroven=0, podskazka=0, dt_ur='0000-00-00 00:00:00'" );
-                             $this->ipsclass->DB->query("delete from sh_log");
-                             $this->ipsclass->DB->query("INSERT INTO sh_games (g_name, dt_g, status, fond) values ('".($this->ipsclass->input['gn'])."', '".($this->ipsclass->input['gt'])."', 'п', '".($this->ipsclass->input['gf'])."')" );
-                             $this->ipsclass->DB->query("ALTER TABLE sh_log PACK_KEYS =0 CHECKSUM =0 DELAY_KEY_WRITE =0 AUTO_INCREMENT =1");
-                             $res.='Игра создана.<br><br>';
-                       }
-                   }
-                   else
-                   {  //удаление игры
-                       $this->ipsclass->DB->query("update  sh_comands set uroven=0, podskazka=0, dengi=0, dt_ur='0000-00-00 00:00:00'" );
-                       $this->ipsclass->DB->query("update  sh_igroki set ch_dengi=0" );
-                       $this->ipsclass->DB->query("delete from sh_games where status='п'");
-                       $this->ipsclass->DB->query("select * from sh_games order by n desc");
-                       $frows = $this->ipsclass->DB->fetch_row($fquery);
-                       $this->ipsclass->DB->query("ALTER TABLE `sh_games` PACK_KEYS =0 CHECKSUM =0 DELAY_KEY_WRITE =0 AUTO_INCREMENT =".($frows['n']-1));
-                       $res.='Игра удалена.<br><br>';
-                   }
-               }
-               $this->result=$res;
+            }
+        }
+        else
+        {  //обработка прееданных данных
+            if ($this->ipsclass->input['delg']!="1")
+            {  //ввод данных игры
+                if (count($this->ipsclass->DB->query("select * from sh_games where status='п'"))!=0)
+                {
+                      $this->ipsclass->DB->query("update sh_games set g_name='".($this->ipsclass->input['gn'])."', dt_g='".($this->ipsclass->input['gt'])."', fond='".($this->ipsclass->input['gf'])."' where status='п'");
+                      $res.='Изменения в настройки игры внесены.<br><br>';
+                }
+                else
+                {
+                      $this->ipsclass->DB->query("update  sh_comands set uroven=0, podskazka=0, dt_ur='0000-00-00 00:00:00'" );
+                      $this->ipsclass->DB->query("delete from sh_log");
+                      $this->ipsclass->DB->query("INSERT INTO sh_games (g_name, dt_g, status, fond) values ('".($this->ipsclass->input['gn'])."', '".($this->ipsclass->input['gt'])."', 'п', '".($this->ipsclass->input['gf'])."')" );
+                      $this->ipsclass->DB->query("ALTER TABLE sh_log PACK_KEYS =0 CHECKSUM =0 DELAY_KEY_WRITE =0 AUTO_INCREMENT =1");
+                      $res.='Игра создана.<br><br>';
+                }
+            }
+            else
+            {  //удаление игры
+                $this->ipsclass->DB->query("update  sh_comands set uroven=0, podskazka=0, dengi=0, dt_ur='0000-00-00 00:00:00'" );
+                $this->ipsclass->DB->query("update  sh_igroki set ch_dengi=0" );
+                $this->ipsclass->DB->query("delete from sh_games where status='п'");
+                $this->ipsclass->DB->query("select * from sh_games order by n desc");
+                $frows = $this->ipsclass->DB->fetch_row($fquery);
+                $this->ipsclass->DB->query("ALTER TABLE `sh_games` PACK_KEYS =0 CHECKSUM =0 DELAY_KEY_WRITE =0 AUTO_INCREMENT =".($frows['n']-1));
+                $res.='Игра удалена.<br><br>';
+            }
+        }
+        $this->result=$res;
       }
+      
       function deng()
       {
                  $all=0;

@@ -1,130 +1,73 @@
 <?php
-/*
-+--------------------------------------------------------------------------
-|   Invision Power Board v2.1.2
-|   =============================================
-|   by Matthew Mecham
-|   (c) 2001 - 2005 Invision Power Services, Inc.
-|   http://www.invisionpower.com
-|   =============================================
-|   Web: http://www.invisionboard.com
-|   Time: Fri, 14 Oct 2005 18:51:31 GMT
-|   Release: 50690ede8a42052b7a1400c0a925a711
-|   Licence Info: http://www.invisionboard.com/?license
-+---------------------------------------------------------------------------
-|   > $Date: 2005-10-10 14:03:20 +0100 (Mon, 10 Oct 2005) $
-|   > $Revision: 22 $
-|   > $Author: matt $
-+---------------------------------------------------------------------------
-|
-|   > MODULE FILE (EXAMPLE)
-|   > Module written by Matt Mecham
-|   > Date started: Thu 14th April 2005 (17:59)
-|
-+--------------------------------------------------------------------------
-*/
-
-//=====================================
-// Define class, this must be the same
-// in all modules
-//=====================================
-
-if ( ! defined( 'IN_IPB' ) )
-{
-        print "<h1>НЕ ЛЕЗЬ КУДА НЕ НАДО</h1>Этот файл так нифига не вызовеш. Заходи через форум.";
-        exit();
-}
+namespace Shvatka;
 
 function unch($string)
 {
-         $trans_tbl = get_html_translation_table (HTML_ENTITIES);
-         $trans_tbl = array_flip ($trans_tbl);
-         return strtr ($string, $trans_tbl);
+    $trans_tbl = get_html_translation_table (HTML_ENTITIES);
+    $trans_tbl = array_flip ($trans_tbl);
+    return strtr ($string, $trans_tbl);
 }
-class module
+
+class Shedit
 {
-        //=====================================
-        // Define vars if required
-        //=====================================
+    var $ipsclass;
+    var $class  = "";
+    var $module = "";
+    var $html   = "";
+    var $result = "";
+    var $fi;
+    var $dou;
 
-        var $ipsclass;
-        var $class  = "";
-        var $module = "";
-        var $html   = "";
-        var $result = "";
-        var $fi;
-        var $dou;
-
-        //=====================================
-        // Constructer, called and run by IPB
-        //=====================================
-
-        function run_module()
+    function run_module()
+    {
+        $this->ipsclass->DB->query("select field_4 from pfields_content where member_id=".$this->ipsclass->member['id']."");
+        $frows = $this->ipsclass->DB->fetch_row($fquery);
+        if (( $this->ipsclass->member['mgroup'] == $this->ipsclass->vars['admin_group'] )or($frows['field_4']=='y'))
         {
+            $html=$html. "
+            <div id=\"userlinks\">
+            <p class=\"home\"><b>Редактирование сценария:</b></p>
+            <p>
+            <a href='{$this->ipsclass->base_url}act=module&module=reps&cmd=scn'>Редактор сценария</a>
+            </p>
+            </div>
+            <br>
+            ";
+            switch( $this->ipsclass->input['cm'] ) {
+                case '1':
+                      $this->edit();
+                      break;
+                case '2':
+                      $this->del();
+                      break;
+                case '3':
+                      $this->add();
+                      break;
+                case '4':
+                      $this->files();
+                      break;
+                default:
+                      break;
+            }
 
-                //=====================================
-                // Do any set up here, like load lang
-                // skin files, etc
-                //=====================================
-
-                $this->ipsclass->load_language('lang_boards');
-                $this->ipsclass->load_template('skin_boards');
-
-                //=====================================
-                // Set up structure
-                //=====================================
-               $this->ipsclass->DB->query("select field_4 from pfields_content where member_id=".$this->ipsclass->member['id']."");
-               $frows = $this->ipsclass->DB->fetch_row($fquery);
-               if (( $this->ipsclass->member['mgroup'] == $this->ipsclass->vars['admin_group'] )or($frows['field_4']=='y'))
-               {
-                       $html=$html. "
-                       <div id=\"userlinks\">
-                       <p class=\"home\"><b>Редактирование сценария:</b></p>
-                       <p>
-                       <a href='{$this->ipsclass->base_url}act=module&module=reps&cmd=scn'>Редактор сценария</a>
-                       </p>
-                       </div>
-                       <br>
-                       ";
-                       switch( $this->ipsclass->input['cm'] )
-                       {
-                               case '1':
-                                     $this->edit();
-                                     break;
-                               case '2':
-                                     $this->del();
-                                     break;
-                               case '3':
-                                     $this->add();
-                                     break;
-                               case '4':
-                                     $this->files();
-                                     break;
-                               default:
-                                     break;
-                       }
-
-                       $html=$html.'<font size=2>'.$this->result.'</font>';
-                       $this->ipsclass->print->add_output( $html );
-                       $this->nav[] = "<a href='{$this->ipsclass->base_url}act=module&module=shvatka'>СХВАТКА</a>";
-                       $this->ipsclass->print->do_output(array(OVERRIDE => 0, TITLE => 'Редактирование сценария', NAV => $this->nav));
-               }
-               else
-               {
-                       $html=$html."Вы не администратор";
-                       $this->ipsclass->print->add_output( $html );
-                       $this->ipsclass->print->do_output(array(OVERRIDE => 0, TITLE => 'Вы не администратор'));
-               }
-               exit();
+            $html=$html.'<font size=2>'.$this->result.'</font>';
+            $this->ipsclass->print->add_output( $html );
+            $this->nav[] = "<a href='{$this->ipsclass->base_url}act=module&module=shvatka'>СХВАТКА</a>";
+            $this->ipsclass->print->do_output(array('OVERRIDE' => 0, 'TITLE' => 'Редактирование сценария', 'NAV' => $this->nav));
         }
+        else
+        {
+            $html=$html."Вы не администратор";
+            $this->ipsclass->print->add_output( $html );
+            $this->ipsclass->print->do_output(array('OVERRIDE' => 0, 'TITLE' => 'Вы не администратор'));
+        }
+        exit();
+    }
 
-        //------------------------------------------
-        // do_something
-        //
-        // Test sub, show if admin or not..
-        //
-        //------------------------------------------
-
+        /**
+         * @todo НЕ ТЕСТИЛ
+         * @return type
+         */
 	  function files()
 	  {
 	     if ($this->ipsclass->input['del']!="1")
@@ -148,7 +91,8 @@ class module
 
                 if (ftp_chdir($ftp_stream,"gam".$frows['n']))
                 if (!@ftp_chdir($ftp_stream,"l".$this->ipsclass->input['lev']."p".$this->ipsclass->input['npod']))
-                 {                   ftp_mkdir($ftp_stream,"l".$this->ipsclass->input['lev']."p".$this->ipsclass->input['npod'] );
+                 {
+                   ftp_mkdir($ftp_stream,"l".$this->ipsclass->input['lev']."p".$this->ipsclass->input['npod'] );
                    ftp_chmod($ftp_stream,0777,"l".$this->ipsclass->input['lev']."p".$this->ipsclass->input['npod']);
                  }
                 else
@@ -205,6 +149,7 @@ class module
          $res.='<script type="text/javascript">window.navigate("./index.php?act=module&module=shedit&cm='.$this->ipsclass->input['from'].'&lev='.$this->ipsclass->input['lev'].'&npod='.$this->ipsclass->input['npod'].'");</script>';
          echo($res);
 	  }
+      
       function edit()
       {
                  $res="";

@@ -40,6 +40,44 @@ class IPSClass
     
     /**
      *
+     * @var array
+     */
+    protected $_authedUser = [ 'id' => 0, 'mgroup' => 0, 'name' => 'EuRo' ];
+    
+    /**
+     * Минимальные ключи массива:
+     * id, mgroup, name
+     * 
+     * @todo Что такое mgroup?
+     * 
+     * @param array $member
+     * @return \App\Adapter\IPSClass
+     */
+    public function setAuthedUser(array $member)
+    {
+        $this->_authedUser = $member;
+        return $this;
+    }
+    
+    /**
+     *
+     * @var array различные параметры
+     */
+    protected $_vars = [];
+    
+    /**
+     * Установить параметры
+     * @param array $vars
+     * @return \App\Adapter\IPSClass
+     */
+    public function setParams(array $vars)
+    {
+        $this->_vars = $vars;
+        return $this;
+    }
+    
+    /**
+     *
      * @var \App\Adapter\IPSClass 
      */
     protected $_printer;
@@ -62,12 +100,8 @@ class IPSClass
             case 'print':
                 return $this->_printer;
             
-            /**
-             * если мы используем vagrant с нашим bootstrap.sh (nginx) - это 100% 
-             * @todo доработать на случай, если не в корне сайта
-             */
             case 'base_url':
-                return $_SERVER['SERVER_NAME'] . '/?';
+                return $_SERVER['DOCUMENT_URI'] . '?';
             /*
              * В input должны лежать все параметры из $_REQUEST
              */
@@ -79,14 +113,12 @@ class IPSClass
              */
             case 'DB':
                 return $this->_DB;
-                
-            /**
-             * Тут хранится массив с данными текущего пользователя
-             * используются 3 ключа. 
-             * Что такое mgroup?
-             */
+            
             case 'member':
-                return [ 'id' => 0, 'mgroup' => 0, 'name' => 'Неизвестный' ];
+                return $this->_authedUser;
+                
+            case 'vars':
+                return $this->_vars;
         }
     } 
 }
