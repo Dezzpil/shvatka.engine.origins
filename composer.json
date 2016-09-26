@@ -13,7 +13,9 @@
             "email": "nikita@shvatka.ru"
         }
     ],
-    "require": {},
+    "require": {
+        "silex/silex": "~2.0"
+    },
     
     "autoload" : {
         "psr-4": {

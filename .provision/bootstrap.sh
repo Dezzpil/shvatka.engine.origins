@@ -21,7 +21,7 @@ cat /vagrant/.provision/create.sql | mysql -uroot -ptoor
 mysql -uroot -ptoor shvatka < /vagrant/db/shvatka.sql
 
 # ставим сервер, интерпретатор и настраиваем
-apt-get install -y nginx php5-fpm php5-mysql
+apt-get install -y nginx php5-fpm php5-mysql php5-xdebug
 rm /etc/nginx/sites-enabled/default
 cp /vagrant/.provision/nginx.conf /etc/nginx/sites-enabled/default
 service nginx restart

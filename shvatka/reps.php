@@ -1,20 +1,12 @@
 <?php
 namespace Shvatka;
 
-class Reps
+class Reps extends Base
 {
-    var $ipsclass;
-    var $class  = "";
-    var $module = "";
-    var $html   = "";
-    var $result = "";
-
-    //=====================================
-    // Constructer, called and run by IPB
-    //=====================================
-
     function run_module()
     {
+        parent::run_module();
+        
         function sectostr($secs)
         {
             $st="";
@@ -40,7 +32,7 @@ class Reps
                  var answer = confirm(\"Опубликовать текущую игру?\");
                  if (answer)
                  {
-                     window.location = \"{$this->ipsclass->base_url}act=module&module=shgames&cmd=pub\";
+                     window.location = \"{$this->ipsclass->base_url}act=module&module=games&cmd=pub\";
                  }
                  else
                  {
@@ -110,7 +102,7 @@ class Reps
             $this->ipsclass->print->add_output( $html );
             $this->ipsclass->print->do_output(array('OVERRIDE' => 0, 'TITLE' => 'Вы не администратор'));
         }
-        exit();
+        //exit();
     }
 
       function admexmsg()
@@ -127,7 +119,7 @@ class Reps
 
                }
       	    }
-            $res.='<form "./index.php" method="post">
+            $res.='<form "' . $this->ipsclass->base_url . '" method="post">
 <input name="act" type="hidden" value="module">
 <input name="module" type="hidden" value="reps">
 <input name="cmd" type="hidden" value="exmsg">';
@@ -201,7 +193,7 @@ class Reps
       function scn()
       {
                  $sub="{$this->ipsclass->base_url}act=module&module=reps&cmd=scn";
-                 $sub1="{$this->ipsclass->base_url}act=module&module=shedit";
+                 $sub1="{$this->ipsclass->base_url}act=module&module=edit";
                  $ref=$_SERVER['HTTP_REFERER'];
                  if ((strpos(trim($ref),trim($sub))===FALSE)&&(strpos(trim($ref),trim($sub))===FALSE))
                        {
@@ -255,9 +247,9 @@ class Reps
                              $ptm="";
                      }
                      $res.='
-<div align="right"><form action="./index.php" >
+<div align="right"><form action="' . $this->ipsclass->base_url . '" >
 <input name="act" type="hidden" value="module">
-<input name="module" type="hidden" value="shedit">
+<input name="module" type="hidden" value="edit">
 <input name="lev" type="hidden" value="'.$frows['uroven'].'">
 <input name="npod" type="hidden" value="'.$frows['n_podskazki'].'">
 <select size="1" name="cm" style={border:1px;border:outset;border-color:#ffffff;font-size:9px;}>
@@ -268,16 +260,16 @@ class Reps
 </td></tr><tr class=\'ipbtable\'><td class="row1">';
                  }
                  $res.='
-<center><form action="./index.php">
+<center><form action="' . $this->ipsclass->base_url . '">
 <input name="act" type="hidden" value="module">
-<input name="module" type="hidden" value="shedit">
+<input name="module" type="hidden" value="edit">
 <input name="cm" type="hidden" value="3">
 Добавить уровень<input name="lev" type="text" SIZE="2" value="">
 подсказка<input name="npod" type="text" SIZE="2" value="">
 <input type="submit" value="ОК"></form><br>';
 if ($b)
 $res.='
-<form id="fdelgame" action="./index.php" onsubmit="return confirm(\'Уверены что хотете удалить ВЕСЬ сценарий?\')">
+<form id="fdelgame" action="' . $this->ipsclass->base_url . '" onsubmit="return confirm(\'Уверены что хотете удалить ВЕСЬ сценарий?\')">
 <input name="act" type="hidden" value="module">
 <input name="module" type="hidden" value="reps">
 <input name="cmd" type="hidden" value="scn">
@@ -391,7 +383,7 @@ $res.='</center></td></tr></table></div>';
             if (count($this->ipsclass->DB->query("select * from sh_games where status='п'"))!=0)
             { // редактирование данных игры
               $frows = $this->ipsclass->DB->fetch_row($fquery);
-              $res.='<center><form action="./index.php">
+              $res.='<center><form action="' . $this->ipsclass->base_url . '">
 <input name="act" type="hidden" value="module">
 <input name="module" type="hidden" value="reps">
 <input name="cmd" type="hidden" value="addg">
@@ -403,7 +395,7 @@ $res.='</center></td></tr></table></div>';
 </form>
 <br>
 <br>
-<form "./index.php">
+<form "' . $this->ipsclass->base_url . '">
 <input name="act" type="hidden" value="module">
 <input name="module" type="hidden" value="reps">
 <input name="cmd" type="hidden" value="addg">
@@ -414,7 +406,7 @@ $res.='</center></td></tr></table></div>';
             }
             else
             { // добавление новой игры
-                $res.='<center><form action="./index.php">
+                $res.='<center><form action="' . $this->ipsclass->base_url . '">
 <input name="act" type="hidden" value="module">
 <input name="module" type="hidden" value="reps">
 <input name="cmd" type="hidden" value="addg">
@@ -461,45 +453,39 @@ $res.='</center></td></tr></table></div>';
       
       function deng()
       {
-                 $all=0;
-		   $qut=0;
-                 $res="";
-                 if ($this->ipsclass->input['y']=="1")
-                 {
-                  $res.='<center><b>Изменения внесены</b></center>';
-                       $fq=$this->ipsclass->DB->query("select * from sh_igroki");
-                        while ($frows = $this->ipsclass->DB->fetch_row($fq))
-                        {
-                                if ($this->ipsclass->input[$frows['n']]=="1")
-                                {
-                                        $this->ipsclass->DB->query("update  sh_igroki set ch_dengi=1 where n=".$frows['n']);
-                                }
-                                else
-                                {
-                                        $this->ipsclass->DB->query("update  sh_igroki set ch_dengi=0 where n=".$frows['n']);
-                                }
+                $all=0;
+                $qut=0;
+                $res="";
+                if ($this->ipsclass->input['y']=="1")
+                {
+                    $res.='<center><b>Изменения внесены</b></center>';
+                    $fq=$this->ipsclass->DB->query("select * from sh_igroki");
+                    while ($frows = $this->ipsclass->DB->fetch_row($fq))
+                    {
+                        if ($this->ipsclass->input[$frows['n']]=="1") {
+                            $this->ipsclass->DB->query("update  sh_igroki set ch_dengi=1 where n=".$frows['n']);
+                        } else {
+                            $this->ipsclass->DB->query("update  sh_igroki set ch_dengi=0 where n=".$frows['n']);
+                        }
 
+                    }
+                    $fq=$this->ipsclass->DB->query("select * from sh_comands");
+                    while ($frows = $this->ipsclass->DB->fetch_row($fq))
+                    {
+                        if ($this->ipsclass->input['c'.$frows['n']]=="1") {
+                            $this->ipsclass->DB->query("update  sh_comands set dengi=1 where n=".$frows['n']);
+                        } else {
+                            $this->ipsclass->DB->query("update  sh_comands set dengi=0 where n=".$frows['n']);
                         }
-                       $fq=$this->ipsclass->DB->query("select * from sh_comands");
-                        while ($frows = $this->ipsclass->DB->fetch_row($fq))
-                        {
-                               if ($this->ipsclass->input['c'.$frows['n']]=="1")
-                                {
-                                        $this->ipsclass->DB->query("update  sh_comands set dengi=1 where n=".$frows['n']);
-                                }
-                                else
-                                {
-                                        $this->ipsclass->DB->query("update  sh_comands set dengi=0 where n=".$frows['n']);
-                                }
-                        }
-                 }
-                 $comd=array();
-                 $this->ipsclass->DB->query("select * from sh_comands");
-                 while ($frows = $this->ipsclass->DB->fetch_row($fquery))
-                 {
+                    }
+                }
+                $comd=array();
+                $this->ipsclass->DB->query("select * from sh_comands");
+                while ($frows = $this->ipsclass->DB->fetch_row($fquery))
+                {
                    $comd[$frows['n']]=$frows['nazvanie'];
                  }
-                 $res.='<div class="borderwrap"><div class="maintitle" align="center">Регистрация на игру </div><br><form action="./index.php">
+                 $res.='<div class="borderwrap"><div class="maintitle" align="center">Регистрация на игру </div><br><form action="' . $this->ipsclass->base_url . '">
 <input name="act" type="hidden" value="module">
 <input name="module" type="hidden" value="reps">
 <input name="cmd" type="hidden" value="deng">
@@ -510,21 +496,21 @@ $res.='</center></td></tr></table></div>';
                     $cmn=$this->ipsclass->DB->fetch_row($this->ipsclass->DB->query("select * from sh_comands where nazvanie='".$naz."'"));
                     if ($cmn['dengi']==1)
                     {
-                             $res.='checked';
+                        $res.='checked';
                     }
                     $res.='>'.$naz.'</td></tr>';
                     $fq=$this->ipsclass->DB->query("select * from sh_igroki where komanda='".$naz."'");
+                    
                     $res=$res.'<tr><th align="center" width="50%">Ник</th><th align="center" >Статус</th><th align="center" >Очки</th></tr>';
                     while ($frows = $this->ipsclass->DB->fetch_row($fq))
                     {
-                       $usID=$this->ipsclass->DB->fetch_row($this->ipsclass->DB->query("select * from members where name='".($frows['nick'])."'"));
-                       $res=$res."<tr class='ipbtable'><td class=\"row1\"><input name=\"".$frows['n']."\" type=\"checkbox\" value=\"1\"";
-                       if ($frows['ch_dengi']=='1')
-                       {
+                        $usID=$this->ipsclass->DB->fetch_row($this->ipsclass->DB->query("select * from members where name='".($frows['nick'])."'"));
+                        $res=$res."<tr class='ipbtable'><td class=\"row1\"><input name=\"".$frows['n']."\" type=\"checkbox\" value=\"1\"";
+                        if ($frows['ch_dengi']=='1') {
                              $res.='checked';
                              $qut=$qut+1;
-                       }
-                       $res.="><b><a href=\"{$this->ipsclass->base_url}showuser=".$usID['id']."\">".($frows['nick'])."</a></b></td><td class=\"row2\" align=\"center\">".($frows['status_in_cmd'])."</td><td class=\"row2\" align=\"center\">".($frows['ochki'])."</td></tr>";
+                        }
+                        $res.="><b><a href=\"{$this->ipsclass->base_url}showuser=".$usID['id']."\">".($frows['nick'])."</a></b></td><td class=\"row2\" align=\"center\">".($frows['status_in_cmd'])."</td><td class=\"row2\" align=\"center\">".($frows['ochki'])."</td></tr>";
                     }
                     $res=$res."</TABLE><center>Всего зарегистрированых $qut</center><br>";
                     $all=$all+$qut;
@@ -562,7 +548,7 @@ $res.='</center></td></tr></table></div>';
                }
                else
                {
-                  $res='<div class="borderwrap"><div class="maintitle" align="center">Очки</div><br><form action="./index.php" method="post">
+                  $res='<div class="borderwrap"><div class="maintitle" align="center">Очки</div><br><form action="' . $this->ipsclass->base_url . '" method="post">
 <input name="act" type="hidden" value="module">
 <input name="module" type="hidden" value="reps">
 <input name="cmd" type="hidden" value="ochki">

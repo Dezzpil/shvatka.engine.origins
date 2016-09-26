@@ -1,27 +1,65 @@
 <?php
-require_once __DIR__ . '/../init.php';
+error_reporting(E_ALL);
+date_default_timezone_set('Europe/Moscow');
+$loader = require __DIR__ . '/../vendor/autoload.php';
 
-define('LOGIN', 'Jacob');
+/**
+ * Список используемых таблиц (тех, что без префикса sh_)
+ * admin_logs         - mod_reps.php:264
+ * pfields_content    - mod_shvatka.php:401
+ * members            - shvatka:168
+ */
 
-$DBAdapter = \App\Adapter\DB::getInstance();
+// Запускаем и настраиваем микрофреймворк для целей маршрутизации по модулям
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Request;
+use Silex\Application;
+
+$app = new Application;
+$app['debug'] = true;
+
+$app->match(
+    '/{controller}/{action}', 
+    function(Request $request, Application $app, $controller, $action) use ($loader)
+    {
+        $controller = ucfirst(strtolower($controller));
+        $action = strtolower($action);
+        $class = '\\App\\Controller\\' . $controller;
         
-$adapter = new App\Adapter\IPSClass($_REQUEST);
-$adapter->setDB($DBAdapter);
-$adapter->setPrinter(App\Adapter\Printer::getInstance());
+        if (empty($loader->loadClass($class))) {
+            throw new Exception('Контроллера ' . $controller . ' не существует');
+        }
+        
+        $object = new $class;
+        
+        // Если контроллер использует трейт для хранения 
+        // автолоадера классов, пока это нужно только для контроллера движка
+        if (method_exists($object, 'setClassLoader')) {
+            $object->setClassLoader($loader);
+        }
+        
+        if (method_exists($object, $action)) {
+            return $object->$action($request, $app);
+        } else {
+            throw new Exception('У контроллера ' . $controller . ' не существует действия ' . $action);
+        }
+    }
+)
+->value('controller', 'index')
+->value('action', 'index');
 
-// Аутентифицированный пользователь
-$member = $DBAdapter->query("select * from members where name='" . LOGIN ."'");
-$adapter->setAuthedUser($member[0]);
+$app->error(function (\Exception $e, Request $request, $code) {
+    switch ($code) {
+        case 404:
+            $message = 'The requested page could not be found.';
+            break;
+        default:
+            $message = 'We are sorry, but something went terribly wrong.';
+    }
 
-$adapter->setParams([
-    'admin_group' => ADMIN_GROUP
-]);
+    var_dump($e->getCode(), $e->getMessage(), $e->getTrace());
+    
+    return new Response($message);
+});
 
-// TODO добавить маршрутизатор, ориентирующийся на module={mod}
-// TODO Silex
-
-$mod = new Shvatka\Reps();
-$mod->ipsclass = $adapter;
-$mod->run_module();
-
-exit();
+$app->run();

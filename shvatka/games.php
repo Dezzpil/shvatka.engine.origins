@@ -1,123 +1,64 @@
 <?php
-/*
-+--------------------------------------------------------------------------
-|   Invision Power Board v2.1.2
-|   =============================================
-|   by Matthew Mecham
-|   (c) 2001 - 2005 Invision Power Services, Inc.
-|   http://www.invisionpower.com
-|   =============================================
-|   Web: http://www.invisionboard.com
-|   Time: Fri, 14 Oct 2005 18:51:31 GMT
-|   Release: 50690ede8a42052b7a1400c0a925a711
-|   Licence Info: http://www.invisionboard.com/?license
-+---------------------------------------------------------------------------
-|   > $Date: 2005-10-10 14:03:20 +0100 (Mon, 10 Oct 2005) $
-|   > $Revision: 22 $
-|   > $Author: matt $
-+---------------------------------------------------------------------------
-|
-|   > MODULE FILE (EXAMPLE)
-|   > Module written by Matt Mecham
-|   > Date started: Thu 14th April 2005 (17:59)
-|
-+--------------------------------------------------------------------------
-*/
+namespace Shvatka;
 
-//=====================================
-// Define class, this must be the same
-// in all modules
-//=====================================
-if ( ! defined( 'IN_IPB' ) )
+class Games extends Base
 {
-        print "<h1>НЕ ЛЕЗЬ КУДА НЕ НАДО</h1>Этот файл так нифига не вызовеш. Заходи через форум.";
-        exit();
-}
-
-
-class module
-{
-        //=====================================
-        // Define vars if required
-        //=====================================
-
-        var $ipsclass;
-        var $class  = "";
-        var $module = "";
-        var $html   = "";
-        var $result = "";
-
-        //=====================================
-        // Constructer, called and run by IPB
-        //=====================================
-
-        function run_module()
+    function run_module()
+    {
+        parent::run_module();
+        
+        function sectostr($secs)
         {
-            function sectostr($secs)
-            {
-                $st="";
-                $tmp=floor($secs / 86400);
-                if ($tmp>0) {$st='<span id=\'days\'>'.$tmp.'</span> д. ';}
-                $tmp2=floor(($secs - ($tmp*86400))/3600);
-                if ($tmp2>0) {$st=$st.'<span id=\'hours\'>'.$tmp2.'</span> ч. ';}
-                $tmp3=floor(($secs - ($tmp*86400) - ($tmp2*3600))/60);
-                if ($tmp3>0) {$st=$st.'<span id=\'mins\'>'.$tmp3.'</span> м. ';}
-                $tmp=floor($secs - ($tmp*86400) - ($tmp2*3600)-($tmp3*60));
-                if ($tmp>0) {$st=$st.'<span id=\'secs\'>'.$tmp.'</span> сек. ';}
-                return $st;
-            }
-                //=====================================
-                // Do any set up here, like load lang
-                // skin files, etc
-                //=====================================
-
-                $this->ipsclass->load_language('lang_boards');
-                $this->ipsclass->load_template('skin_boards');
-
-                //=====================================
-                // Set up structure
-                //=====================================
-               $html=$html. "";
-                switch( $this->ipsclass->input['cmd'] )
-                {
-                        case 'disp':
-                             $this->disp($this->ipsclass->input['id']);
-                             break;
-                        case 'pub':
-                             $qqq=$this->ipsclass->DB->query("select field_4 from pfields_content where member_id=".$this->ipsclass->member['id']."");
-            				 $fff = $this->ipsclass->DB->fetch_row($qqq);
-                             if (( $this->ipsclass->member['mgroup'] == $this->ipsclass->vars['admin_group'] )or($fff['field_4']=='y'))
-                             {$this->pub();}
-                             else
-                             {$this->result="Вы не администратор и не можете опубликовать результаты игры.";}
-                             break;
-                        default:
-                             $this->result="Укажите номер игры";
-                             break;
-                }
-
-            $html=$html.'<font size=2>'.$this->result.'</font>';
-            $this->ipsclass->print->add_output( $html );
-            $this->nav[] = "<a href='{$this->ipsclass->base_url}act=module&module=shvatka'>СХВАТКА</a>";
-            $this->ipsclass->print->do_output(array(OVERRIDE => 0, TITLE => 'Информация об игре', NAV => $this->nav));
-
-                exit();
+            $st="";
+            $tmp=floor($secs / 86400);
+            if ($tmp>0) {$st='<span id=\'days\'>'.$tmp.'</span> д. ';}
+            $tmp2=floor(($secs - ($tmp*86400))/3600);
+            if ($tmp2>0) {$st=$st.'<span id=\'hours\'>'.$tmp2.'</span> ч. ';}
+            $tmp3=floor(($secs - ($tmp*86400) - ($tmp2*3600))/60);
+            if ($tmp3>0) {$st=$st.'<span id=\'mins\'>'.$tmp3.'</span> м. ';}
+            $tmp=floor($secs - ($tmp*86400) - ($tmp2*3600)-($tmp3*60));
+            if ($tmp>0) {$st=$st.'<span id=\'secs\'>'.$tmp.'</span> сек. ';}
+            return $st;
         }
 
-        //------------------------------------------
-        // do_something
-        //
-        // Test sub, show if admin or not..
-        //
-        //------------------------------------------
+        //=====================================
+        // Set up structure
+        //=====================================
+        $html=$html. "";
+        switch( $this->ipsclass->input['cmd'] )
+        {
+            case 'disp':
+                $this->disp($this->ipsclass->input['id']);
+                break;
+            case 'pub':
+                $qqq=$this->ipsclass->DB->query("select field_4 from pfields_content where member_id=".$this->ipsclass->member['id']."");
+                $fff = $this->ipsclass->DB->fetch_row($qqq);
+                if (( $this->ipsclass->member['mgroup'] == $this->ipsclass->vars['admin_group'] )or($fff['field_4']=='y'))
+                    {$this->pub();}
+                else
+                    {$this->result="Вы не администратор и не можете опубликовать результаты игры.";}
+                break;
+            default:
+                $this->result="Укажите номер игры";
+                break;
+        }
 
-      function pub()
-      {
-                 $res="";
-                 $ptm="";
-                 if (mysql_num_rows($this->ipsclass->DB->query("select * from sh_games WHERE status='т'"))!=0)
-                 {
-      //Сценарий                 	$res=$res.'<div align="center"><b>Cценарий</b></div><br><div  class="borderwrap" style={margin:2px;}>';
+        $html=$html.'<font size=2>'.$this->result.'</font>';
+        $this->ipsclass->print->add_output( $html );
+        $this->nav[] = "<a href='{$this->ipsclass->base_url}act=module&module=shvatka'>СХВАТКА</a>";
+        $this->ipsclass->print->do_output(array('OVERRIDE' => 0, 'TITLE' => 'Информация об игре', 'NAV' => $this->nav));
+
+        ////exit();
+    }
+
+    function pub()
+    {
+        $res="";
+        $ptm="";
+        if (count($this->ipsclass->DB->query("select * from sh_games WHERE status='т'"))!=0)
+        {
+      //Сценарий
+                 	$res=$res.'<div align="center"><b>Cценарий</b></div><br><div  class="borderwrap" style={margin:2px;}>';
                  	$res.="<table style={width:100%;}><tr class=\"ipbtable\"><td class=\"row1\">";
                  	$this->ipsclass->DB->query("select * from sh_game order by uroven, n_podskazki");
                  	while ($frows = $this->ipsclass->DB->fetch_row($fquery))
@@ -237,7 +178,7 @@ class module
                  	$res=$res.'<div>';
                  	foreach ($comd as $n=>$naz)
                  	{  $keyprev="";
-                 	   if (mysql_num_rows($this->ipsclass->DB->query("select * from sh_log where comanda='".$naz."' order by time"))!=0)
+                 	   if (count($this->ipsclass->DB->query("select * from sh_log where comanda='".$naz."' order by time"))!=0)
                  	   {
                  	     $res=$res.'<table cellspacing="1" class="borderwrap" style={width:auto;} align="center"><tr><td align="center" colspan="3" class="maintitle">'.$naz.'</td></tr>';
                  	     $res=$res.'<tr><th align="center">Время</th><th align="center" >Ключ</th><th>Автор</th></tr>';
@@ -256,17 +197,19 @@ class module
                  	 $res.='</div>';
                  	$this->ipsclass->DB->query("select * from sh_games WHERE status='т'");
                  	$frows = $this->ipsclass->DB->fetch_row($fquery);
-                 	$this->ipsclass->DB->query("update  sh_games set g_name='<a href=\"./index.php?act=module&module=shgames\&cmd=disp\&id=".$frows['n']."\">".$frows['g_name']."</a>' WHERE status='т'");
+                 	$this->ipsclass->DB->query("update  sh_games set g_name='<a href=\"{$this->ipsclass->base_url}?act=module&module=games\&cmd=disp\&id=".$frows['n']."\">".$frows['g_name']."</a>' WHERE status='т'");
                  	$this->ipsclass->DB->query("update  sh_games set logs='".addslashes($res)."' WHERE status='т'");
                  	$this->ipsclass->DB->query("update  sh_games set status='з' WHERE status='т'");
                  	$this->result="Опубликовано";
-                 	header('Location:./index.php?act=module&module=shgames&cmd=disp&id='.$frows['n']);
+                 	header('Location:' . $this->ipsclass->base_url . '?act=module&module=games&cmd=disp&id='.$frows['n']);
                  }
                  else
-                 {                 	$this->result="Нет игры готовой для публикации.";
+                 {
+                 	$this->result="Нет игры готовой для публикации.";
                  }
 
       }
+      
       function disp($id)
       {
                  $chisla=array('0','1','2','3','4','5','6','7','8','9');
@@ -278,16 +221,19 @@ class module
                  $res="";
                  $this->ipsclass->DB->query("select * from sh_games where n='".$id."'");
                  while ($frows = $this->ipsclass->DB->fetch_row($fquery))
-                 {                 	$res.='<script>
+                 {
+                 	$res.='<script>
                  	function showlogs(ref,di,wh)
                  	 {
                  	  if (document.getElementById(ref).innerText=="Показать "+wh)
-                 	  {                 	  	document.getElementById(ref).innerText="Спрятать "+wh;
+                 	  {
+                 	  	document.getElementById(ref).innerText="Спрятать "+wh;
                  	  	document.getElementById(di).style.display="inline";
                  	  	document.getElementById(di).style.visibility="visible";
                  	  }
                  	  else
-                 	  {                 	  	document.getElementById(ref).innerText="Показать "+wh;
+                 	  {
+                 	  	document.getElementById(ref).innerText="Показать "+wh;
                  	  	document.getElementById(di).style.display="none";
                  	  	document.getElementById(di).style.visibility="hidden";
                  	  }

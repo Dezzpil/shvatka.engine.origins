@@ -85,8 +85,6 @@ class DB
             $result->free();
         }
         
-        var_dump($sql, $data);
-        
         $this->_fetchedResult = $this->_result = $data;
         return $this->_result;
     }
@@ -110,16 +108,21 @@ class DB
      * методы переменная, явл. аргументом, даже не инициалицированна
      * 
      * @param type $something
-     * @return array|bool
+     * @return array|null
      */
-    function fetch_row($something = null)
+    function fetch_row(&$result = null)
     {
-        if (count($this->_fetchedResult)) {
+        if ($result !== null) {
+            if (!empty($result)) {
+                return array_shift($result);
+            } else {
+                return false;
+            }
+        } else {
             return array_shift($this->_fetchedResult);
         }
-        return false;
     }
-    
+
     /**
      * Этот метод используется только в одном месте - mod_reps.php:262
      * для записи данных о входе в админку. Проще его переписать там, чем реализовывать метод

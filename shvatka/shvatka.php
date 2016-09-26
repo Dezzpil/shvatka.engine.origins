@@ -1,12 +1,12 @@
 <?php
 namespace Shvatka;
 
-class Shvatka
+class Shvatka extends Base
 {
-    public $result = "";
-
     function run_module()
     {
+        parent::run_module();
+        
         function parsdig($st)
         {
             $chisla=array('0','1','2','3','4','5','6','7','8','9');
@@ -61,7 +61,7 @@ class Shvatka
            echo('<html><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1251" /><title>Схваточка</title></head><body><font size=2>'.$this->result.'</font></body></html>');
         }
 
-        exit();
+        //exit();
     }
 
     /**
@@ -194,7 +194,7 @@ class Shvatka
              $res=$res."<br><TABLE cellspacing=\"1\" style={width:auto;} class=\"borderwrap\" align=\"center\"><tr><th COLSPAN=3>Ваша команда</th></tr>";
              while ($frows = $this->ipsclass->DB->fetch_row($fquery))
              {
-                   $res=$res.'<tr class="ipbtable"><td class="row1"><b>'.($frows['nick']).'</b></center></td><td class="row1"><form  action="./index.php" method="post">
+                   $res=$res.'<tr class="ipbtable"><td class="row1"><b>'.($frows['nick']).'</b></center></td><td class="row1"><form  action="' . $this->ipsclass->base_url . '" method="post">
 <input type=HIDDEN name="act" value="module">
 <input type=HIDDEN name="module" value="shvatka">
 <input type=HIDDEN name="cmd" value="cap">
@@ -208,7 +208,7 @@ class Shvatka
                     $res.='>'.$zn;
                    }
 
-                   $res.='</select></form></td><td class="row1"><center><a href="./index.php?act=module&module=shvatka&cmd=cap&del='.($frows['n']).'"><font size=1 color=red>Исключить</font></center></td></tr>';
+                   $res.='</select></form></td><td class="row1"><center><a href="' . $this->ipsclass->base_url . '?act=module&module=shvatka&cmd=cap&del='.($frows['n']).'"><font size=1 color=red>Исключить</font></center></td></tr>';
              }
              $res=$res."</table ><br><TABLE cellspacing=\"1\" style={width:auto;} class=\"borderwrap\" align=\"center\"><tr><th COLSPAN=2>Заявки в вашу команду.</th></tr>";
              $this->ipsclass->DB->query("select * from sh_recrut  WHERE kuda='".$id_team."'");
@@ -217,7 +217,7 @@ class Shvatka
                    if ($frows['otvet']!="Капитан вам отказал, отзовите свою заявку.")
                    {
                          $res=$res."<tr class=\"ipbtable\"><td class=\"row1\"><center><b>".$frows['kto']."</b></center></td>";
-                         $res=$res.'<td class="row2"><center><a href="./index.php?act=module&module=shvatka&cmd=cap&yes='.($frows['n']).'"><font size=1 color=green>Принять</font></a>  <a href="./index.php?act=module&module=shvatka&cmd=cap&cnc='.($frows['n']).'"><font size=1 color=red>Отказать</font></a></center></td></tr>';
+                         $res=$res.'<td class="row2"><center><a href="' . $this->ipsclass->base_url . '?act=module&module=shvatka&cmd=cap&yes='.($frows['n']).'"><font size=1 color=green>Принять</font></a>  <a href="' . $this->ipsclass->base_url . '?act=module&module=shvatka&cmd=cap&cnc='.($frows['n']).'"><font size=1 color=red>Отказать</font></a></center></td></tr>';
                    }
              }
              $res=$res."</table><br>";
@@ -240,12 +240,12 @@ class Shvatka
                            $this->ipsclass->DB->query("update sh_igroki set ch_dengi=0 WHERE (ch_dengi=1)and(komanda='".$komanda."')");
                            if (count($this->ipsclass->DB->query("select * from sh_comands WHERE dengi=1"))==0)
                            {$this->ipsclass->DB->query("update  sh_games set status='т' WHERE status='п'");}
-                           header('Location:./index.php?act=module&module=shvatka&cmd=cap');
+                           header('Location:'.$this->ipsclass->base_url.'?act=module&module=shvatka&cmd=cap');
                         }
                         else
                         {
                             $res.="<br><div align='center' style={width:auto;} id='here' class=\"borderwrap\"><br>Сейчас идёт игра. Если вы поняли, что ваша команда не хочет<br>или не может продолжать игру, то нажмите кнопку<br>
-                            <form action=./index.php id='action' method='post'>
+                            <form action={$this->ipsclass->base_url} id='action' method='post'>
                             <input name=\"act\" type=\"hidden\" value=\"module\">
                             <input name=\"module\" type=\"hidden\" value=\"shvatka\">
                             <input name=\"cmd\" type=\"hidden\" value=\"cap\">
@@ -320,7 +320,7 @@ class Shvatka
            }
 
 
-           $res=$res.'Куда хотите подать заявку, '.$this->ipsclass->member['name'].' ?<br><Form action="./index.php" method="post">
+           $res=$res.'Куда хотите подать заявку, '.$this->ipsclass->member['name'].' ?<br><Form action="'.$this->ipsclass->base_url.'" method="post">
 <input type=HIDDEN name="act" value="module">Команда: <input type=HIDDEN name="module" value="shvatka">
 <input type=HIDDEN name="cmd" value="nmem"><SELECT name="kuda">';
            $this->ipsclass->DB->query("select * from sh_comands");
@@ -336,7 +336,7 @@ class Shvatka
                $res=$res."<TABLE cellspacing=\"1\" style={width:auto;} class=\"borderwrap\"><th COLSPAN=3><b>Вы подали заявки в следующие команды:</b></th>";
                while ($frows = $this->ipsclass->DB->fetch_row($fquery))
                {
-                  $res=$res.'<tr class="ipbtable"><td class="row2"><b>'.$cm_array[$frows['kuda']].'</b></td><td class="row2"><center><a href="./index.php?act=module&module=shvatka&cmd=nmem&cnc='.($frows['n']).'"><font size=1 color=red>Отозвать заявку</font></a></td><td class="row2" style={font-style:italic}><blink><font size=1>   '.($frows['otvet']).'</font></blink></td></tr>';
+                  $res=$res.'<tr class="ipbtable"><td class="row2"><b>'.$cm_array[$frows['kuda']].'</b></td><td class="row2"><center><a href="'.$this->ipsclass->base_url.'?act=module&module=shvatka&cmd=nmem&cnc='.($frows['n']).'"><font size=1 color=red>Отозвать заявку</font></a></td><td class="row2" style={font-style:italic}><blink><font size=1>   '.($frows['otvet']).'</font></blink></td></tr>';
                }
                $res=$res.'</table>';
            }
@@ -349,10 +349,9 @@ class Shvatka
     }
 
     /**
-     * @todo проверить
      * 
-     * @param type $k
-     * @param type $bk
+     * @param type $k  ключ поля
+     * @param type $bk ключ мозга
      */
     function do_game($k,$bk)
     {
@@ -377,7 +376,7 @@ class Shvatka
         $frows = $this->ipsclass->DB->fetch_row($fquery);
         if ($frows['status_in_cmd']=='Капитан') $res.="<a href='{$this->ipsclass->base_url}act=module&module=shvatka&cmd=cap'>Капитанский мостик</a> &middot;&nbsp;";
         $res.="<a href='{$this->ipsclass->base_url}act=module&module=shvatka&cmd=nmem'>Хочу в команду</a> &middot;&nbsp;
-            <a href='{$this->ipsclass->base_url}act=module&module=shstat'>SH-cтатистика</a>
+            <a href='{$this->ipsclass->base_url}act=module&module=stat'>SH-cтатистика</a>
             </p>
             </div>
             <br>
@@ -579,9 +578,9 @@ EOF;
                                {
                                          $this->ipsclass->DB->query("INSERT INTO sh_log (comanda, time, keytext, autor) values('".$komanda."','".date('Y-m-d H:i:s',($z+(strtotime("now"))))."','".str_replace(" ","&nbsp;",htmlspecialchars($k.$bk))."','".$this->ipsclass->member['name']."')");
                                          /*if ($this->ipsclass->input['lofver']==1)
-                                         header('Location:./index.php?act=module&module=shvatka&lofver=1');
+                                         header('Location:{$this->ipsclass->base_url}?act=module&module=shvatka&lofver=1');
                                          else
-                                         header('Location:./index.php?act=module&module=shvatka');*/
+                                         header('Location:{$this->ipsclass->base_url}?act=module&module=shvatka');*/
                                }
                                else
                                {
@@ -653,7 +652,7 @@ EOF;
                                     }
                                     $res=$res.'<b>Подсказка '.$podskazka.': </b>'.$frows['text'].'<br>';
                                }
-                               $res=$res.'<Form action="./index.php" autocomplete="on" method="post">
+                               $res=$res.'<Form action="'.$this->ipsclass->base_url.'" autocomplete="on" method="post">
 <input type=HIDDEN name="act" value="module">Ключ: <input type=HIDDEN name="module" value="shvatka">
 <input type=HIDDEN name="cmd" value="sh">';
 if ($this->ipsclass->input['lofver']==1)
@@ -687,7 +686,7 @@ $res.='<br><input type=submit value="  Проверить ключ/наличи�
               while ($frows = $this->ipsclass->DB->fetch_row($msg_q))
               {
                 if ($frows['komand']=='все') {$color='#EE634F'; $komu='<i><u>всех</u></i> команд';} else {$color='#67ED50'; $komu='команды <i><u>'.$komanda.'</u></i>';}
-                if ($frows['endtime']>=mktime()) $adm_msg.='<table style="border: 1px solid black;width:100%;background:'.$color.';"><tr><th>Сообщение от организатора '.$frows['autor'].' для '.$komu.'.</th></tr><tr class="ipbtable"><td class="row1">'.$frows['msg'].' <div align="right"><form  "./index.php" method="get">
+                if ($frows['endtime']>=mktime()) $adm_msg.='<table style="border: 1px solid black;width:100%;background:'.$color.';"><tr><th>Сообщение от организатора '.$frows['autor'].' для '.$komu.'.</th></tr><tr class="ipbtable"><td class="row1">'.$frows['msg'].' <div align="right"><form  "' . $this->ipsclass->base_url .'" method="get">
 <input name="act" type="hidden" value="module">
 <input name="module" type="hidden" value="utils">
 <input name="hsh" type="hidden" value="'.$frows['hash'].'"><input style="font: 8pt tahoma; padding: 0pt;"type="submit" value="Прочитал"></form></div></td></tr></table>';

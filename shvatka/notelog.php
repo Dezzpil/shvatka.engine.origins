@@ -1,77 +1,19 @@
 <?php
-/*
-+--------------------------------------------------------------------------
-|   Invision Power Board v2.1.2
-|   =============================================
-|   by Matthew Mecham
-|   (c) 2001 - 2005 Invision Power Services, Inc.
-|   http://www.invisionpower.com
-|   =============================================
-|   Web: http://www.invisionboard.com
-|   Time: Fri, 14 Oct 2005 18:51:31 GMT
-|   Release: 50690ede8a42052b7a1400c0a925a711
-|   Licence Info: http://www.invisionboard.com/?license
-+---------------------------------------------------------------------------
-|   > $Date: 2005-10-10 14:03:20 +0100 (Mon, 10 Oct 2005) $
-|   > $Revision: 22 $
-|   > $Author: matt $
-+---------------------------------------------------------------------------
-|
-|   > MODULE FILE (EXAMPLE)
-|   > Module written by Matt Mecham
-|   > Date started: Thu 14th April 2005 (17:59)
-|
-+--------------------------------------------------------------------------
-*/
+namespace Shvatka;
 
-//=====================================
-// Define class, this must be the same
-// in all modules
-//=====================================
-if ( ! defined( 'IN_IPB' ) )
+class Notelog extends Base
 {
-        print "<h1>НЕ ЛЕЗЬ КУДА НЕ НАДО</h1>Этот файл так нифига не вызовеш. Заходи через форум.";
-        exit();
-}
-
-
-class module
-{
-        //=====================================
-        // Define vars if required
-        //=====================================
-
-        var $ipsclass;
-        var $class  = "";
-        var $module = "";
-        var $html   = "";
-        var $result = "";
-
-        //=====================================
-        // Constructer, called and run by IPB
-        //=====================================
-
         function run_module()
         {
-
-                //=====================================
-                // Do any set up here, like load lang
-                // skin files, etc
-                //=====================================
-
-                $this->ipsclass->load_language('lang_boards');
-                $this->ipsclass->load_template('skin_boards');
-
-                //=====================================
-                // Set up structure
-                //=====================================
+            parent::run_module();
+            
                $html=$html. "
                 <div id=\"userlinks\">
                 <p class=\"home\"><b>Статистика СХВАТКИ:</b></p>
                 <p>
-                <a href='{$this->ipsclass->base_url}act=module&module=shstat&cmd=cmds'>Kоманды</a> &middot;
-                <a href='{$this->ipsclass->base_url}act=module&module=shstat&cmd=sost'>Составы команд</a> &middot;
-                <a href='{$this->ipsclass->base_url}act=module&module=shstat&cmd=games'>Прошедшие игры</a> &middot;
+                <a href='{$this->ipsclass->base_url}act=module&module=stat&cmd=cmds'>Kоманды</a> &middot;
+                <a href='{$this->ipsclass->base_url}act=module&module=stat&cmd=sost'>Составы команд</a> &middot;
+                <a href='{$this->ipsclass->base_url}act=module&module=stat&cmd=games'>Прошедшие игры</a> &middot;
                 <a href='{$this->ipsclass->base_url}act=module&module=notelog'>Лог начисления очков</a>
                 </p>
                 </div>
@@ -87,9 +29,9 @@ class module
             $html=$html.'<font size=2>'.$this->result.'</font>';
             $this->ipsclass->print->add_output( $html );
             $this->nav[] = "<a href='{$this->ipsclass->base_url}act=module&module=shvatka'>СХВАТКА</a>";
-            $this->ipsclass->print->do_output(array(OVERRIDE => 0, TITLE => 'Логи начисления очков', NAV => $this->nav));
+            $this->ipsclass->print->do_output(array('OVERRIDE' => 0, 'TITLE' => 'Логи начисления очков', 'NAV' => $this->nav));
 
-                exit();
+                //exit();
         }
 
         //------------------------------------------

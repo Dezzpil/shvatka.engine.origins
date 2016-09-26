@@ -93,6 +93,23 @@ class IPSClass
         return $this;
     }
     
+    /**
+     * Базовый url адреса движка
+     * @var string 
+     */
+    protected $_baseURL;
+    
+    /**
+     * 
+     * @param string $url
+     * @return \App\Adapter\IPSClass
+     */
+    public function setBaseURL($url)
+    {
+        $this->_baseURL = $url;
+        return $this;
+    }
+    
     public function __get($name)
     {
         switch ($name) {
@@ -101,16 +118,14 @@ class IPSClass
                 return $this->_printer;
             
             case 'base_url':
-                return $_SERVER['DOCUMENT_URI'] . '?';
+                return $this->_baseURL;
             /*
              * В input должны лежать все параметры из $_REQUEST
+             * или подтасованные данные для тестирования
              */
             case 'input':
                 return $this->_data;
-                
-            /**
-             * Сюда надо добавить драйвера для БД
-             */
+            
             case 'DB':
                 return $this->_DB;
             

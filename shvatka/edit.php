@@ -3,23 +3,16 @@ namespace Shvatka;
 
 function unch($string)
 {
-    $trans_tbl = get_html_translation_table (HTML_ENTITIES);
-    $trans_tbl = array_flip ($trans_tbl);
-    return strtr ($string, $trans_tbl);
+    $trans_tbl = get_html_translation_table(HTML_ENTITIES);
+    $trans_tbl = array_flip($trans_tbl);
+    return strtr($string, $trans_tbl);
 }
 
-class Shedit
+class Edit extends Base
 {
-    var $ipsclass;
-    var $class  = "";
-    var $module = "";
-    var $html   = "";
-    var $result = "";
-    var $fi;
-    var $dou;
-
     function run_module()
     {
+        parent::run_module();
         $this->ipsclass->DB->query("select field_4 from pfields_content where member_id=".$this->ipsclass->member['id']."");
         $frows = $this->ipsclass->DB->fetch_row($fquery);
         if (( $this->ipsclass->member['mgroup'] == $this->ipsclass->vars['admin_group'] )or($frows['field_4']=='y'))
@@ -61,7 +54,7 @@ class Shedit
             $this->ipsclass->print->add_output( $html );
             $this->ipsclass->print->do_output(array('OVERRIDE' => 0, 'TITLE' => 'Вы не администратор'));
         }
-        exit();
+        //exit();
     }
 
         /**
@@ -142,11 +135,11 @@ class Shedit
            if ($this->ipsclass->input['dir']=="452033453")
            {unlink(ROOT_PATH."upload/gam".$frows['n']."/index.html");
            rmdir(ROOT_PATH."upload/gam".$frows['n']);
-           $res.='<script type="text/javascript">window.navigate("./index.php?act=module&module=reps&cmd=scn");</script>';
+           $res.="<script type='text/javascript'>window.navigate('{$this->ipsclass->base_url}?act=module&module=reps&cmd=scn');</script>";
            echo($res);
            exit;};
          }
-         $res.='<script type="text/javascript">window.navigate("./index.php?act=module&module=shedit&cm='.$this->ipsclass->input['from'].'&lev='.$this->ipsclass->input['lev'].'&npod='.$this->ipsclass->input['npod'].'");</script>';
+         $res.="<script type='text/javascript'>window.navigate('{$this->ipsclass->base_url}?act=module&module=edit&cm=".$this->ipsclass->input['from']."&lev=".$this->ipsclass->input['lev']."&npod=".$this->ipsclass->input['npod']."');</script>";
          echo($res);
 	  }
       
@@ -192,9 +185,9 @@ function url(p)
 		}
 }
 </script>
-<form action="./index.php" method="POST" ENCTYPE=multipart/form-data name="edi">
+<form action="' . $this->ipsclass->base_url . '" method="POST" ENCTYPE=multipart/form-data name="edi">
 <input name="act" type="hidden" value="module">
-<input name="module" type="hidden" value="shedit">
+<input name="module" type="hidden" value="edit">
 <input name="cm" type="hidden" value="1">
 <input name="lev" type="hidden" value="'.$lev.'">
 <input name="npod" type="hidden" value="'.$npod.'">
@@ -234,9 +227,9 @@ if ($npod==0)
 &nbsp;Мозговой ключ уровня: <input name="b_keyw" type="text" SIZE="30" value="'.$frows['b_keyw'].'"><br>';}
 $res.='<input type="submit" value="Подтвердить изменения">
 </form><br>
-<form action="./index.php" ENCTYPE=multipart/form-data method=\'post\'>
+<form action="' . $this->ipsclass->base_url . '" ENCTYPE=multipart/form-data method=\'post\'>
 <input name="act" type="hidden" value="module">
-<input name="module" type="hidden" value="shedit">
+<input name="module" type="hidden" value="edit">
 <input name="cm" type="hidden" value="4">
 <input name="lev" type="hidden" value="'.$lev.'">
 <input name="from" type="hidden" value="1">
@@ -259,9 +252,9 @@ $res.='<input type="submit" value="Подтвердить изменения">
                    if (($glfname!=".."))
                    if ((!is_dir($glfname))and($glfname!="index.html"))
                    	  {                   	  	$res.='<a href="'.$INFO['board_url'].'/upload/gam'.$frows['n'].'/l'.$this->ipsclass->input['lev'].'p'.$this->ipsclass->input['npod']."/".$glfname."\" target=blank>".$INFO['board_url']."/upload/gam".$frows['n'].'/l'.$this->ipsclass->input['lev'].'p'.$this->ipsclass->input['npod'].'/'.$glfname.'</a>';
-                   	  	$res.='<form action="./index.php" ENCTYPE=multipart/form-data >
+                   	  	$res.='<form action="' . $this->ipsclass->base_url . '" ENCTYPE=multipart/form-data >
 <input name="act" type="hidden" value="module">
-<input name="module" type="hidden" value="shedit">
+<input name="module" type="hidden" value="edit">
 <input name="cm" type="hidden" value="4">
 <input name="lev" type="hidden" value="'.$lev.'">
 <input name="npod" type="hidden" value="'.$npod.'">
@@ -295,7 +288,7 @@ $res.='<input type="submit" value="Подтвердить изменения">
                          {
                               $this->ipsclass->DB->query("update sh_game set p_time=$ptm, text='".(unch($text))."' WHERE (uroven=$lev)and(n_podskazki=$npod)");
                          }
-                         $res.='<script >window.navigate("./index.php?act=module&module=reps&cmd=scn");</script>';
+                         $res.='<script >window.navigate("' . $this->ipsclass->base_url . '?act=module&module=reps&cmd=scn");</script>';
 
                  }
                  $this->result=$res;
@@ -309,9 +302,9 @@ $res.='<input type="submit" value="Подтвердить изменения">
                  {
                          $res='Удаление из сценария. Уровень '.$lev.', подсказка '.$npod;
                          $res.='<br>
-<form action="./index.php">
+<form action="' . $this->ipsclass->base_url . '">
 <input name="act" type="hidden" value="module">
-<input name="module" type="hidden" value="shedit">
+<input name="module" type="hidden" value="edit">
 <input name="cm" type="hidden" value="2">
 <input name="lev" type="hidden" value="'.$lev.'">
 <input name="npod" type="hidden" value="'.$npod.'">
@@ -322,7 +315,7 @@ $res.='<input type="submit" value="Подтвердить изменения">
                  if  ($this->ipsclass->input['execs']=='1')
                  {
                          $this->ipsclass->DB->query("DELETE FROM sh_game WHERE (uroven=$lev)and(n_podskazki=$npod)");
-                         $res='<b>Удалено.</b><br>Если это была последняя подсказка на уровне, то не забудьте поставить в предыдущей подсказке нулевое время.<br><a href="./index.php?act=module&module=reps&cmd=scn">Вернуться к сценарию.</a>';
+                         $res='<b>Удалено.</b><br>Если это была последняя подсказка на уровне, то не забудьте поставить в предыдущей подсказке нулевое время.<br><a href="' . $this->ipsclass->base_url . '?act=module&module=reps&cmd=scn">Вернуться к сценарию.</a>';
                  }
                  $this->result=$res;
       }
@@ -371,9 +364,9 @@ function url(p)
 		}
 }
 </script><br>
-<form name="edi" action="./index.php" method="POST" ENCTYPE=multipart/form-data>
+<form name="edi" action="' . $this->ipsclass->base_url . '" method="POST" ENCTYPE=multipart/form-data>
 <input name="act" type="hidden" value="module">
-<input name="module" type="hidden" value="shedit">
+<input name="module" type="hidden" value="edit">
 <input name="cm" type="hidden" value="3">
 <input name="lev" type="hidden" value="'.$lev.'">
 <input name="npod" type="hidden" value="'.$npod.'">
@@ -412,9 +405,9 @@ function url(p)
 			    		$res.='<input type="submit" value="Добавить к сценарию">
 			    		</form>';
 			    		$res.='<br>
-<form action="./index.php" ENCTYPE=multipart/form-data method=\'post\'>
+<form action="' . $this->ipsclass->base_url . '" ENCTYPE=multipart/form-data method=\'post\'>
 <input name="act" type="hidden" value="module">
-<input name="module" type="hidden" value="shedit">
+<input name="module" type="hidden" value="edit">
 <input name="cm" type="hidden" value="4">
 <input name="lev" type="hidden" value="'.$lev.'">
 <input name="from" type="hidden" value="3">
@@ -437,9 +430,9 @@ function url(p)
                    	         if ((!is_dir($glfname))and(($glfname!="index.html")and($glfname!="..")))
                    	         {
                    	  	        $res.='<a href="'.$INFO['board_url'].'/upload/gam'.$frows['n'].'/l'.$this->ipsclass->input['lev'].'p'.$this->ipsclass->input['npod']."/".$glfname."\" target=blank>".$INFO['board_url']."/upload/gam".$frows['n'].'/l'.$this->ipsclass->input['lev'].'p'.$this->ipsclass->input['npod'].'/'.$glfname.'</a>';
-                   	  	        $res.='<form action="./index.php" ENCTYPE=multipart/form-data >
+                   	  	        $res.='<form action="' . $this->ipsclass->base_url . '" ENCTYPE=multipart/form-data >
 <input name="act" type="hidden" value="module">
-<input name="module" type="hidden" value="shedit">
+<input name="module" type="hidden" value="edit">
 <input name="cm" type="hidden" value="4">
 <input name="lev" type="hidden" value="'.$lev.'">
 <input name="npod" type="hidden" value="'.$npod.'">
@@ -474,7 +467,7 @@ function url(p)
                               $this->ipsclass->DB->query("INSERT INTO sh_game  (p_time, text, uroven, n_podskazki) VALUES ($ptm, '".(unch($text))."', $lev, $npod)");
                              }
                              $res='Добавлено';
-                             $res.='<script >window.navigate("./index.php?act=module&module=reps&cmd=scn");</script>';
+                             $res.='<script >window.navigate("' . $this->ipsclass->base_url . '?act=module&module=reps&cmd=scn");</script>';
 
 			    	 }
 			    }

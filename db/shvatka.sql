@@ -13,7 +13,7 @@ CREATE TABLE IF NOT EXISTS `sh_comands` (
   `uroven` int(11) NOT NULL DEFAULT '0',
   `podskazka` int(11) NOT NULL DEFAULT '0',
   `dt_ur` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
-  `dengi` binary(1) NOT NULL DEFAULT '0',
+  `dengi` tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`n`)
 ) ENGINE=MyISAM AUTO_INCREMENT=1;
 
@@ -33,7 +33,7 @@ CREATE TABLE IF NOT EXISTS `sh_igroki` (
   `komanda` varchar(50)  NOT NULL DEFAULT '',
   `status_in_cmd` varchar(64) DEFAULT 'Полевой',
   `ochki` int(11) NOT NULL DEFAULT '0',
-  `ch_dengi` binary(1) NOT NULL DEFAULT '0',
+  `ch_dengi` tinyint(1) NOT NULL DEFAULT '0',
   `games` text ,
   `viwestatus` char(1)  NOT NULL DEFAULT 'n',
   PRIMARY KEY (`n`),

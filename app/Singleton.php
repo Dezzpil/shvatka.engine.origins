@@ -1,8 +1,12 @@
 <?php
+
 namespace App;
 
 /**
  * Singleton
+ * для тех классов, что используют одиночку
+ * необходимо самостоятельно определить метод
+ * __construct как private/protected
  * 
  * @date 2016.09.15
  * @author Nikita Dezzpil Orlov
