@@ -85,7 +85,7 @@ class Stat extends Base
                  $res=$res.'<div class="borderwrap"><div class="maintitle" align="center">Составы команд </div><br>';
                  foreach ($comd as $n=>$naz)
                  {
-                    $res=$res.'<table cellspacing="1" class="borderwrap" style={width:auto;} align="center"><tr><td align="center" colspan="4" class="maintitle">'.$naz.'</td></tr>';
+                    $res = $res.'<table cellspacing="1" class="borderwrap" align="center"><tr><td align="center" colspan="4" class="maintitle">'.$naz.'</td></tr>';
                     $fq=$this->ipsclass->DB->query("select * from sh_igroki where komanda='".$naz."' order by ochki DESC, nick");
                     $res=$res.'<tr><th align="center">Ник</th><th align="center" >Статус</th><th align="center" >Очки</th><th align="center">Порядковый номер<br> сыграных игр</th></tr>';
                     while ($frows = $this->ipsclass->DB->fetch_row($fq))
@@ -104,7 +104,7 @@ class Stat extends Base
                  $res="";
                  $ms=1;
                  $this->ipsclass->DB->query("select * from sh_comands order by ochki DESC, nazvanie");
-                 $res=$res.'<table cellspacing="1" class="borderwrap" style={width:auto;} align="center"><tr><td align="center" colspan="4" class="maintitle">Статистика по командам</td></tr>';
+                 $res=$res.'<table cellspacing="1" class="borderwrap" align="center"><tr><td align="center" colspan="4" class="maintitle">Статистика по командам</td></tr>';
                  $res=$res."<tr class=\"ipbtable\"><th>Место</th><th width=\"50%\">Название</th><th align=\"center\" >Очки</th><th align=\"center\" >Игры</th></tr>";
                  while (($frows = $this->ipsclass->DB->fetch_row($fquery))and($ms!=$cntcm+1))
                  {
@@ -171,7 +171,7 @@ class Stat extends Base
 
                  </script>';
                  $this->ipsclass->DB->query("select * from sh_games where status!='п'");
-                 $res=$res.'<table cellspacing="1" class="borderwrap" style={width:auto;} align="center"><tr><td align="center" colspan="4" class="maintitle">Прошедшие игры</td></tr>';
+                 $res=$res.'<table cellspacing="1" class="borderwrap" align="center"><tr><td align="center" colspan="4" class="maintitle">Прошедшие игры</td></tr>';
                  $res=$res."<tr width=\"auto\" class=\"ipbtable\"><th align=\"center\">№</th><th width=\"50%\" align=\"center\" >Название</th><th align=\"center\" >Пъедестал</th></tr>";
                  while ($frows = $this->ipsclass->DB->fetch_row($fquery))
                  {

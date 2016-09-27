@@ -3,6 +3,8 @@ error_reporting(E_ALL);
 date_default_timezone_set('Europe/Moscow');
 $loader = require __DIR__ . '/../vendor/autoload.php';
 
+session_save_path(__DIR__ . '/../data/sessions');
+
 /**
  * Список используемых таблиц (тех, что без префикса sh_)
  * admin_logs         - mod_reps.php:264
@@ -38,6 +40,12 @@ $app->match(
             $object->setClassLoader($loader);
         }
         
+        $result = $object->before($request, $app);
+        if (!empty($result)) {
+            // на случай редиректа
+            return $result;
+        }
+        
         if (method_exists($object, $action)) {
             return $object->$action($request, $app);
         } else {
@@ -54,10 +62,8 @@ $app->error(function (\Exception $e, Request $request, $code) {
             $message = 'The requested page could not be found.';
             break;
         default:
-            $message = 'We are sorry, but something went terribly wrong.';
+            $message = 'Ошибка, код ' . $e->getCode() . ': ' . $e->getMessage();
     }
-
-    var_dump($e->getCode(), $e->getMessage(), $e->getTrace());
     
     return new Response($message);
 });

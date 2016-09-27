@@ -34,32 +34,25 @@ class Shvatka extends Base
             return $st;
         }
 
-        switch( $this->ipsclass->input['cmd'] )
-        {
-          case 'sh':
-               $this->do_game($this->ipsclass->input['keyw'],$this->ipsclass->input['b_keyw']);
+        switch (@$this->ipsclass->input['cmd']) {
+            case 'sh':
+               $this->do_game(@$this->ipsclass->input['keyw'], @$this->ipsclass->input['b_keyw']);
                break;
-          case 'cap':
-                $this->cap($this->ipsclass->input['cnc'],$this->ipsclass->input['del'],$this->ipsclass->input['yes']);
+            case 'cap':
+                $this->cap(@$this->ipsclass->input['cnc'], @$this->ipsclass->input['del'], @$this->ipsclass->input['yes']);
                 break;
-          case 'nmem':
-                $this->nmem($this->ipsclass->input['kuda'],$this->ipsclass->input['cnc']);
+            case 'nmem':
+                $this->nmem(@$this->ipsclass->input['kuda'], @$this->ipsclass->input['cnc']);
                 break;
-          default:
+            default:
                 $this->do_game("","");
                 break;
         }
-        if ($this->ipsclass->input['lofver']!=1)
-        {
-            $html=$html.'<font size=2>'.$this->result.'</font>';
-            $this->ipsclass->print->add_output( $html );
-            $this->nav[] = "<a href='{$this->ipsclass->base_url}act=module&module=shvatka'>СХВАТКА</a>";
-            $this->ipsclass->print->do_output(array('OVERRIDE' => 0, 'TITLE' => 'СХВАТКА', 'NAV' => $this->nav));
-        }
-        else
-        {
-           echo('<html><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1251" /><title>Схваточка</title></head><body><font size=2>'.$this->result.'</font></body></html>');
-        }
+        
+        $html = '<font size=2>'.$this->result.'</font>';
+        $this->ipsclass->print->add_output( $html );
+        $this->nav[] = "<a href='{$this->ipsclass->base_url}act=module&module=shvatka'>СХВАТКА</a>";
+        $this->ipsclass->print->do_output(array('OVERRIDE' => 0, 'TITLE' => 'СХВАТКА', 'NAV' => $this->nav));
 
         //exit();
     }
@@ -191,7 +184,7 @@ class Shvatka extends Base
                      $this->ipsclass->DB->query("update sh_recrut set otvet='Капитан вам отказал, отзовите свою заявку.' WHERE n=".$cn);
              }
              $this->ipsclass->DB->query("select * from sh_igroki WHERE komanda='".$komanda."'");
-             $res=$res."<br><TABLE cellspacing=\"1\" style={width:auto;} class=\"borderwrap\" align=\"center\"><tr><th COLSPAN=3>Ваша команда</th></tr>";
+             $res=$res."<br><TABLE cellspacing=\"1\" class=\"borderwrap\" align=\"center\"><tr><th COLSPAN=3>Ваша команда</th></tr>";
              while ($frows = $this->ipsclass->DB->fetch_row($fquery))
              {
                    $res=$res.'<tr class="ipbtable"><td class="row1"><b>'.($frows['nick']).'</b></center></td><td class="row1"><form  action="' . $this->ipsclass->base_url . '" method="post">
@@ -210,7 +203,7 @@ class Shvatka extends Base
 
                    $res.='</select></form></td><td class="row1"><center><a href="' . $this->ipsclass->base_url . '?act=module&module=shvatka&cmd=cap&del='.($frows['n']).'"><font size=1 color=red>Исключить</font></center></td></tr>';
              }
-             $res=$res."</table ><br><TABLE cellspacing=\"1\" style={width:auto;} class=\"borderwrap\" align=\"center\"><tr><th COLSPAN=2>Заявки в вашу команду.</th></tr>";
+             $res=$res."</table ><br><TABLE cellspacing=\"1\" class=\"borderwrap\" align=\"center\"><tr><th COLSPAN=2>Заявки в вашу команду.</th></tr>";
              $this->ipsclass->DB->query("select * from sh_recrut  WHERE kuda='".$id_team."'");
              while ($frows = $this->ipsclass->DB->fetch_row($fquery))
              {
@@ -244,7 +237,7 @@ class Shvatka extends Base
                         }
                         else
                         {
-                            $res.="<br><div align='center' style={width:auto;} id='here' class=\"borderwrap\"><br>Сейчас идёт игра. Если вы поняли, что ваша команда не хочет<br>или не может продолжать игру, то нажмите кнопку<br>
+                            $res.="<br><div align='center' id='here' class=\"borderwrap\"><br>Сейчас идёт игра. Если вы поняли, что ваша команда не хочет<br>или не может продолжать игру, то нажмите кнопку<br>
                             <form action={$this->ipsclass->base_url} id='action' method='post'>
                             <input name=\"act\" type=\"hidden\" value=\"module\">
                             <input name=\"module\" type=\"hidden\" value=\"shvatka\">
@@ -333,7 +326,7 @@ class Shvatka extends Base
            $res=$res."</option></select><input type=submit value=' Подать заявку ' style='background:#D2D0D0;border:1px;border:outset;border-color:#ffffff'><br></Form>";
            if (count($this->ipsclass->DB->query("select * from sh_recrut WHERE kto='".$this->ipsclass->member['name']."'"))!=0)
            {
-               $res=$res."<TABLE cellspacing=\"1\" style={width:auto;} class=\"borderwrap\"><th COLSPAN=3><b>Вы подали заявки в следующие команды:</b></th>";
+               $res=$res."<TABLE cellspacing=\"1\" style='' class=\"borderwrap\"><th COLSPAN=3><b>Вы подали заявки в следующие команды:</b></th>";
                while ($frows = $this->ipsclass->DB->fetch_row($fquery))
                {
                   $res=$res.'<tr class="ipbtable"><td class="row2"><b>'.$cm_array[$frows['kuda']].'</b></td><td class="row2"><center><a href="'.$this->ipsclass->base_url.'?act=module&module=shvatka&cmd=nmem&cnc='.($frows['n']).'"><font size=1 color=red>Отозвать заявку</font></a></td><td class="row2" style={font-style:italic}><blink><font size=1>   '.($frows['otvet']).'</font></blink></td></tr>';
@@ -443,7 +436,7 @@ CountDown()
 </SCRIPT>
 EOF;
                             $this->ipsclass->DB->query("select * from sh_comands WHERE dengi=1");
-                            $res=$res."<center><br><TABLE cellspacing=\"1\" style={width:auto;} class=\"borderwrap\">
+                            $res=$res."<center><br><TABLE cellspacing=\"1\" style='' class=\"borderwrap\">
 <tr><td class=\"maintitle\" align=\"center\" colspan=\"2\">Заявленные команды</td></tr><tr><th align=\"center\"><b>Название</b></th><th align=\"center\"><b>Очки</b></th></tr>";
                             while ($frows = $this->ipsclass->DB->fetch_row($fquery))
                             {
@@ -451,7 +444,7 @@ EOF;
                             }
                             $res=$res."</table></center><br>";
                             $this->ipsclass->DB->query("select * from sh_igroki WHERE ch_dengi=1 order by komanda");
-                            $res=$res."<center><TABLE cellspacing=\"1\" style={width:auto;} class=\"borderwrap\"><tr><td class=\"maintitle\" align=\"center\" colspan=\"3\">Игроки сделавшие взносы</td></tr>
+                            $res=$res."<center><TABLE cellspacing=\"1\" style='' class=\"borderwrap\"><tr><td class=\"maintitle\" align=\"center\" colspan=\"3\">Игроки сделавшие взносы</td></tr>
 <tr><th align=\"center\"><b>Участник</b></th><th align=\"center\"><b>Команда</b></th><th align=\"center\"><b>Очки</b></td></tr>";
                             while ($frows = $this->ipsclass->DB->fetch_row($fquery))
                             {
@@ -532,7 +525,7 @@ CountDown()
 </SCRIPT>
 EOF;
                       $this->ipsclass->DB->query("select * from sh_comands WHERE dengi=1");
-                      $res=$res."<center><br><TABLE cellspacing=\"1\" style={width:auto;} class=\"borderwrap\">
+                      $res=$res."<center><br><TABLE cellspacing=\"1\" style='' class=\"borderwrap\">
 <tr><td class=\"maintitle\" align=\"center\" colspan=\"2\">Заявленные команды</td></tr><tr><th align=\"center\"><b>Название</b></th><th align=\"center\"><b>Очки</b></th></tr>";
                       while ($frows = $this->ipsclass->DB->fetch_row($fquery))
                       {
@@ -540,7 +533,7 @@ EOF;
                       }
                       $res=$res."</table></center><br>";
                       $this->ipsclass->DB->query("select * from sh_igroki WHERE ch_dengi=1 order by komanda");
-                      $res=$res."<center><TABLE cellspacing=\"1\" style={width:auto;} class=\"borderwrap\"><tr><td class=\"maintitle\" align=\"center\" colspan=\"3\">Игроки сделавшие взносы</td></tr>
+                      $res=$res."<center><TABLE cellspacing=\"1\" style='' class=\"borderwrap\"><tr><td class=\"maintitle\" align=\"center\" colspan=\"3\">Игроки сделавшие взносы</td></tr>
 <tr><th align=\"center\"><b>Участник</b></th><th align=\"center\"><b>Команда</b></th><th align=\"center\"><b>Очки</b></td></tr>";
                       while ($frows = $this->ipsclass->DB->fetch_row($fquery))
                       {
@@ -693,10 +686,11 @@ $res.='<br><input type=submit value="  Проверить ключ/наличи�
               }
               if ($adm_msg!='') $res.='<div id="adm_msg_div" style="left:35%;top:35%;width:30%;height:auto;overflow: auto;position:absolute;" onClick="javascript:this.style.display=\'none\'">'.$adm_msg.'</div>';
             }
-        if ($this->ipsclass->input['lofver']==1)
-        {$this->result=$res."<center><font size=1><a href='{$this->ipsclass->base_url}act=module&module=shvatka'>Схватка с оформлением</a></font></center>";}
-        else
-        {$this->result=$res."<table cellspacing=\"0\" id=\"gfooter\"><tr><td align=\"center\"><b><a href='{$this->ipsclass->base_url}act=module&module=shvatka&lofver=1'}>Схватка без оформления</a></b></td></tr></table>";}
+//        if ($this->ipsclass->input['lofver']==1)
+//        {$this->result=$res."<center><font size=1><a href='{$this->ipsclass->base_url}act=module&module=shvatka'>Схватка с оформлением</a></font></center>";}
+//        else
+//        {$this->result=$res."<table cellspacing=\"0\" id=\"gfooter\"><tr><td align=\"center\"><b><a href='{$this->ipsclass->base_url}act=module&module=shvatka&lofver=1'}>Схватка без оформления</a></b></td></tr></table>";}
+            $this->result = $res;
     }
 }
 ?>

@@ -212,6 +212,16 @@ INSERT INTO `members` (`name`, `mgroup`) VALUES ('Rex', 3);
 INSERT INTO `members` (`name`, `mgroup`) VALUES ('Tali', 3);
 INSERT INTO `members` (`name`, `mgroup`) VALUES ('Jacob', '3');
 
+ALTER TABLE `members` 
+ADD COLUMN `password` VARCHAR(255) NOT NULL AFTER `mgroup`;
+
+UPDATE `members` SET `password`='f55cf1f2c5d28b43e6770fb56c14a9e5' WHERE `id`='2';
+UPDATE `members` SET `password`='f55cf1f2c5d28b43e6770fb56c14a9e5' WHERE `id`='1';
+UPDATE `members` SET `password`='f55cf1f2c5d28b43e6770fb56c14a9e5' WHERE `id`='3';
+UPDATE `members` SET `password`='f55cf1f2c5d28b43e6770fb56c14a9e5' WHERE `id`='4';
+UPDATE `members` SET `password`='f55cf1f2c5d28b43e6770fb56c14a9e5' WHERE `id`='5';
+UPDATE `members` SET `password`='f55cf1f2c5d28b43e6770fb56c14a9e5' WHERE `id`='6';
+
 -- --------------------------------------------------------
 
 -- 

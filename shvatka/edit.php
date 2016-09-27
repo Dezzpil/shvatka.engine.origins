@@ -201,7 +201,7 @@ $res.='</b> подсказка:<input name="ptm" type="text" SIZE="2" value="'.(
 if (!$npod==0)
 {$res.=' Если это последняя подсказка, то обязательно поставьте 0.';}
 $res.='<br>Текст (можно использовать html) уровня или подсказки:<br>
-<div style={margin-left:5px}><table cellpadding=\'0\' cellspacing=\'0\' class="rtebuttonbar1" style={width:auto}>
+<div style={margin-left:5px}><table cellpadding=\'0\' cellspacing=\'0\' class="rtebuttonbar1">
 	   <tr>
 	    <td><img class="rteVertSep" src="style_images/1/folder_rte_images/rte_dots.gif" width="3" height="15" border="0" alt=""></td>
 
@@ -379,7 +379,7 @@ function url(p)
 				    	$res.='</b> подсказка:<input name="ptm" type="text" SIZE="2" value=""> мин.';
 			    		if (!$npod==0)
 			    		{$res.=' Если это последняя подсказка, то обязательно поставьте 0.';}
-			    		$res.='<br>Текст (можно использовать html) уровня или подсказки:<br><div style={margin-left:5px}><table cellpadding=\'0\' cellspacing=\'0\' class="rtebuttonbar1" style={width:auto}>
+			    		$res.='<br>Текст (можно использовать html) уровня или подсказки:<br><div style={margin-left:5px}><table cellpadding=\'0\' cellspacing=\'0\' class="rtebuttonbar1">
 	   <tr>
 	    <td><img class="rteVertSep" src="style_images/1/folder_rte_images/rte_dots.gif" width="3" height="15" border="0" alt=""></td>
 

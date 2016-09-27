@@ -9,7 +9,7 @@ use Symfony\Component\HttpFoundation\Request;
  * @date 26.09.2016
  * @author Nikita Dezzpil Orlov <nikita@shvatka.ru>
  */
-class Tools
+class Tools extends Base
 {
     /**
      * 
@@ -64,5 +64,18 @@ class Tools
             "delete from pfields_content where member_id={$user['id']}"
         );
         return "У пользователя {$name} изьяты права на редактирование сценария";
+    }
+    
+    /**
+     * @todo выпилить, уязвимость
+     * @param Request $request
+     * @param Application $app
+     * @return string
+     */
+    public function hash(Request $request, Application $app)
+    {
+        $password = $request->get('password');
+        $auth = \App\Auth::getInstance();
+        return $auth->hashPassword($password);
     }
 }

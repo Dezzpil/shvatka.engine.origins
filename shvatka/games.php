@@ -148,7 +148,7 @@ class Games extends Base
                  	        $tab[$j][$i]='<font color=red>'.(date('H:i:s',strtotime($tab[$j][$i]))).'</font>';
                  	   }
                  	}
-                 	$res.='<table class="borderwrap" style={width:auto;}><tr><th>Название команды</th>';
+                 	$res.='<table class="borderwrap"><tr><th>Название команды</th>';
                  	foreach ($levkeys as $lev)
                  	{
                  	       $res.='<th> Уровень '.$lev.'</th>';
@@ -180,7 +180,7 @@ class Games extends Base
                  	{  $keyprev="";
                  	   if (count($this->ipsclass->DB->query("select * from sh_log where comanda='".$naz."' order by time"))!=0)
                  	   {
-                 	     $res=$res.'<table cellspacing="1" class="borderwrap" style={width:auto;} align="center"><tr><td align="center" colspan="3" class="maintitle">'.$naz.'</td></tr>';
+                 	     $res=$res.'<table cellspacing="1" class="borderwrap" align="center"><tr><td align="center" colspan="3" class="maintitle">'.$naz.'</td></tr>';
                  	     $res=$res.'<tr><th align="center">Время</th><th align="center" >Ключ</th><th>Автор</th></tr>';
                  		 while ($frows = $this->ipsclass->DB->fetch_row($fquery))
                  	     {

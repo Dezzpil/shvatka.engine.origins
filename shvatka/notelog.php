@@ -58,7 +58,7 @@ class Notelog extends Base
 
                  $res=$res.'<div class="borderwrap"><div class="maintitle" align="center">Лог выставления очков</div><br />';
 
-                 $res=$res."<table cellspacing=\"1\" class=\"borderwrap\" style={width:auto;} align=\"center\">
+                 $res=$res."<table cellspacing=\"1\" class=\"borderwrap\" align=\"center\">
                  <tr>";
                  for ($i = 1; $i <= 4; $i++)
                  {

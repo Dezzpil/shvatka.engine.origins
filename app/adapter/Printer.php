@@ -34,10 +34,11 @@ class Printer
             foreach ($params['NAV'] as $item) {
                 $this->_data = $item . '&nbsp;&nbsp;' . $this->_data;
             }
+            $this->_data = '<br />&nbsp;<br />' . $this->_data;
         }
         
         if (array_key_exists('TITLE', $params)) {
-            $this->_data = '<body><h1>' . $params['TITLE'] . '</h1>' . $this->_data;
+            //$this->_data = '<body><h1>' . $params['TITLE'] . '</h1>' . $this->_data;
             $this->_data = '<head><title>' . $params['TITLE'] . '</title></head>' . $this->_data;
         }
         
