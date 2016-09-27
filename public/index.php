@@ -18,7 +18,7 @@ $config = json_decode($configContents, true);
 
 // настариваем подключение
 $db = $config['database'];
-\App\Adapter\DB::config($db['host'], $db['user'], $db['password'], $db['schema'], $db['port']);
+App\Adapter\DB::config($db['host'], $db['user'], $db['password'], $db['schema'], $db['port']);
 
 // Запускаем и настраиваем микрофреймворк для целей маршрутизации по модулям
 use Symfony\Component\HttpFoundation\Response;
@@ -65,7 +65,7 @@ $app->match(
 ->value('controller', 'index')
 ->value('action', 'index');
 
-$app->error(function (\Exception $e, Request $request, $code) {
+$app->error(function (Exception $e, Request $request, $code) {
     switch ($code) {
         case 404:
             $message = 'The requested page could not be found.';
