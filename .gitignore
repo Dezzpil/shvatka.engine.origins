@@ -3,3 +3,4 @@ data/sessions/sess_*
 nbproject
 .idea
 .vagrant
+config.json

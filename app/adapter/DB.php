@@ -9,14 +9,20 @@ namespace App\Adapter;
  */
 class DB
 {
-    /**
-     * @todo вынести в конфиг
-     */
-    const dbHost = '127.0.0.1';
-    const dbUser = 'root';
-    const dbPass = 'toor';
-    const dbName = 'shvatka';
-    const dbPort = 3306;
+    static protected $host;
+    static protected $user;
+    static protected $password;
+    static protected $schema;
+    static protected $port;
+    
+    static public function config($host, $user, $password, $schema, $port)
+    {
+        static::$host = $host;
+        static::$user = $user;
+        static::$password = $password;
+        static::$schema = $schema;
+        static::$port = $port;
+    }
     
     use \App\Singleton;
     
@@ -43,7 +49,7 @@ class DB
     {
         // установить соединение
         $this->_mysqli = new \mysqli();
-        $this->_mysqli->connect(self::dbHost, self::dbUser, self::dbPass, self::dbName, self::dbPort);
+        $this->_mysqli->connect(self::$host, self::$user, self::$password, self::$schema, self::$port);
         $this->_mysqli->query('SET NAMES utf8');
     }
     
