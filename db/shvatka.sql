@@ -1,4 +1,6 @@
 
+SET NAMES utf8;
+
 -- 
 -- Структура таблицы `sh_comands`
 -- 
@@ -38,7 +40,7 @@ CREATE TABLE IF NOT EXISTS `sh_igroki` (
   `viwestatus` char(1)  NOT NULL DEFAULT 'n',
   PRIMARY KEY (`n`),
   FULLTEXT KEY `nick` (`nick`)
-) ENGINE=MyISAM AUTO_INCREMENT=1;
+) ENGINE=MyISAM DEFAULT CHARACTER SET utf8 AUTO_INCREMENT=1;
 
 INSERT INTO `sh_igroki` (`nick`, `komanda`, `status_in_cmd`, `ochki`) VALUES ('Shepard', 'Normandia', 'Капитан', '42');
 INSERT INTO `sh_igroki` (`nick`, `komanda`, `status_in_cmd`, `ochki`) VALUES ('Eshli', 'Normandia', 'Радистка', '10');
@@ -96,7 +98,7 @@ CREATE TABLE IF NOT EXISTS `sh_games` (
   `pedistal` text ,
   `g_name` text ,
   `dt_g` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
-  `status` set('п','т','з')  NOT NULL DEFAULT '',
+  `status` char(1)  NOT NULL DEFAULT '',
   `fond` varchar(50)  NOT NULL DEFAULT '',
   `scenariy` longtext ,
   `leveltable` text ,

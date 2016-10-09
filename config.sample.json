@@ -1,10 +1,19 @@
 {
-    "database": {
-        "host": "127.0.0.1",
-        "port": 3306,
-        "user": "root",
-        "password": "toor",
-        "schema": "shvatka"
+    "production": {
+        "database": {
+            "host": "127.0.0.1",
+            "port": 3306,
+            "user": "root",
+            "password": "toor",
+            "schema": "shvatka"
+        },
+        "debug": true
     },
-    "debug": true
+    "testing:production": {
+        "database": {
+            "user": "tester",
+            "password": "tester",
+            "schema": "shvatka_tests"
+        }
+    }
 }

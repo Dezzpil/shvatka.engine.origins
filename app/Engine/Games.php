@@ -1,5 +1,5 @@
 <?php
-namespace Shvatka;
+namespace App\Engine;
 
 class Games extends Base
 {

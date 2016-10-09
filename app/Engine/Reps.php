@@ -1,5 +1,5 @@
 <?php
-namespace Shvatka;
+namespace App\Engine;
 
 class Reps extends Base
 {
@@ -20,7 +20,7 @@ class Reps extends Base
             if ($tmp>0) {$st=$st.'<span id=\'secs\'>'.$tmp.'</span> сек. ';}
             return $st;
         }
-
+        $html = '';
         $this->ipsclass->DB->query("select field_4 from pfields_content where member_id=".$this->ipsclass->member['id']."");
         $frows = $this->ipsclass->DB->fetch_row($fquery);
         if (( $this->ipsclass->member['mgroup'] == $this->ipsclass->vars['admin_group'] )or($frows['field_4']=='y'))
@@ -208,7 +208,7 @@ class Reps extends Base
                        }
                  $res="";
                  $ptm="";
-                 if ($this->ipsclass->input['delg']=="1")
+                 if (@$this->ipsclass->input['delg']=="1")
                  {                 	$this->ipsclass->DB->query("delete from sh_game");
                  	$this->ipsclass->DB->query("select * from sh_games WHERE status='п'");
                      $frows = $this->ipsclass->DB->fetch_row($fquery);
@@ -378,7 +378,7 @@ $res.='</center></td></tr></table></div>';
     function addg()
     {
         $res="";
-        if ($this->ipsclass->input['y']=="")
+        if (@$this->ipsclass->input['y']=="")
         {
             if (count($this->ipsclass->DB->query("select * from sh_games where status='п'"))!=0)
             { // редактирование данных игры
@@ -421,20 +421,20 @@ $res.='</center></td></tr></table></div>';
         }
         else
         {  //обработка прееданных данных
-            if ($this->ipsclass->input['delg']!="1")
+            if (@$this->ipsclass->input['delg']!="1")
             {  //ввод данных игры
                 if (count($this->ipsclass->DB->query("select * from sh_games where status='п'"))!=0)
                 {
-                      $this->ipsclass->DB->query("update sh_games set g_name='".($this->ipsclass->input['gn'])."', dt_g='".($this->ipsclass->input['gt'])."', fond='".($this->ipsclass->input['gf'])."' where status='п'");
-                      $res.='Изменения в настройки игры внесены.<br><br>';
+                    $this->ipsclass->DB->query("update sh_games set g_name='".($this->ipsclass->input['gn'])."', dt_g='".($this->ipsclass->input['gt'])."', fond='".($this->ipsclass->input['gf'])."' where status='п'");
+                    $res.='Изменения в настройки игры внесены.<br><br>';
                 }
                 else
                 {
-                      $this->ipsclass->DB->query("update  sh_comands set uroven=0, podskazka=0, dt_ur='0000-00-00 00:00:00'" );
-                      $this->ipsclass->DB->query("delete from sh_log");
-                      $this->ipsclass->DB->query("INSERT INTO sh_games (g_name, dt_g, status, fond) values ('".($this->ipsclass->input['gn'])."', '".($this->ipsclass->input['gt'])."', 'п', '".($this->ipsclass->input['gf'])."')" );
-                      $this->ipsclass->DB->query("ALTER TABLE sh_log PACK_KEYS =0 CHECKSUM =0 DELAY_KEY_WRITE =0 AUTO_INCREMENT =1");
-                      $res.='Игра создана.<br><br>';
+                    $this->ipsclass->DB->query("update  sh_comands set uroven=0, podskazka=0, dt_ur='0000-00-00 00:00:00'" );
+                    $this->ipsclass->DB->query("delete from sh_log");
+                    $this->ipsclass->DB->query("INSERT INTO sh_games (g_name, dt_g, status, fond) values ('".($this->ipsclass->input['gn'])."', '".($this->ipsclass->input['gt'])."', 'п', '".($this->ipsclass->input['gf'])."')" );
+                    //$this->ipsclass->DB->query("ALTER TABLE sh_log PACK_KEYS =0 CHECKSUM =0 DELAY_KEY_WRITE =0 AUTO_INCREMENT =1");
+                    $res.='Игра создана.<br><br>';
                 }
             }
             else
@@ -462,7 +462,7 @@ $res.='</center></td></tr></table></div>';
                     $fq=$this->ipsclass->DB->query("select * from sh_igroki");
                     while ($frows = $this->ipsclass->DB->fetch_row($fq))
                     {
-                        if ($this->ipsclass->input[$frows['n']]=="1") {
+                        if (@$this->ipsclass->input[$frows['n']]=="1") {
                             $this->ipsclass->DB->query("update  sh_igroki set ch_dengi=1 where n=".$frows['n']);
                         } else {
                             $this->ipsclass->DB->query("update  sh_igroki set ch_dengi=0 where n=".$frows['n']);
@@ -493,7 +493,8 @@ $res.='</center></td></tr></table></div>';
                  foreach ($comd as $n=>$naz)
                  {
                     $res=$res.'<table cellspacing="1" class="borderwrap" align="center"><tr><td align="center" colspan="3" class="maintitle"><input name="c'.$n.'" type="checkbox" value="1"';
-                    $cmn=$this->ipsclass->DB->fetch_row($this->ipsclass->DB->query("select * from sh_comands where nazvanie='".$naz."'"));
+                    $commands = $this->ipsclass->DB->query("select * from sh_comands where nazvanie='".$naz."'");
+                    $cmn = $this->ipsclass->DB->fetch_row($commands);
                     if ($cmn['dengi']==1)
                     {
                         $res.='checked';
@@ -504,7 +505,8 @@ $res.='</center></td></tr></table></div>';
                     $res=$res.'<tr><th align="center" width="50%">Ник</th><th align="center" >Статус</th><th align="center" >Очки</th></tr>';
                     while ($frows = $this->ipsclass->DB->fetch_row($fq))
                     {
-                        $usID=$this->ipsclass->DB->fetch_row($this->ipsclass->DB->query("select * from members where name='".($frows['nick'])."'"));
+                        $members = $this->ipsclass->DB->query("select * from members where name='".($frows['nick'])."'");
+                        $usID=$this->ipsclass->DB->fetch_row($members);
                         $res=$res."<tr class='ipbtable'><td class=\"row1\"><input name=\"".$frows['n']."\" type=\"checkbox\" value=\"1\"";
                         if ($frows['ch_dengi']=='1') {
                              $res.='checked';

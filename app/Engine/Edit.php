@@ -1,5 +1,5 @@
 <?php
-namespace Shvatka;
+namespace App\Engine;
 
 function unch($string)
 {
@@ -13,10 +13,7 @@ class Edit extends Base
     function run_module()
     {
         parent::run_module();
-        $this->ipsclass->DB->query("select field_4 from pfields_content where member_id=".$this->ipsclass->member['id']."");
-        $frows = $this->ipsclass->DB->fetch_row($fquery);
-        if (( $this->ipsclass->member['mgroup'] == $this->ipsclass->vars['admin_group'] )or($frows['field_4']=='y'))
-        {
+        if ($this->_isOrganizator()) {
             $html=$html. "
             <div id=\"userlinks\">
             <p class=\"home\"><b>Редактирование сценария:</b></p>
@@ -57,92 +54,6 @@ class Edit extends Base
         //exit();
     }
 
-        /**
-         * @todo НЕ ТЕСТИЛ
-         * @return type
-         */
-	  function files()
-	  {
-	     if ($this->ipsclass->input['del']!="1")
-	     {
-	       $curdir=getcwd();	  	   $this->ipsclass->DB->query("select * from sh_games WHERE status='п'");
-           $frows = $this->ipsclass->DB->fetch_row($fquery);
-           if ($frows['n']!="")                                                    /* Смотрим есть ли предстоящая или текущая игра */
-           {
-             $ImgDir="upload/gam".$frows['n']."/l".$this->ipsclass->input['lev']."p".$this->ipsclass->input['npod']; // Каталог для хранения изображений
-             /* if ($ftp_stream=ftp_connect('www.shvatka.ru'))
-             if (ftp_login( $ftp_stream, 'shvatka', ''))
-             {
-                if (ftp_chdir($ftp_stream,"upload"))
-                if (!@ftp_chdir($ftp_stream,"gam".$frows['n']))
-                 {
-                   ftp_mkdir($ftp_stream,"gam".$frows['n']);
-                   ftp_chmod($ftp_stream,0777,"gam".$frows['n']);
-                 }
-                else
-                 @ftp_chdir($ftp_stream,"..");
-
-                if (ftp_chdir($ftp_stream,"gam".$frows['n']))
-                if (!@ftp_chdir($ftp_stream,"l".$this->ipsclass->input['lev']."p".$this->ipsclass->input['npod']))
-                 {
-                   ftp_mkdir($ftp_stream,"l".$this->ipsclass->input['lev']."p".$this->ipsclass->input['npod'] );
-                   ftp_chmod($ftp_stream,0777,"l".$this->ipsclass->input['lev']."p".$this->ipsclass->input['npod']);
-                 }
-                else
-                 @ftp_chdir($ftp_stream,"..");
-             }
-             ftp_close ($ftp_stream); */
-             @chdir("upload");
-             @mkdir( "gam".$frows['n'], 0777);
-             @chdir("gam".$frows['n']);
-             if (!file_exists("index.html")) {copy(ROOT_PATH."upload/index.html","index.html");}
-             @mkdir("l".$this->ipsclass->input['lev']."p".$this->ipsclass->input['npod'], 0777);
-             @chdir("l".$this->ipsclass->input['lev']."p".$this->ipsclass->input['npod']);
-             if (!file_exists("index.html")) {copy(ROOT_PATH."upload/index.html","index.html");}
-             // Создаем, если его еще нет
-             // Проверяем, нажата ли кнопка добавления файла
-             if($this->ipsclass->input['dou'])
-             {
-             // Проверяем, принят ли файл
-             if ( is_uploaded_file($_FILES['fi']['tmp_name'])) {
-                // Все в порядке — добавляем файл в каталог с файлми
-                // Используем то же имя, что и в системе пользователя
-                $res.="Файл ".$_FILES['fi']['name']." загружен.";
-                if ( ! move_uploaded_file($_FILES['fi']['tmp_name'],$_FILES['fi']['name']))
-                {
-			       $this->error_no = 4;
-			       return;
-		        }
-             }
-             else
-             {            	 $res.="ФАЙЛ НЕ ЗАГРУЖЕН";             }
-            }
-           }
-
-
-           chdir($curdir);
-         }
-         else
-         {           $this->ipsclass->DB->query("select * from sh_games WHERE status='п'");
-           $frows = $this->ipsclass->DB->fetch_row($fquery);
-           if (unlink(ROOT_PATH."upload/gam".$frows['n']."/l".$this->ipsclass->input['lev']."p".$this->ipsclass->input['npod']."/".$this->ipsclass->input['fname']))
-           {$res.='Файл удалён';}
-           else
-           {$res.='ФАЙЛ УДАЛИТЬ НЕ УЛДАЛОСЬ';};
-           if ($this->ipsclass->input['dir']=="452033454")
-           {unlink(ROOT_PATH."upload/gam".$frows['n']."/l".$this->ipsclass->input['lev']."p".$this->ipsclass->input['npod']."/index.html");
-            rmdir(ROOT_PATH."upload/gam".$frows['n']."/l".$this->ipsclass->input['lev']."p".$this->ipsclass->input['npod']);}
-           if ($this->ipsclass->input['dir']=="452033453")
-           {unlink(ROOT_PATH."upload/gam".$frows['n']."/index.html");
-           rmdir(ROOT_PATH."upload/gam".$frows['n']);
-           $res.="<script type='text/javascript'>window.navigate('{$this->ipsclass->base_url}?act=module&module=reps&cmd=scn');</script>";
-           echo($res);
-           exit;};
-         }
-         $res.="<script type='text/javascript'>window.navigate('{$this->ipsclass->base_url}?act=module&module=edit&cm=".$this->ipsclass->input['from']."&lev=".$this->ipsclass->input['lev']."&npod=".$this->ipsclass->input['npod']."');</script>";
-         echo($res);
-	  }
-      
       function edit()
       {
                  $res="";

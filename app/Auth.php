@@ -20,7 +20,7 @@ class Auth
     
     protected function __construct()
     {
-        session_start();
+        @session_start();
         
         if (array_key_exists('auth', $_SESSION)) {
             $this->_member = $_SESSION['auth'];

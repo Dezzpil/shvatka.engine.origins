@@ -1,10 +1,8 @@
 <?php
-
 namespace App\Controller;
 
 use Silex\Application;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpKernel\HttpKernelInterface;
 
 /**
  * 
@@ -16,7 +14,7 @@ class Shvatka extends Authed
     use \App\ClassLoaderBridge;
     
     const ADMIN_GROUP = 4; // Главные администаторы
-    const SH_NAMESPACE = '\\Shvatka\\';
+    const SH_NAMESPACE = '\\App\\Engine\\';
     const SH_BASEURL = '/shvatka';
     const SH_STARTURL = '/shvatka?module=shvatka';
     
@@ -30,7 +28,7 @@ class Shvatka extends Authed
 //        $userLogin = 'Jacob';
 //        $userLogin = 'Shepard';
 //        $member = $DBAdapter->query("select * from members where name='" . $userLogin ."'");
-
+        
         $auth = \App\Auth::getInstance();
         $member = $auth->getAuthedMemder();
         
@@ -51,9 +49,10 @@ class Shvatka extends Authed
         
         $modClass = self::SH_NAMESPACE . ucfirst(strtolower($modName));
         if (empty($this->_loader->loadClass($modClass))) {
-            throw new \Exception('Модуля ' . $modName . ' не существует');
+            $app->abort(404, 'Модуля ' . $modName . ' не существует');
         }
 
+        
         $mod = new $modClass;
         $mod->ipsclass = $adapter;
 
