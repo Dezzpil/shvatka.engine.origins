@@ -16,12 +16,12 @@ class Config implements \ArrayAccess
      * @param string $path
      * @param string $env
      * @return static
-     * @throws Exception
+     * @throws \Exception
      */
     static public function parse($path, $env)
     {
         if (static::$instance !== null) {
-            throw new Exception('Конфигурация уже была загружена ранее');
+            throw new \Exception('Конфигурация уже была загружена ранее');
         }
         static::$instance = new static($path, $env);
         return static::$instance;
@@ -72,7 +72,7 @@ class Config implements \ArrayAccess
     protected function __construct($path, $env)
     {
         if (!file_exists($path) || !is_readable($path)) {
-            throw new Exception('Файл конфигурации (' . $path . ') не существует или недоступен для чтения');
+            throw new \Exception('Файл конфигурации (' . $path . ') не существует или недоступен для чтения');
         }
         $content = file_get_contents($path);
         $this->rawData = json_decode($content, true);
@@ -90,7 +90,7 @@ class Config implements \ArrayAccess
             $parenting = explode(':', $sectionName);
             $name = array_shift($parenting);
             if (empty($parenting)) {
-                throw new Exception('Не указана родительская секция окружения в ' . $sectionName);
+                throw new \Exception('Не указана родительская секция окружения в ' . $sectionName);
             } else {
                 // заменяем родительские значения
                 $parent = array_shift($parenting);
@@ -105,7 +105,7 @@ class Config implements \ArrayAccess
             if (array_key_exists($sectionName, $this->rawData)) {
                 $this->sectionsData[$sectionName] = $this->rawData[$sectionName];
             } else {
-                throw new Exception('Указанная секция (' . $sectionName . ')не существует в файле конфигурации');
+                throw new \Exception('Указанная секция (' . $sectionName . ')не существует в файле конфигурации');
             }
         }
     }

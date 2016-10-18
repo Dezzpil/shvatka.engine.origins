@@ -1,6 +1,9 @@
 <?php
 // Жестко определяем значение окружения
-define('APPLICATION_ENV', 'testing');
+if (!defined('APPLICATION_ENV')) {
+    define('APPLICATION_ENV', 'testing');
+}
 
 // запускаем приложение
-return require __DIR__ . '/../app.php';
+$app = require __DIR__ . '/../app.php';
+return $app;

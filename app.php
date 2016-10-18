@@ -1,6 +1,6 @@
 <?php
 // Базовые настройки
-error_reporting(E_ALL);
+error_reporting();
 date_default_timezone_set('Europe/Moscow');
 session_save_path(__DIR__ . '/data/sessions');
 
@@ -8,7 +8,12 @@ session_save_path(__DIR__ . '/data/sessions');
 $loader = require __DIR__ . '/vendor/autoload.php';
 
 // Загружаем и разбираем конфигурацию
-$config = App\Config::parse(__DIR__ . '/config.json', APPLICATION_ENV);
+try {
+    $config = App\Config::parse(__DIR__ . '/config.json', APPLICATION_ENV);
+} catch (Exception $e) {
+    // ... на случай тестов
+    $config = App\Config::getInstance();
+}
 
 // Настраиваем приложение
 $db = $config['database'];
@@ -18,6 +23,7 @@ App\Adapter\DB::config($db['host'], $db['user'], $db['password'], $db['schema'],
 use Symfony\Component\Debug\ExceptionHandler;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
+use Silex\Provider\SessionServiceProvider;
 use Silex\Application;
 
 ExceptionHandler::register();
@@ -25,7 +31,15 @@ ExceptionHandler::register();
 $app = new Application;
 $app['debug'] = $config['debug'];
 
-// настраиваем роуты
+// без этого кука будет генериться каждый раз по-новой,
+// потому что приложение не будет подхватывать ранее созданную
+$app->register(new SessionServiceProvider(), [
+    // это нужно определить именно здесь, если мы запускаем тесты
+    // позже уже не получается
+    // http://stackoverflow.com/questions/13586447/phpunit-fails-when-using-silex-sessionserviceprovider
+    'session.test' => APPLICATION_ENV === 'testing'
+]);
+
 $app->match(
     '/{controller}/{action}', 
     function(Request $request, Application $app, $controller, $action) use ($loader)
@@ -53,7 +67,8 @@ $app->match(
         
         $action = strtolower($action);
         if (method_exists($object, $action)) {
-            return $object->$action($request, $app);
+            $result = $object->$action($request, $app);
+            return $result;
         } else {
             $app->abort(404, 'У контроллера ' . $controller . ' не существует действия ' . $action);
         }
@@ -74,5 +89,10 @@ $app->error(function (Exception $e, Request $request, $code) {
     return new Response($message);
 });
 
-$app->run();
+// здесь запускать приложение не надо
+// это зависит от того, как мы его используем:
+// * если тесты - они запускают самостоятельно, ориентируясь на код функц. теста
+// 
+// * если запрос с сервара - вызов происходит из public/index.php, и запуск
+//   ориентируется на данные, полученные от сервера
 return $app;

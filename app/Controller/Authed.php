@@ -5,6 +5,7 @@ namespace App\Controller;
 use Silex\Application;
 use Symfony\Component\HttpFoundation\Request;
 
+
 /**
  * 
  * @date 27.09.2016
@@ -16,7 +17,8 @@ abstract class Authed extends Base
     {
         parent::before($request, $app);
         
-        $auth = \App\Auth::getInstance();
+        $session = $this->_getSession($request);
+        $auth = new \App\Auth($session);
         if ( !$auth->isAuth()) {
             return $app->redirect('/');
         }

@@ -38,28 +38,8 @@ class Stat extends Base
             $html=$html.'<font size=2>'.$this->result.'</font>';
             $this->ipsclass->print->add_output( $html );
             $this->nav[] = "<a href='{$this->ipsclass->base_url}act=module&module=shvatka'>СХВАТКА</a>";
-            $this->ipsclass->print->do_output(array(OVERRIDE => 0, TITLE => 'Статистика СХВАТКИ', NAV => $this->nav));
-            /*echo  '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xml:lang="en" lang="en" xmlns="http://www.w3.org/1999/xhtml">
-<head>
-<meta http-equiv="content-type" content="text/html; charset=windows-1251" />
-<link rel="shortcut icon" href="favicon.ico" />
-		<link type="text/css" href="jquery/css/cupertino/jquery-ui-1.7.2.custom.css" rel="stylesheet" />
-		<script type="text/javascript" src="jquery/js/jquery-1.3.2.min.js"></script>
-		<script type="text/javascript" src="jquery/js/jquery-ui-1.7.2.custom.min.js"></script>
-<title>Статистика СХВАТКИ</title></head>
-<body>'.$this->result.'</body>
-</html>';*/
-
-                //exit();
+            return $this->ipsclass->print->do_output(array(OVERRIDE => 0, TITLE => 'Статистика СХВАТКИ', NAV => $this->nav));
         }
-
-        //------------------------------------------
-        // do_something
-        //
-        // Test sub, show if admin or not..
-        //
-        //------------------------------------------
 
       function sost($id)
       {

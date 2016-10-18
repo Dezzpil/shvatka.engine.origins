@@ -42,7 +42,7 @@ class Printer
             $this->_data = '<head><title>' . $params['TITLE'] . '</title></head>' . $this->_data;
         }
         
-        echo $this->_data;
+        return $this->_data;
     }
     
 }

@@ -10,10 +10,10 @@ class Shvatka extends Base
         function parsdig($st)
         {
             $chisla=array('0','1','2','3','4','5','6','7','8','9');
-            $ya=true;            	for ($i=0; $i<strlen($st); $i++)
-            {
-                if (!in_array(substr($st,$i,1),$chisla))
-                {                    	$ya=false;
+            $ya=true;            	
+            for ($i=0; $i<strlen($st); $i++) {
+                if (!in_array(substr($st,$i,1),$chisla)) {                    	
+                    $ya=false;
                     break;
                 }
             }
@@ -52,9 +52,7 @@ class Shvatka extends Base
         $html = '<font size=2>'.$this->result.'</font>';
         $this->ipsclass->print->add_output( $html );
         $this->nav[] = "<a href='{$this->ipsclass->base_url}act=module&module=shvatka'>СХВАТКА</a>";
-        $this->ipsclass->print->do_output(array('OVERRIDE' => 0, 'TITLE' => 'СХВАТКА', 'NAV' => $this->nav));
-
-        //exit();
+        return $this->ipsclass->print->do_output(array('OVERRIDE' => 0, 'TITLE' => 'СХВАТКА', 'NAV' => $this->nav));
     }
 
     /**
@@ -675,11 +673,11 @@ $res.='<br><input type=submit value="  Проверить ключ/наличи�
                   $res=$res.'Дата предстоящей игры пока не определена.<br><br>';
               }
               $adm_msg='';
-              $msg_q=$this->ipsclass->DB->query("select * from sh_admin_msg WHERE ((komand='все')|(FIND_IN_SET('".$komanda."',komand)!=0))&((endtime>='".mktime()."')&(FIND_IN_SET('".$komanda."',readed)=0))");
+              $msg_q=$this->ipsclass->DB->query("select * from sh_admin_msg WHERE ((komand='все')|(FIND_IN_SET('".$komanda."',komand)!=0))&((endtime>='".time()."')&(FIND_IN_SET('".$komanda."',readed)=0))");
               while ($frows = $this->ipsclass->DB->fetch_row($msg_q))
               {
                 if ($frows['komand']=='все') {$color='#EE634F'; $komu='<i><u>всех</u></i> команд';} else {$color='#67ED50'; $komu='команды <i><u>'.$komanda.'</u></i>';}
-                if ($frows['endtime']>=mktime()) $adm_msg.='<table style="border: 1px solid black;width:100%;background:'.$color.';"><tr><th>Сообщение от организатора '.$frows['autor'].' для '.$komu.'.</th></tr><tr class="ipbtable"><td class="row1">'.$frows['msg'].' <div align="right"><form  "' . $this->ipsclass->base_url .'" method="get">
+                if ($frows['endtime']>=time()) $adm_msg.='<table style="border: 1px solid black;width:100%;background:'.$color.';"><tr><th>Сообщение от организатора '.$frows['autor'].' для '.$komu.'.</th></tr><tr class="ipbtable"><td class="row1">'.$frows['msg'].' <div align="right"><form  "' . $this->ipsclass->base_url .'" method="get">
 <input name="act" type="hidden" value="module">
 <input name="module" type="hidden" value="utils">
 <input name="hsh" type="hidden" value="'.$frows['hash'].'"><input style="font: 8pt tahoma; padding: 0pt;"type="submit" value="Прочитал"></form></div></td></tr></table>';

@@ -3,6 +3,8 @@ namespace App\Controller;
 
 use Silex\Application;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Session\Session;
+
 
 /**
  * 
@@ -18,6 +20,9 @@ class Shvatka extends Authed
     const SH_BASEURL = '/shvatka';
     const SH_STARTURL = '/shvatka?module=shvatka';
     
+    const EXC_NOMOD = 'Не указан модуль';
+    const EXC_NOSUCHMOD = 'Такого модуля не существует';
+    
     public function index(Request $request, Application $app)
     {
         // объект для обращения к БД
@@ -29,11 +34,16 @@ class Shvatka extends Authed
 //        $userLogin = 'Shepard';
 //        $member = $DBAdapter->query("select * from members where name='" . $userLogin ."'");
         
-        $auth = \App\Auth::getInstance();
+        //$auth = \App\Auth::getInstance();
+        $session = $this->_getSession($request);
+        $auth = new \App\Auth($session);
+        
         $member = $auth->getAuthedMemder();
         
         // Создаем и настраиваем адаптер для работы движка игры
-        $adapter = new \App\Adapter\IPSClass($_REQUEST);
+        $data = array_merge($request->query->all(), $request->request->all());
+
+        $adapter = new \App\Adapter\IPSClass($data);
         $adapter->setDB($DBAdapter);
         $adapter->setPrinter(\App\Adapter\Printer::getInstance());
         $adapter->setBaseURL(self::SH_BASEURL . '?');
@@ -44,23 +54,20 @@ class Shvatka extends Authed
         
         $modName = $request->get('module');
         if (empty($modName)) {
-            throw new \Exception('Не указан модуль');
+            throw new \Exception(static::EXC_NOMOD);
         }
         
         $modClass = self::SH_NAMESPACE . ucfirst(strtolower($modName));
         if (empty($this->_loader->loadClass($modClass))) {
-            $app->abort(404, 'Модуля ' . $modName . ' не существует');
+            $app->abort(404, static::EXC_NOSUCHMOD);
         }
 
-        
         $mod = new $modClass;
         $mod->ipsclass = $adapter;
 
         // The return value of the 
         // closure becomes the content of the page.
-        ob_start();
-        $mod->run_module();
-        $result = ob_get_clean();
+        $result = $mod->run_module();
         
         $userHtml = "<small>Пользователь {$member['name']} ({$member['komanda']})";
         $userHtml .= "&nbsp;<a href='/index/logout'>Выйти</a></small><br />";

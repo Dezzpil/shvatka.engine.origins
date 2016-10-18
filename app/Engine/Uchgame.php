@@ -54,7 +54,7 @@ class Uchgame extends Base
                 }
             }
             $this->ipsclass->print->add_output($res);    
-            $this->ipsclass->print->do_output(['NAV' => $this->nav]);
+            return $this->ipsclass->print->do_output(['NAV' => $this->nav]);
 
         }
 }

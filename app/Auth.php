@@ -3,6 +3,7 @@
 namespace App;
 
 use App\Adapter\DB;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 /**
  * 
@@ -14,20 +15,42 @@ class Auth
     // самая наипростейшая аутентификация
     // завязанная на таблице members
     
-    use Singleton;
+    //use Singleton;
     
+    /**
+     *
+     * @var \SessionIdInterface
+     */
+    protected $_session = null;
+    
+    /**
+     *
+     * @var array
+     */
     protected $_member = null;
     
-    protected function __construct()
+    /**
+     * 
+     * @param SessionInterface $session
+     */
+    public function __construct(SessionInterface $session)
     {
-        @session_start();
+        $this->_session = $session;
         
-        if (array_key_exists('auth', $_SESSION)) {
-            $this->_member = $_SESSION['auth'];
+        if (!$this->_session->isStarted()) {
+            $this->_session->start();
+        }
+        
+        if ($this->_session->has('auth')) {
+            $this->_member = $this->_session->get('auth');
         }
     }
-
-
+    
+    const EXC_NONAME = 'Не указан логин пользователя!';
+    const EXC_NOUSER = 'Пользователя с указанным логином не существует!';
+    const EXC_BADDATA = 'Логин или пароль указаны неверно!';
+    const EXC_NOAUTH = 'Нет данных об аутентификации!';
+    
     /**
      * Пользватель аутентифицирован?
      * @return boolean
@@ -45,7 +68,7 @@ class Auth
     function getAuthedMemder()
     {
         if (empty($this->_member)) {
-            throw new \Exception('No authed member', 1);
+            throw new \Exception(static::EXC_NOAUTH, 1);
         }
         return $this->_member;
     }
@@ -64,7 +87,7 @@ class Auth
     protected function _loadMember($name)
     {
         if (empty($name)) {
-            throw new \Exception('Не указан name пользователя', 1);
+            throw new \Exception(static::EXC_NONAME, 1);
         }
 
         $result = DB::getInstance()->query(
@@ -72,7 +95,7 @@ class Auth
         );
 
         if (empty($result)) {
-            throw new \Exception("Пользователя {$name} не существует", 2);
+            throw new \Exception(static::EXC_NOUSER, 2);
         }
 
         return $result[0];
@@ -90,7 +113,6 @@ class Auth
         return md5('thisIs' . $password . 'salt!');
     }
 
-
     /**
      * Войти
      * @param type $name
@@ -104,11 +126,10 @@ class Auth
         if ($this->hashPassword($password) === $member['password']) {
             unset($member['password']);
             $this->_member = $member;
-            $_SESSION['auth'] = $this->_member;
-            
-            return $this->getAuthedMemder();
+            $this->_session->set('auth', $this->_member);
+            return $this->_member;
         } else {
-            throw new \Exception('Логин или пароль указаны неверно!', 10);
+            throw new \Exception(static::EXC_BADDATA, 10);
         }
     }
     
@@ -119,8 +140,7 @@ class Auth
     {
         if ($this->isAuth()) {
             $this->_member = null;
-            unset($_SESSION['auth']);
-            session_destroy();
+            $this->_session->remove('auth');
         }
     }
     

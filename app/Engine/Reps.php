@@ -94,15 +94,14 @@ class Reps extends Base
                 $html=$html.'<font size=2>'.$this->result.'</font>';
                 $this->ipsclass->print->add_output( $html );
                 $this->nav[] = "<a href='{$this->ipsclass->base_url}act=module&module=shvatka'>СХВАТКА</a>";
-                $this->ipsclass->print->do_output(array('OVERRIDE' => 0, 'TITLE' => 'Админка игры', 'NAV' => $this->nav));
+                return $this->ipsclass->print->do_output(array('OVERRIDE' => 0, 'TITLE' => 'Админка игры', 'NAV' => $this->nav));
         }
         else
         {
             $html=$html."Вы не администратор";
             $this->ipsclass->print->add_output( $html );
-            $this->ipsclass->print->do_output(array('OVERRIDE' => 0, 'TITLE' => 'Вы не администратор'));
+            return $this->ipsclass->print->do_output(array('OVERRIDE' => 0, 'TITLE' => 'Вы не администратор'));
         }
-        //exit();
     }
 
       function admexmsg()
@@ -113,7 +112,7 @@ class Reps extends Base
 	           {
 	              if (isset($this->ipsclass->input['ig'])&(isset($this->ipsclass->input['msgexptm'])))
 	               {
-                     $this->ipsclass->DB->query("INSERT INTO sh_admin_msg (msg, starttime, endtime,  komand,  autor, hash) VALUES ('".($this->ipsclass->input['msgtxt'])."','".(mktime())."','".(mktime()+($this->ipsclass->input['msgexptm']*60))."','".(implode ( ',',  $this->ipsclass->input['ig']))."','".($this->ipsclass->member['name'])."','".(md5( $this->ipsclass->input['msgtxt']))."')");
+                     $this->ipsclass->DB->query("INSERT INTO sh_admin_msg (msg, starttime, endtime,  komand,  autor, hash) VALUES ('".($this->ipsclass->input['msgtxt'])."','".(time())."','".(time()+($this->ipsclass->input['msgexptm']*60))."','".(implode ( ',',  $this->ipsclass->input['ig']))."','".($this->ipsclass->member['name'])."','".(md5( $this->ipsclass->input['msgtxt']))."')");
 	                 $res.='<br>Сообщение отправлено.';
 	               }
 

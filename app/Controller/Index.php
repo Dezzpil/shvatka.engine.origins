@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use Silex\Application;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Session\Session;
 
 /**
  * 
@@ -30,8 +31,8 @@ HTML;
 
     public function index(Request $request, Application $app)
     {
-        $auth = \App\Auth::getInstance();
-        
+        $session = $this->_getSession($request);
+        $auth = new \App\Auth($session);
         if ($auth->isAuth()) {
             return $app->redirect(Shvatka::SH_STARTURL);
         } else {
@@ -42,9 +43,11 @@ HTML;
     
     public function login(Request $request, Application $app)
     {
-        $auth = \App\Auth::getInstance();
+        $session = $this->_getSession($request);
+        $auth = new \App\Auth($session);
         $name = $request->get('name');
         $pass = $request->get('password');
+        
         try {
             $auth->login($name, $pass);
             return $app->redirect(Shvatka::SH_STARTURL);
@@ -55,7 +58,8 @@ HTML;
     
     public function logout(Request $request, Application $app)
     {
-        $auth = \App\Auth::getInstance();
+        $session = $this->_getSession($request);
+        $auth = new \App\Auth($session);
         $auth->logout();
         return $app->redirect('/');
     }

@@ -29,7 +29,7 @@ class Notelog extends Base
             $html=$html.'<font size=2>'.$this->result.'</font>';
             $this->ipsclass->print->add_output( $html );
             $this->nav[] = "<a href='{$this->ipsclass->base_url}act=module&module=shvatka'>СХВАТКА</a>";
-            $this->ipsclass->print->do_output(array('OVERRIDE' => 0, 'TITLE' => 'Логи начисления очков', 'NAV' => $this->nav));
+            return $this->ipsclass->print->do_output(array('OVERRIDE' => 0, 'TITLE' => 'Логи начисления очков', 'NAV' => $this->nav));
 
                 //exit();
         }
