@@ -39,7 +39,8 @@ class Shvatka extends Authed
         $member = $auth->getAuthedMemder();
         
         // Создаем и настраиваем адаптер для работы движка игры
-        $data = array_merge($request->query->all(), $request->request->all());
+        $params = array_merge($request->query->all(), $request->request->all());
+        $data = new \App\DataContainer($params);
 
         $adapter = new \App\Adapter\IPSClass($data);
         $adapter->setDB($DBAdapter);

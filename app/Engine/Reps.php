@@ -375,88 +375,44 @@ $res.='</center></td></tr></table></div>';
                  $this->result=$res;
       }
       
+    /**
+     * Управление предстоящей игрой
+     */
     function addg()
-    {
-        $res = "";
+    {   
+        $gameHelper = new Helper\Game;
+        $game = $gameHelper->load();
+        $result = [
+            'created' => false,
+            'updated' => false,
+            'deleted' => false,
+            'game' => $game
+        ];
         
-        $game = new Helper\Game;
-        if (@$this->ipsclass->input['y'] == "") {
+        if (!empty($this->ipsclass->input['y'])) {
             
-            $this->ipsclass->render('module/game.twig', [
-                'baseUrl' => $this->ipsclass->base_url,
-                'game' => $game->load()
-            ]);
-            
-//            if (count($this->ipsclass->DB->query("select * from sh_games where status='п'"))!=0)
-//            { // редактирование данных игры
-//              $frows = $this->ipsclass->DB->fetch_row($fquery);
-//              $res.='<center><form action="' . $this->ipsclass->base_url . '">
-//<input name="act" type="hidden" value="module">
-//<input name="module" type="hidden" value="reps">
-//<input name="cmd" type="hidden" value="addg">
-//<input name="y" type="hidden" value="1">
-//<b>Название игры <b><input name="gn" size="100" type="text" value="'.$frows['g_name'].'"><br>
-//Дата игры в формате ГГГГ-ММ-ДД ЧЧ:ММ:СС <input name="gt" type="text" value="'.$frows['dt_g'].'"><br>
-//То, что идёт после слов "Призовой фонд игры составляет:" (например: "100 руб", или "сколько собрали") </b><input name="gf" type="text" value="'.$frows['fond'].'"><br>
-//<input type="submit" value="Подтвердить изменения" style={background:#D2D0D0;border:1px;border:outset;border-color:#ffffff;font-size:11px;}>
-//</form>
-//<br>
-//<br>
-//<form "' . $this->ipsclass->base_url . '">
-//<input name="act" type="hidden" value="module">
-//<input name="module" type="hidden" value="reps">
-//<input name="cmd" type="hidden" value="addg">
-//<input name="delg" type="hidden" value="1">
-//<input name="y" type="hidden" value="1">
-//<input type="submit" value="Удалить игру" style={background:#ff9090;border:1px;border:outset;border-color:#ffffff;font-size:11px;}><br></b>
-//</form><font color=red size=1>После удаления игры все команды и игроки переводятся в состояние "деньги НЕ сдал" </font></center>';
-//            }
-//            else
-//            { // добавление новой игры
-//                $res.='<center><form action="' . $this->ipsclass->base_url . '">
-//<input name="act" type="hidden" value="module">
-//<input name="module" type="hidden" value="reps">
-//<input name="cmd" type="hidden" value="addg">
-//<input name="y" type="hidden" value="1">
-//<b>Название игры <input name="gn" size="100" type="text" value=""><br>
-//Дата игры в формате ГГГГ-ММ-ДД ЧЧ:ММ:СС <input name="gt" type="text" value="0000-00-00 23:00:00"><br>
-//То, что идёт после слов "Призовой фонд игры составляет:" (например: "100 руб", или "сколько собрали") </b><input name="gf" type="text" value=""><br>
-//<input type="submit" value="Создать игру" style={background:#D2D0D0;border:1px;border:outset;border-color:#ffffff;font-size:11px;}><br>
-//</form>
-//<font color=red size=1>После создания новой игры логи предыдущей игры, а также даты и времена окончания командами педыдущей игры будут стёрты. Если их не запостили пердыдущие организаторы, сделайте это вы. </font></center>';
-//            }
-        }
-        else
-        {  //обработка прееданных данных
-            if (@$this->ipsclass->input['delg']!="1")
-            {  //ввод данных игры
-                if (count($this->ipsclass->DB->query("select * from sh_games where status='п'"))!=0)
-                {
-                    $this->ipsclass->DB->query("update sh_games set g_name='".($this->ipsclass->input['gn'])."', dt_g='".($this->ipsclass->input['gt'])."', fond='".($this->ipsclass->input['gf'])."' where status='п'");
-                    $res.='Изменения в настройки игры внесены.<br><br>';
-                }
-                else
-                {
-                    $this->ipsclass->DB->query("update  sh_comands set uroven=0, podskazka=0, dt_ur='0000-00-00 00:00:00'" );
-                    $this->ipsclass->DB->query("delete from sh_log");
-                    $this->ipsclass->DB->query("INSERT INTO sh_games (g_name, dt_g, status, fond) values ('".($this->ipsclass->input['gn'])."', '".($this->ipsclass->input['gt'])."', 'п', '".($this->ipsclass->input['gf'])."')" );
-                    //$this->ipsclass->DB->query("ALTER TABLE sh_log PACK_KEYS =0 CHECKSUM =0 DELAY_KEY_WRITE =0 AUTO_INCREMENT =1");
-                    $res.='Игра создана.<br><br>';
+            if ($this->ipsclass->input['delg'] == "1") {
+                $gameHelper->delete();
+                $result['deleted'] = true;
+                unset($result['game']);
+            } else {
+                $name = $this->ipsclass->input['gn'];
+                $date = $this->ipsclass->input['gt'];
+                $money = $this->ipsclass->input['gf'];
+                
+                if (empty($game)) {
+                    $gameHelper->insert($name, $date, $money);
+                    $result['created'] = true;
+                    $result['game'] = $gameHelper->load();
+                } else {
+                    $gameHelper->update($name, $date, $money);
+                    $result['updated'] = true;
                 }
             }
-            else
-            {  //удаление игры
-                $this->ipsclass->DB->query("update  sh_comands set uroven=0, podskazka=0, dengi=0, dt_ur='0000-00-00 00:00:00'" );
-                $this->ipsclass->DB->query("update  sh_igroki set ch_dengi=0" );
-                $this->ipsclass->DB->query("delete from sh_games where status='п'");
-                $this->ipsclass->DB->query("select * from sh_games order by n desc");
-                $frows = $this->ipsclass->DB->fetch_row($fquery);
-                //$this->ipsclass->DB->query("ALTER TABLE `sh_games` PACK_KEYS =0 CHECKSUM =0 DELAY_KEY_WRITE =0 AUTO_INCREMENT =".($frows['n']-1));
-                $res.='Игра удалена.<br><br>';
-            }
         }
-        $this->result=$res;
-      }
+        
+        $this->ipsclass->render('module/game.twig', $result);
+    }
       
       function deng()
       {
