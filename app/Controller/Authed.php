@@ -1,10 +1,8 @@
 <?php
-
 namespace App\Controller;
 
-use Silex\Application;
+use App\Application;
 use Symfony\Component\HttpFoundation\Request;
-
 
 /**
  * 
@@ -21,6 +19,10 @@ abstract class Authed extends Base
         $auth = new \App\Auth($session);
         if ( !$auth->isAuth()) {
             return $app->redirect('/');
+        } else {
+            // Если пользователь аутентифицирован,
+            // то будем отображать блок с информацией
+            $app->setTemplateVariable('member', $auth->getAuthedMemder());
         }
     }
 }

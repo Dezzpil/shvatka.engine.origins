@@ -1,0 +1,26 @@
+<center>
+    <form action="<?= $this->base_url ?>">
+        <input name="act" type="hidden" value="module">
+        <input name="module" type="hidden" value="reps">
+        <input name="cmd" type="hidden" value="addg">
+        <input name="y" type="hidden" value="1">
+        <b>Название игры</b>
+        <input name="gn" size="100" type="text" value="<?= $this->game['g_name'] ?>"><br>
+        <b>Дата игры в формате ГГГГ-ММ-ДД ЧЧ:ММ:СС</b>
+        <input name="gt" type="text" value="<?= $this->game['dt_g'] ?>"><br>
+        <b>То, что идёт после слов "Призовой фонд игры составляет:" (например: "100 руб", или "сколько собрали")</b>
+        <input name="gf" type="text" value="<?= $this->game['fond'] ?>"><br>
+        <input type="submit" value="Подтвердить изменения" />
+    </form>
+    <br>
+    <br>
+    <form action="<?= $this->base_url ?>">
+        <input name="act" type="hidden" value="module">
+        <input name="module" type="hidden" value="reps">
+        <input name="cmd" type="hidden" value="addg">
+        <input name="delg" type="hidden" value="1">
+        <input name="y" type="hidden" value="1">
+        <input type="submit" value="Удалить игру">
+    </form>
+    <font color=red size=1>После удаления игры все команды и игроки переводятся в состояние "деньги НЕ сдал" </font>
+</center>

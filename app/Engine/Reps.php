@@ -3,23 +3,24 @@ namespace App\Engine;
 
 class Reps extends Base
 {
+    function sectostr($secs)
+    {
+        $st="";
+        $tmp=floor($secs / 86400);
+        if ($tmp>0) {$st='<span id=\'days\'>'.$tmp.'</span> д. ';}
+        $tmp2=floor(($secs - ($tmp*86400))/3600);
+        if ($tmp2>0) {$st=$st.'<span id=\'hours\'>'.$tmp2.'</span> ч. ';}
+        $tmp3=floor(($secs - ($tmp*86400) - ($tmp2*3600))/60);
+        if ($tmp3>0) {$st=$st.'<span id=\'mins\'>'.$tmp3.'</span> м. ';}
+        $tmp=floor($secs - ($tmp*86400) - ($tmp2*3600)-($tmp3*60));
+        if ($tmp>0) {$st=$st.'<span id=\'secs\'>'.$tmp.'</span> сек. ';}
+        return $st;
+    }
+    
     function run_module()
     {
         parent::run_module();
         
-        function sectostr($secs)
-        {
-            $st="";
-            $tmp=floor($secs / 86400);
-            if ($tmp>0) {$st='<span id=\'days\'>'.$tmp.'</span> д. ';}
-            $tmp2=floor(($secs - ($tmp*86400))/3600);
-            if ($tmp2>0) {$st=$st.'<span id=\'hours\'>'.$tmp2.'</span> ч. ';}
-            $tmp3=floor(($secs - ($tmp*86400) - ($tmp2*3600))/60);
-            if ($tmp3>0) {$st=$st.'<span id=\'mins\'>'.$tmp3.'</span> м. ';}
-            $tmp=floor($secs - ($tmp*86400) - ($tmp2*3600)-($tmp3*60));
-            if ($tmp>0) {$st=$st.'<span id=\'secs\'>'.$tmp.'</span> сек. ';}
-            return $st;
-        }
         $html = '';
         $this->ipsclass->DB->query("select field_4 from pfields_content where member_id=".$this->ipsclass->member['id']."");
         $frows = $this->ipsclass->DB->fetch_row($fquery);
@@ -341,7 +342,7 @@ $res.='</center></td></tr></table></div>';
                               if  ($naz!=$j)
                               {
                                      if ($tab[$naz][$lev]!=0)
-                                     $tab[$naz][$lev]=(date('H:i:s',strtotime($tab[$naz][$lev]))).'<br>-'.(sectostr(strtotime($fin[$lev])-strtotime($tab[$j][$i])));
+                                     $tab[$naz][$lev]=(date('H:i:s',strtotime($tab[$naz][$lev]))).'<br>-'.($this->sectostr(strtotime($fin[$lev])-strtotime($tab[$j][$i])));
                                      else
                                      $tab[$naz][$lev]='--:--:--';
                               }
@@ -376,47 +377,54 @@ $res.='</center></td></tr></table></div>';
       
     function addg()
     {
-        $res="";
-        if (@$this->ipsclass->input['y']=="")
-        {
-            if (count($this->ipsclass->DB->query("select * from sh_games where status='п'"))!=0)
-            { // редактирование данных игры
-              $frows = $this->ipsclass->DB->fetch_row($fquery);
-              $res.='<center><form action="' . $this->ipsclass->base_url . '">
-<input name="act" type="hidden" value="module">
-<input name="module" type="hidden" value="reps">
-<input name="cmd" type="hidden" value="addg">
-<input name="y" type="hidden" value="1">
-<b>Название игры <b><input name="gn" size="100" type="text" value="'.$frows['g_name'].'"><br>
-Дата игры в формате ГГГГ-ММ-ДД ЧЧ:ММ:СС <input name="gt" type="text" value="'.$frows['dt_g'].'"><br>
-То, что идёт после слов "Призовой фонд игры составляет:" (например: "100 руб", или "сколько собрали") </b><input name="gf" type="text" value="'.$frows['fond'].'"><br>
-<input type="submit" value="Подтвердить изменения" style={background:#D2D0D0;border:1px;border:outset;border-color:#ffffff;font-size:11px;}>
-</form>
-<br>
-<br>
-<form "' . $this->ipsclass->base_url . '">
-<input name="act" type="hidden" value="module">
-<input name="module" type="hidden" value="reps">
-<input name="cmd" type="hidden" value="addg">
-<input name="delg" type="hidden" value="1">
-<input name="y" type="hidden" value="1">
-<input type="submit" value="Удалить игру" style={background:#ff9090;border:1px;border:outset;border-color:#ffffff;font-size:11px;}><br></b>
-</form><font color=red size=1>После удаления игры все команды и игроки переводятся в состояние "деньги НЕ сдал" </font></center>';
-            }
-            else
-            { // добавление новой игры
-                $res.='<center><form action="' . $this->ipsclass->base_url . '">
-<input name="act" type="hidden" value="module">
-<input name="module" type="hidden" value="reps">
-<input name="cmd" type="hidden" value="addg">
-<input name="y" type="hidden" value="1">
-<b>Название игры <input name="gn" size="100" type="text" value=""><br>
-Дата игры в формате ГГГГ-ММ-ДД ЧЧ:ММ:СС <input name="gt" type="text" value="0000-00-00 23:00:00"><br>
-То, что идёт после слов "Призовой фонд игры составляет:" (например: "100 руб", или "сколько собрали") </b><input name="gf" type="text" value=""><br>
-<input type="submit" value="Создать игру" style={background:#D2D0D0;border:1px;border:outset;border-color:#ffffff;font-size:11px;}><br>
-</form>
-<font color=red size=1>После создания новой игры логи предыдущей игры, а также даты и времена окончания командами педыдущей игры будут стёрты. Если их не запостили пердыдущие организаторы, сделайте это вы. </font></center>';
-            }
+        $res = "";
+        
+        $game = new Helper\Game;
+        if (@$this->ipsclass->input['y'] == "") {
+            
+            $this->ipsclass->render('module/game.twig', [
+                'baseUrl' => $this->ipsclass->base_url,
+                'game' => $game->load()
+            ]);
+            
+//            if (count($this->ipsclass->DB->query("select * from sh_games where status='п'"))!=0)
+//            { // редактирование данных игры
+//              $frows = $this->ipsclass->DB->fetch_row($fquery);
+//              $res.='<center><form action="' . $this->ipsclass->base_url . '">
+//<input name="act" type="hidden" value="module">
+//<input name="module" type="hidden" value="reps">
+//<input name="cmd" type="hidden" value="addg">
+//<input name="y" type="hidden" value="1">
+//<b>Название игры <b><input name="gn" size="100" type="text" value="'.$frows['g_name'].'"><br>
+//Дата игры в формате ГГГГ-ММ-ДД ЧЧ:ММ:СС <input name="gt" type="text" value="'.$frows['dt_g'].'"><br>
+//То, что идёт после слов "Призовой фонд игры составляет:" (например: "100 руб", или "сколько собрали") </b><input name="gf" type="text" value="'.$frows['fond'].'"><br>
+//<input type="submit" value="Подтвердить изменения" style={background:#D2D0D0;border:1px;border:outset;border-color:#ffffff;font-size:11px;}>
+//</form>
+//<br>
+//<br>
+//<form "' . $this->ipsclass->base_url . '">
+//<input name="act" type="hidden" value="module">
+//<input name="module" type="hidden" value="reps">
+//<input name="cmd" type="hidden" value="addg">
+//<input name="delg" type="hidden" value="1">
+//<input name="y" type="hidden" value="1">
+//<input type="submit" value="Удалить игру" style={background:#ff9090;border:1px;border:outset;border-color:#ffffff;font-size:11px;}><br></b>
+//</form><font color=red size=1>После удаления игры все команды и игроки переводятся в состояние "деньги НЕ сдал" </font></center>';
+//            }
+//            else
+//            { // добавление новой игры
+//                $res.='<center><form action="' . $this->ipsclass->base_url . '">
+//<input name="act" type="hidden" value="module">
+//<input name="module" type="hidden" value="reps">
+//<input name="cmd" type="hidden" value="addg">
+//<input name="y" type="hidden" value="1">
+//<b>Название игры <input name="gn" size="100" type="text" value=""><br>
+//Дата игры в формате ГГГГ-ММ-ДД ЧЧ:ММ:СС <input name="gt" type="text" value="0000-00-00 23:00:00"><br>
+//То, что идёт после слов "Призовой фонд игры составляет:" (например: "100 руб", или "сколько собрали") </b><input name="gf" type="text" value=""><br>
+//<input type="submit" value="Создать игру" style={background:#D2D0D0;border:1px;border:outset;border-color:#ffffff;font-size:11px;}><br>
+//</form>
+//<font color=red size=1>После создания новой игры логи предыдущей игры, а также даты и времена окончания командами педыдущей игры будут стёрты. Если их не запостили пердыдущие организаторы, сделайте это вы. </font></center>';
+//            }
         }
         else
         {  //обработка прееданных данных
@@ -443,7 +451,7 @@ $res.='</center></td></tr></table></div>';
                 $this->ipsclass->DB->query("delete from sh_games where status='п'");
                 $this->ipsclass->DB->query("select * from sh_games order by n desc");
                 $frows = $this->ipsclass->DB->fetch_row($fquery);
-                $this->ipsclass->DB->query("ALTER TABLE `sh_games` PACK_KEYS =0 CHECKSUM =0 DELAY_KEY_WRITE =0 AUTO_INCREMENT =".($frows['n']-1));
+                //$this->ipsclass->DB->query("ALTER TABLE `sh_games` PACK_KEYS =0 CHECKSUM =0 DELAY_KEY_WRITE =0 AUTO_INCREMENT =".($frows['n']-1));
                 $res.='Игра удалена.<br><br>';
             }
         }

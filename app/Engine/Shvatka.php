@@ -684,11 +684,6 @@ $res.='<br><input type=submit value="  Проверить ключ/наличи�
               }
               if ($adm_msg!='') $res.='<div id="adm_msg_div" style="left:35%;top:35%;width:30%;height:auto;overflow: auto;position:absolute;" onClick="javascript:this.style.display=\'none\'">'.$adm_msg.'</div>';
             }
-//        if ($this->ipsclass->input['lofver']==1)
-//        {$this->result=$res."<center><font size=1><a href='{$this->ipsclass->base_url}act=module&module=shvatka'>Схватка с оформлением</a></font></center>";}
-//        else
-//        {$this->result=$res."<table cellspacing=\"0\" id=\"gfooter\"><tr><td align=\"center\"><b><a href='{$this->ipsclass->base_url}act=module&module=shvatka&lofver=1'}>Схватка без оформления</a></b></td></tr></table>";}
             $this->result = $res;
     }
 }
-?>

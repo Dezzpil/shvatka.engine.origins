@@ -47,4 +47,17 @@ class IndexTest extends \App\Tests\AbstractTest
         $this->assertTrue($client->getResponse()->isRedirect());
         $this->assertTrue(empty($client->getRequest()->getSession()->get('auth')));
     }
+    
+    public function testNotAdmin()
+    {
+        $this->_loginUser();
+        $client = $this->createClient();
+        $client->request('GET', '/shvatka', 
+            ['module' => 'reps', 'cmd' => 'addg']
+        );
+        $this->assertContains(
+            'Вы не администратор',
+            $client->getResponse()->getContent()
+        );
+    }
 }

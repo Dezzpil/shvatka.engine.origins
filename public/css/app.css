@@ -7,7 +7,25 @@ and open the template in the editor.
     Created on : 27.09.2016, 4:24:20
     Author     : Nikita Dezzpil Orlov <nikita@shvatka.ru>
 */
+body {
+    
+}
+ul {
+    margin: 10px 0;
+    padding: 0;
+}
+.list-inline li {
+    display: inline-block;
+    margin: 0 3px;
+    padding: 0;
+}
+.list-inline li:first-child {
+    margin: 0 3px 0 0;
+}
+.list-inline li:last-child {
+    margin: 0 0 0 3px;
+}
 
 table {
-    width: 100%;
+    width:100%;
 }

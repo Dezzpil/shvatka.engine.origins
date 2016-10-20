@@ -1,10 +1,8 @@
 <?php
 namespace App\Controller;
 
-use Silex\Application;
+use App\Application;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Session\Session;
-
 
 /**
  * 
@@ -58,8 +56,10 @@ class Shvatka extends Authed
         }
         
         $modClass = self::SH_NAMESPACE . ucfirst(strtolower($modName));
-        if (empty($this->_loader->loadClass($modClass))) {
-            $app->abort(404, static::EXC_NOSUCHMOD);
+        if (!class_exists($modClass)) {
+            if (empty($this->_loader->loadClass($modClass))) {
+                $app->abort(404, static::EXC_NOSUCHMOD);
+            }
         }
 
         $mod = new $modClass;
@@ -68,6 +68,15 @@ class Shvatka extends Authed
         // The return value of the 
         // closure becomes the content of the page.
         $result = $mod->run_module();
+        
+        // Задаем проверку на то, используется ли запрос на рендер с использованием
+        // стороннего движка. Если да, то передаем данные приложению, а оно должно
+        // знать как и с помощью чего все правильно сделать. Таким образом потом
+        // движок рендера можно будет поменять в любой момент
+        $renderRequest = $adapter->getRenderRequest();
+        if (!empty($renderRequest)) {
+            return $app->render($renderRequest->getViewName(), $renderRequest->getParams());
+        }
         
         $userHtml = "<small>Пользователь {$member['name']} ({$member['komanda']})";
         $userHtml .= "&nbsp;<a href='/index/logout'>Выйти</a></small><br />";

@@ -80,7 +80,7 @@ class DB
         if ($result === true) return $this->_result;
         
         if ($this->_mysqli->errno) {
-            var_dump($result, $this->_mysqli->errno, $this->_mysqli->error);
+            var_dump($sql, $result, $this->_mysqli->errno, $this->_mysqli->error);
             die;
         }
         

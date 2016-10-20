@@ -24,14 +24,15 @@ use Symfony\Component\Debug\ExceptionHandler;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Silex\Provider\SessionServiceProvider;
-use Silex\Application;
+use Silex\Provider\TwigServiceProvider;
+use App\Application;
 
 ExceptionHandler::register();
 
 $app = new Application;
 $app['debug'] = $config['debug'];
 
-// без этого кука будет генериться каждый раз по-новой,
+// без этого кука в тестах будет генериться каждый раз по-новой,
 // потому что приложение не будет подхватывать ранее созданную
 $app->register(new SessionServiceProvider(), [
     // это нужно определить именно здесь, если мы запускаем тесты
@@ -39,6 +40,24 @@ $app->register(new SessionServiceProvider(), [
     // http://stackoverflow.com/questions/13586447/phpunit-fails-when-using-silex-sessionserviceprovider
     'session.test' => APPLICATION_ENV === 'testing'
 ]);
+
+$app->register(new TwigServiceProvider(), array(
+    'twig.path' => __DIR__.'/app/view',
+    'twig.options' => [
+        'cache' => !$config['debug'],
+        'debug' => $config['debug'],
+        'strict_variables' => false
+    ]
+));
+
+$app['twig']->addExtension(new Twig_Extension_Debug());
+
+/**
+ * Простой роут для проверки работы рендера представлений
+ */
+//$app->match('/render', function(Request $r, Application $a) {
+//   return $a->render('test.twig', ['foo' => 'bar', 'pew' => 'pew']);
+//});
 
 $app->match(
     '/{controller}/{action}', 

@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        {% block head %}
+            <link rel="stylesheet" href="/css/app.css" />
+            <title>Shvatka / {% block title %}Движок{% endblock %}</title>
+        {% endblock %}
+    </head>
+    <body>
+        <div id="header">
+            {% if member is not empty %}
+                <small>Пользователь {{ member.name }} ({{ member.komanda }})&nbsp;<a href="/index/logout">Выйти</a></small>
+            {% endif %}
+            {% block topmenu %}
+                <ul id="topmenu" class="list-inline">
+                    <li><a href='/shvatka?act=module&moduleshvatka'>Схватка</a></li>
+                    <li><a href='/shvatka?act=module&module=uchgame'>Сыгранные игры</a></li>
+                    <li><a href='/shvatka?act=module&module=stat'>Статистика</a></li>
+                    <li><a href='/shvatka?act=module&module=notelog'>Лог очков</a></li>
+                    <li><a href='/shvatka?act=module&module=reps'>Администрирование</a></li>
+                    <li><a href='/shvatka?act=module&module=edit'>Редактор</a></li>
+                </ul>
+            {% endblock %}
+            <h1>{% block header %}{% endblock %}</h1>
+        </div>
+        <div id="content">{% block content %}{% endblock %}</div>
+    </body>
+</html>

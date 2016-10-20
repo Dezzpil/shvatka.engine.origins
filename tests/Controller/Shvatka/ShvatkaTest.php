@@ -8,23 +8,19 @@ namespace App\Tests\Controller\Shvatka;
  */
 class ShvatkaTest extends \App\Tests\AbstractTest
 {
-    protected function _loginUser()
-    {
-        $client = $this->createClient();
-        $client->request('POST', '/index/login', ['name' => 'Shepard', 'password' => 'Normandia']);
-    }
-    
+    /**
+     * @skip
+     */
     public function testNoUpcomingGameAction()
     {        
         $this->_loginUser();
         $client = $this->createClient();
         $client->request('GET', '/shvatka', ['module' => 'shvatka']);
         $this->assertTrue($client->getResponse()->isOk());
-        
-        $html = $client->getResponse()->getContent();
-        $test = strpos($html, 'Дата предстоящей игры пока не определена');
-        
-        $this->assertGreaterThan(0, $test);
+        $this->assertContains(
+            'Дата предстоящей игры пока не определена',
+            $client->getResponse()->getContent()
+        );
     }
     
     // TODO продолжить

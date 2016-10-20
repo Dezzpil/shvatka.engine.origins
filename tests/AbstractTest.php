@@ -17,4 +17,33 @@ abstract class AbstractTest extends WebTestCase
 
         return $app;
     }
+    
+    /**
+     * Войти под пользователем
+     * @return \App\Auth
+     */
+    protected function _loginUser()
+    {
+        $client = $this->createClient();
+        $client->request('POST', '/index/login', ['name' => 'Shepard', 'password' => 'Normandia']);
+        $session = $client->getRequest()->getSession();
+        $auth = new \App\Auth($session);
+        return $auth;
+    }
+    
+    /**
+     * Дать пользователю админские права для работы с игрой
+     * @param string $login
+     */
+    protected function _makeAdmin($login)
+    {
+        $client = $this->createClient();
+        $client->request('GET', '/tools/scenario', ['name' => 'Shepard']);
+    }
+    
+    protected function _unmakeAdmin($login)
+    {
+        $client = $this->createClient();
+        $client->request('GET', '/tools/unscenario', ['name' => 'Shepard']);
+    }
 }

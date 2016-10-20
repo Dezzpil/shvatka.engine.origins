@@ -135,5 +135,32 @@ class IPSClass
             case 'vars':
                 return $this->_vars;
         }
-    } 
+    }
+    
+    /**
+     *
+     * @var RenderRequest
+     */
+    protected $_renderRequest = null;
+    
+    /**
+     * Сформировать запрос на рендер с использованием стороннего движка
+     * @param string $viewName
+     * @param array $params
+     * @return \App\Adapter\IPSClass
+     */
+    public function render($viewName, array $params = [])
+    {
+        $this->_renderRequest = new RenderRequest($viewName, $params);
+        return $this;
+    }
+    
+    /**
+     * 
+     * @return RenderRequest
+     */
+    public function getRenderRequest()
+    {
+        return $this->_renderRequest;
+    }
 }

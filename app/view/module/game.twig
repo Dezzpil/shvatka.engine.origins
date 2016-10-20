@@ -1,0 +1,39 @@
+{% extends "template/shvatka.twig" %}
+
+{% block header %}Редактор{% endblock %}
+
+{% block content %}
+
+    <form action="/shvatka">
+        <input name="act" type="hidden" value="module">
+        <input name="module" type="hidden" value="reps">
+        <input name="cmd" type="hidden" value="addg">
+        <input name="y" type="hidden" value="1">
+        <b>Название игры</b>
+        <input name="gn" size="100" type="text" value="{{ game.g_name }}"><br>
+        <b>Дата игры в формате ГГГГ-ММ-ДД ЧЧ:ММ:СС</b>
+        <input name="gt" type="text" value="{{ game.dt_g ?: '' }}"><br>
+        <b>То, что идёт после слов "Призовой фонд игры составляет:" (например: "100 руб", или "сколько собрали")</b>
+        <input name="gf" type="text" value="{{ game.fond ?: '' }}"><br>
+        <br />
+        {% if game is not empty %}
+            <input type="submit" value="Подтвердить изменения" />
+        {% else %}
+            <input type="submit" value="Создать игру" />
+        {% endif %}
+    </form>
+    <br /><br />
+
+    {% if game is not empty %}
+    <form action="/shvatka">
+        <input name="act" type="hidden" value="module">
+        <input name="module" type="hidden" value="reps">
+        <input name="cmd" type="hidden" value="addg">
+        <input name="delg" type="hidden" value="1">
+        <input name="y" type="hidden" value="1">
+        <input type="submit" value="Удалить игру">
+    </form>
+    <font color=red size=1>После удаления игры все команды и игроки переводятся в состояние "деньги НЕ сдал" </font>
+    {% endif %}
+
+{% endblock %}

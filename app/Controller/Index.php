@@ -1,10 +1,8 @@
 <?php
-
 namespace App\Controller;
 
-use Silex\Application;
+use App\Application;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Session\Session;
 
 /**
  * 
