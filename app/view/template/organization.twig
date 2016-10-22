@@ -1,0 +1,28 @@
+{% extends "template/shvatka.twig" %}
+
+{% block submenu %}
+<div id="userlinks">
+    <h2 class="home">Администрирование Cхватки:</h2>
+    
+    <font color="red"><b>Перед игрой:</b></font>
+    <ul class="list-inline">
+        <li><a href="/shvatka?act=module&amp;module=reps&amp;cmd=addg" title="Настройки предстоящей(текущей) игры.">Настройки игры</a></li>
+        <li><a href="/shvatka?act=module&amp;module=reps&amp;cmd=scn" title="Редактор сценария. Можно использовать HTML">Редактор сценария</a></li>
+        <li><a href="/shvatka?act=module&amp;module=reps&amp;cmd=deng" title="Здесь можно отметить кто зарегистрирован на предстоящую игру">Зарегистрировать на игру</a></li>
+    </ul><br/>
+    
+    <font color="D2CB03"><b>Во время игры:</b></font>
+    <ul class="list-inline">
+        <li><a href="/shvatka?act=module&amp;module=reps&amp;cmd=spy" title="Во время игры здесь можно смотреть какая команда на каком уровне и подсказке, и когда она начала этот уровнь.">Шпиён</a></li>
+        <li><a href="/shvatka?act=module&amp;module=reps&amp;cmd=exmsg" title="Во время игры здесь можно отправить ЭКСТРЕННЫЕ сообщения командам.">Сообщение</a></li>
+    </ul><br/>
+    
+    <font color="green"><b>После игры:</b></font>
+    <ul class="list-inline">
+        <li><a href="/shvatka?act=module&amp;module=reps&amp;cmd=tlevs" title="Здесь находится таблица завершения командами уровней с указанием времени и отставания от лидера.">Финиш по уровням</a></li>
+        <li><a href="/shvatka?act=module&amp;module=reps&amp;cmd=logs" title="Тут находятся логи игры.">Логи</a></li>
+        <li><a href="/shvatka?act=module&amp;module=reps&amp;cmd=ochki" title="Здесь начисляются очки. Очки добавляются к уже имеющимся. Чтобы снять очки нужно задать отрицательное число.">Очки</a></li>
+        <li><a href="JavaScript:confirmation();" title="Здесь можно опубликовать текущую завершенную игру(работает только со включенными JavaScript)">Опубликовать игру</a></li>
+    </ul><br/>
+</div>
+{% endblock %}

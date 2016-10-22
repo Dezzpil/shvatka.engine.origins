@@ -190,63 +190,58 @@ class Reps extends Base
                  {$res.='</div>';}
                  $this->result=$res;
       }
-      function scn()
-      {
-                 $sub="{$this->ipsclass->base_url}act=module&module=reps&cmd=scn";
-                 $sub1="{$this->ipsclass->base_url}act=module&module=edit";
-                 $ref=$_SERVER['HTTP_REFERER'];
-                 if ((strpos(trim($ref),trim($sub))===FALSE)&&(strpos(trim($ref),trim($sub))===FALSE))
-                       {
-                          $this->ipsclass->DB->do_insert( 'admin_logs', array(
-                                                                                'act'        => 'Адм.Схватки',
-                                                                                'code'       => 'Вход',
-                                                                                'member_id'  => $this->ipsclass->member['id'],
-                                                                                'ctime'      => time(),
-                                                                                'note'       => 'Просмотр сценария. Пришел с '.$ref,
-                                                                                'ip_address' => $this->ipsclass->input['IP_ADDRESS'],
-                                                          )       );
-                       }
-                 $res="";
-                 $ptm="";
-                 if (@$this->ipsclass->input['delg']=="1")
-                 {                 	$this->ipsclass->DB->query("delete from sh_game");
-                 	$this->ipsclass->DB->query("select * from sh_games WHERE status='п'");
-                     $frows = $this->ipsclass->DB->fetch_row($fquery);
-                 	$res.='<div align="center">Сценарий очищен.</div>';
-                 }
-                 $b=false;
-                 $res=$res.'<div class="borderwrap"><div class="maintitle" align="center">Редактор сценария</div>';
-                 $res.="<table style={width:100%;}>
-<tr class=\"ipbtable\"><td class=\"row1\">";
-                 $this->ipsclass->DB->query("select * from sh_game order by uroven, n_podskazki");
-                 while ($frows = $this->ipsclass->DB->fetch_row($fquery))
-                 {   $b=true;
-                     if ($frows['n_podskazki']!='0')
-                     {
-                             $res=$res.'<b>Подсказка №'.$frows['n_podskazki'].' ('.$ptm.' мин.)</b>';
-                             if ($frows['p_time']=='0')
-                             {
-                                 $res.=' Последняя подсказка уровня.';
-                             }
-                             $res.='<br>';
-                     }
-                     else
-                     {
-                             $res=$res.'<br><center><b>Уровень '.$frows['uroven'].'. ';
-                             $res=$res.'Ключ: </b>'.$frows['keyw'].'';
-                             if ($frows['b_keyw']!='') $res=$res.'<b>  Мозговой ключ: </b>'.$frows['b_keyw'];
-                             $res=$res.'</center><br>';
-                     };
-                     $res=$res.$frows['text'].'<br>';
-                     if ($frows['p_time']!='0')
-                     {
-                             $ptm=$frows['p_time'];
-                     }
-                     else
-                     {
-                             $ptm="";
-                     }
-                     $res.='
+      
+    function scn()
+    {
+        $sub="{$this->ipsclass->base_url}act=module&module=reps&cmd=scn";
+        $sub1="{$this->ipsclass->base_url}act=module&module=edit";
+        $ref=$_SERVER['HTTP_REFERER'];
+        if ((strpos(trim($ref),trim($sub))===FALSE)&&(strpos(trim($ref),trim($sub))===FALSE)) {
+            $this->ipsclass->DB->do_insert( 'admin_logs', array(
+                'act'        => 'Адм.Схватки',
+                'code'       => 'Вход',
+                'member_id'  => $this->ipsclass->member['id'],
+                'ctime'      => time(),
+                'note'       => 'Просмотр сценария. Пришел с '.$ref,
+                'ip_address' => $this->ipsclass->input['IP_ADDRESS'],
+            ));
+        }
+        
+        $res="";
+        $ptm="";
+        if (@$this->ipsclass->input['delg'] == "1") {
+            $this->ipsclass->DB->query("delete from sh_game");
+            $this->ipsclass->DB->query("select * from sh_games WHERE status='п'");
+            $frows = $this->ipsclass->DB->fetch_row($fquery);
+            $res.='<div align="center">Сценарий очищен.</div>';
+        }
+        
+        $b=false;
+        $res=$res.'<div class="borderwrap"><div class="maintitle" align="center">Редактор сценария</div>';
+        $res.="<table style={width:100%;}><tr class=\"ipbtable\"><td class=\"row1\">";
+        $this->ipsclass->DB->query("select * from sh_game order by uroven, n_podskazki");
+        while ($frows = $this->ipsclass->DB->fetch_row($fquery))
+        {
+            $b=true;
+            if ($frows['n_podskazki']!='0') {
+                $res=$res.'<b>Подсказка №'.$frows['n_podskazki'].' ('.$ptm.' мин.)</b>';
+                if ($frows['p_time']=='0') {
+                    $res.=' Последняя подсказка уровня.';
+                }
+                $res.='<br>';
+            } else {
+                $res=$res.'<br><center><b>Уровень '.$frows['uroven'].'. ';
+                $res=$res.'Ключ: </b>'.$frows['keyw'].'';
+                if ($frows['b_keyw']!='') $res=$res.'<b>  Мозговой ключ: </b>'.$frows['b_keyw'];
+                $res=$res.'</center><br>';
+            };
+            $res=$res.$frows['text'].'<br>';
+            if ($frows['p_time']!='0') {
+                $ptm=$frows['p_time'];
+            } else {
+                $ptm="";
+            }
+            $res.='
 <div align="right"><form action="' . $this->ipsclass->base_url . '" >
 <input name="act" type="hidden" value="module">
 <input name="module" type="hidden" value="edit">
@@ -258,8 +253,8 @@ class Reps extends Base
 </select>
 <input  type="submit" value="ОК" style={background:#D2D0D0;border:1px;border:outset;border-color:#ffffff;font-size:9px;></form></div>
 </td></tr><tr class=\'ipbtable\'><td class="row1">';
-                 }
-                 $res.='
+        }
+        $res.='
 <center><form action="' . $this->ipsclass->base_url . '">
 <input name="act" type="hidden" value="module">
 <input name="module" type="hidden" value="edit">
@@ -276,8 +271,8 @@ $res.='
 <input name="delg" type="hidden" value="1">
 <input type="submit" value="Удалить нафиг весь сценарий (кроме загруженных файлов)."></form><br>';
 $res.='</center></td></tr></table></div>';
-                 $this->result=$res;
-      }
+        $this->result=$res;
+    }
 
       function spy()
       {
@@ -376,7 +371,7 @@ $res.='</center></td></tr></table></div>';
       }
       
     /**
-     * Управление предстоящей игрой
+     * Настройки предстоящей игры
      */
     function addg()
     {   

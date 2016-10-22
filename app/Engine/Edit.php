@@ -33,9 +33,9 @@ class Edit extends Base
                 case '3':
                       $this->add();
                       break;
-                case '4':
-                      $this->files();
-                      break;
+//                case '4':
+//                      $this->files();
+//                      break;
                 default:
                       break;
             }

@@ -10,6 +10,7 @@
         <div id="header">
             {% if member is not empty %}
                 <small>Пользователь {{ member.name }} ({{ member.komanda }})&nbsp;<a href="/index/logout">Выйти</a></small>
+                <br />&nbsp<br />
             {% endif %}
             {% block topmenu %}
                 <ul id="topmenu" class="list-inline">
@@ -21,7 +22,8 @@
                     <li><a href='/shvatka?act=module&module=edit'>Редактор</a></li>
                 </ul>
             {% endblock %}
-            <h1>{% block header %}{% endblock %}</h1>
+            {% block submenu %}{% endblock %}
+            <h3>{% block header %}{% endblock %}</h3>
         </div>
         <div id="content">{% block content %}{% endblock %}</div>
     </body>

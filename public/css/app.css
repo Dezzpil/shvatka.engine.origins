@@ -7,12 +7,20 @@ and open the template in the editor.
     Created on : 27.09.2016, 4:24:20
     Author     : Nikita Dezzpil Orlov <nikita@shvatka.ru>
 */
+* {
+    box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -o-box-sizing: border-box;
+}
+
 body {
     
 }
 ul {
-    margin: 10px 0;
+    margin: 0;
     padding: 0;
+    display: inline-block;
 }
 .list-inline li {
     display: inline-block;
@@ -28,4 +36,25 @@ ul {
 
 table {
     width:100%;
+}
+
+form {
+    margin-bottom: 15px;
+}
+label {
+    display: block;
+}
+input, select, textarea {
+    width: 100%;
+    padding: 3px;
+}
+span.help-block {
+    font-size: 0.8em;
+    color: #505050;
+}
+.form-group {
+    margin-bottom: 10px;
+}
+.text-danger {
+    color: red !important;
 }

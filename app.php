@@ -44,7 +44,7 @@ $app->register(new SessionServiceProvider(), [
 $app->register(new TwigServiceProvider(), array(
     'twig.path' => __DIR__.'/app/view',
     'twig.options' => [
-        'cache' => !$config['debug'],
+        'cache' => __DIR__ . '/cache',
         'debug' => $config['debug'],
         'strict_variables' => false
     ]

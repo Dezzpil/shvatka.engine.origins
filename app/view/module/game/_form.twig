@@ -1,0 +1,21 @@
+<form action="/shvatka">
+    <input name="act" type="hidden" value="module">
+    <input name="module" type="hidden" value="reps">
+    <input name="cmd" type="hidden" value="addg">
+    <input name="y" type="hidden" value="1">
+    <div class="form-group">
+        <label>Название игры</label>
+        <input name="gn" size="100" type="text" value="{{ game.g_name }}">
+    </div>
+    <div class="form-group">
+        <label>Дата игры</label>
+        <input name="gt" type="text" value="{{ game.dt_g ?: '' }}">
+        <span class="help-block">в формате ГГГГ-ММ-ДД ЧЧ:ММ:СС</span>
+    </div>
+    <div class="form-group">
+        <label>Призовой фонд игры составляет:</label>
+        <input name="gf" type="text" value="{{ game.fond ?: '' }}">
+        <span class="help-block">например: "100 руб", или "сколько собрали"</span>
+    </div>
+    <input type="submit" value="Подтвердить изменения" />
+</form>
