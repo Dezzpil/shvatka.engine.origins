@@ -193,19 +193,20 @@ class Reps extends Base
       
     function scn()
     {
-        $sub="{$this->ipsclass->base_url}act=module&module=reps&cmd=scn";
-        $sub1="{$this->ipsclass->base_url}act=module&module=edit";
-        $ref=$_SERVER['HTTP_REFERER'];
-        if ((strpos(trim($ref),trim($sub))===FALSE)&&(strpos(trim($ref),trim($sub))===FALSE)) {
-            $this->ipsclass->DB->do_insert( 'admin_logs', array(
-                'act'        => 'Адм.Схватки',
-                'code'       => 'Вход',
-                'member_id'  => $this->ipsclass->member['id'],
-                'ctime'      => time(),
-                'note'       => 'Просмотр сценария. Пришел с '.$ref,
-                'ip_address' => $this->ipsclass->input['IP_ADDRESS'],
-            ));
-        }
+        // TODO восстановить это логирование позже
+//        $sub="{$this->ipsclass->base_url}act=module&module=reps&cmd=scn";
+//        $sub1="{$this->ipsclass->base_url}act=module&module=edit";
+//        $ref=@$_SERVER['HTTP_REFERER'];
+//        if ((strpos(trim($ref),trim($sub))===FALSE)&&(strpos(trim($ref),trim($sub))===FALSE)) {
+//            $this->ipsclass->DB->do_insert( 'admin_logs', array(
+//                'act'        => 'Адм.Схватки',
+//                'code'       => 'Вход',
+//                'member_id'  => $this->ipsclass->member['id'],
+//                'ctime'      => time(),
+//                'note'       => 'Просмотр сценария. Пришел с '.$ref,
+//                'ip_address' => $this->ipsclass->input['IP_ADDRESS'],
+//            ));
+//        }
         
         $res="";
         $ptm="";

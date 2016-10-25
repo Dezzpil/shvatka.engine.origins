@@ -44,7 +44,16 @@ class DataContainer implements \ArrayAccess
         }
     }
     
-    public function offsetExists ($offset)
+    /**
+     * 
+     * @return array
+     */
+    public function toArray()
+    {
+        return $this->_data;
+    }
+    
+    public function offsetExists($offset)
     {
         if (array_key_exists($offset, $this->_data)) {
             return true;
@@ -52,17 +61,17 @@ class DataContainer implements \ArrayAccess
         return false;
     }
     
-    public function offsetGet ($offset)
+    public function offsetGet($offset)
     {
         return $this->get($offset);
     }
     
-    public function offsetSet ($offset, $value)
+    public function offsetSet($offset, $value)
     {
         $this->set($offset, $value);
     }
     
-    public function offsetUnset ($offset)
+    public function offsetUnset($offset)
     {
         if ($this->offsetExists($offset)) {
             unset($this->_data[$offset]);

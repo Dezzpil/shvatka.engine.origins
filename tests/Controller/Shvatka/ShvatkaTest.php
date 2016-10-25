@@ -6,7 +6,7 @@ namespace App\Tests\Controller\Shvatka;
  * @date 11.10.2016
  * @author Nikita Dezzpil Orlov <nikita@shvatka.ru>
  */
-class ShvatkaTest extends \App\Tests\AbstractTest
+class ShvatkaTest extends \App\Tests\ControllerTest
 {
     /**
      * @skip

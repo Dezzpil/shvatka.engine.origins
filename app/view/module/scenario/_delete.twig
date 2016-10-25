@@ -1,0 +1,15 @@
+{% if execs == 1 %}
+    <b>Удалено.</b><br />
+    Если это была последняя подсказка на уровне, то не забудьте поставить в предыдущей подсказке нулевое время.
+{% else %}
+    <h3>Удаление из сценария. Уровень {{ lev }}, подсказка {{ npod }}</h3>
+    <form action="/shvatka">
+        <input name="act" type="hidden" value="module">
+        <input name="module" type="hidden" value="edit">
+        <input name="cm" type="hidden" value="{{ cm }}">
+        <input name="lev" type="hidden" value="{{ lev }}">
+        <input name="npod" type="hidden" value="{{ npod }}">
+        <input name="execs" type="hidden" value="1">
+        <input type="submit" value="Подтвердить удаление">
+    </form>
+{% endif %}

@@ -6,7 +6,7 @@ namespace App\Tests\Controller;
  * @date 09.10.2016
  * @author Nikita Dezzpil Orlov <nikita@shvatka.ru>
  */
-class IndexTest extends \App\Tests\AbstractTest
+class IndexTest extends \App\Tests\ControllerTest
 {
     public function testNoNameGivenAction()
     {

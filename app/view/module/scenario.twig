@@ -1,0 +1,62 @@
+{% extends "template/organization.twig" %}
+
+{% block header %}Редактор сценария{% endblock %}
+
+{% block content %}
+
+    {% if error is not empty %}
+
+        {{ error }}
+
+    {% else %}
+
+        {% if cm == 2 %}
+
+            {% include 'module/scenario/_delete.twig' %}
+
+        {% else %}
+
+            <h3>Уровень {{ lev }}, подсказка {{ npod }}</h3>
+            <form name="edi" action="/shvatka" method="POST" ENCTYPE=multipart/form-data>
+                <input name="act" type="hidden" value="module" />
+                <input name="module" type="hidden" value="edit" />
+                <input name="cm" type="hidden" value="{{ cm }}" />
+                <input name="lev" type="hidden" value="{{ lev }}" />
+                <input name="npod" type="hidden" value="{{ npod }}" />
+                <input name="execs" type="hidden" value="1" />
+                <div class="form-group">
+                    <label>
+                        Время, от начала уровня, через которое выскочит 
+                        <b>{{ npod == 0 ? 'первая' : 'следующая за этой' }}</b> 
+                        подсказка (минуты):
+                    </label>
+                    <input name="ptm" type="text" value="{{ ptm ?: 15 }}" /> 
+                    {% if npod != 0 %}
+                        <span class="help-block">Если это последняя подсказка, то обязательно поставьте 0.</span>
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    <label>Текст (можно использовать html) уровня или подсказки:</label>
+                    <textarea name="textl" rows="15">{{ textl }}</textarea>
+                </div>
+
+                {% if npod == 0 %}
+                <div class="form-group">
+                    <label>Ключ уровня: </label>
+                    <input name="keyw" type="text" value="{{ keyw }}" />
+                </div>
+                <div class="form-group">
+                    <label>Мозговой ключ уровня:</label>
+                    <input name="b_keyw" type="text" value="{{ b_keyw }}" />
+                </div>
+                {% endif %}
+
+                <input type="submit" value="Сохранить">
+            </form>
+
+        {% endif %}
+
+    {% endif %}
+    
+{% endblock %}

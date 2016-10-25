@@ -1,6 +1,10 @@
-cache
+cache/*
+!cache/.keepme
+
+data/sessions/*
+!data/session/.keepme
+
 vendor
-data/sessions/sess_*
 nbproject
 .idea
 .vagrant

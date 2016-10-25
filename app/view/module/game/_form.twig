@@ -17,5 +17,9 @@
         <input name="gf" type="text" value="{{ game.fond ?: '' }}">
         <span class="help-block">например: "100 руб", или "сколько собрали"</span>
     </div>
-    <input type="submit" value="Подтвердить изменения" />
+    {% if game is empty %}
+        <input type="submit" value="Создать игру" />
+    {% else %}
+        <input type="submit" value="Подтвердить изменения" />
+    {% endif %}
 </form>
