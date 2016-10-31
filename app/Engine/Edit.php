@@ -15,14 +15,14 @@ class Edit extends Organization
         if ($levelNum == 0) {
             $error = 'Не задан номер уровня';
         } else {
-            if  ($execute == 1) {
-                $unit = new Helper\Scenario($levelNum, $tipNum);
-                
+            $unit = new Helper\Unit($levelNum, $tipNum);
+            if ($execute == 1) {
                 $ptm = $this->ipsclass->input['ptm'] ?: 0;
-                $text = $this->ipsclass->input['textl'];
+                $text = $this->ipsclass->input['text'];
                 $b_keyw = $this->ipsclass->input['b_keyw'];
                 $keyw = $this->ipsclass->input['keyw'];
                 $cmd = intval($this->ipsclass->input['cm']) ?: 1;
+                
                 switch ($cmd) {
                     case 1:
                     case 3: // для обратной совместимости. Создать еще один все равно нельзя
@@ -32,11 +32,19 @@ class Edit extends Organization
                         $unit->delete();
                         break;
                 }
+            } else {
+                foreach ($unit as $key => $value) {
+                    $this->ipsclass->input->set($key, $value);
+                }
             }
         }
+        if ($this->ipsclass->input['return']) {
+            $this->ipsclass->redirect('/shvatka?module=reps&cmd=scn');
+        }
+        
         $this->ipsclass->input->set('error', $error);
         $this->ipsclass->render(
-            'module/scenario.twig', 
+            'module/edit.twig', 
             $this->ipsclass->input->toArray()
         );
     }

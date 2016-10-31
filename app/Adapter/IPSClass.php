@@ -163,4 +163,31 @@ class IPSClass
     {
         return $this->_renderRequest;
     }
+    
+    /**
+     *
+     * @var RedirectRequest 
+     */
+    protected $_redirectRequest;
+
+    /**
+     * 
+     * @param string $url
+     * @param array $params
+     * @return \App\Adapter\IPSClass
+     */
+    public function redirect($url)
+    {
+        $this->_redirectRequest = new RedirectRequest($url);
+        return $this;
+    }
+    
+    /**
+     * 
+     * @return RenderRequest
+     */
+    public function getRedirectRequest()
+    {
+        return $this->_redirectRequest;
+    }
 }

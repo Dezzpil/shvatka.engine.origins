@@ -9,12 +9,14 @@ namespace App\Engine\Helper;
 class Game
 {
     const STATUS_ACTUAL = 'п';
+    const STATUS_ENDED = 'т';
+    
     
     /**
      * 
      * @return array|null
      */
-    function load()
+    public function load()
     {
         $db = \App\Adapter\DB::getInstance();
         $result = $db->query("SELECT * FROM sh_games WHERE status='" . self::STATUS_ACTUAL . "'");
@@ -30,7 +32,7 @@ class Game
      * @param type $datetime
      * @param type $money
      */
-    function update($name, $datetime, $money)
+    public function update($name, $datetime, $money)
     {
         $db = \App\Adapter\DB::getInstance();
         $sql = sprintf(
@@ -41,12 +43,24 @@ class Game
     }
     
     /**
+     * Завершить игру
+     */
+    public function end()
+    {
+        $db = \App\Adapter\DB::getInstance();
+        $db->query(sprintf(
+            "update sh_games set status='%s' WHERE status='%s'",
+            self::STATUS_ENDED, self::STATUS_ACTUAL
+        ));
+    }
+    
+    /**
      * Создать новую предстоящую игру
      * @param type $name
      * @param type $datetime
      * @param type $money
      */
-    function insert($name, $datetime, $money)
+    public function insert($name, $datetime, $money)
     {
         $db = \App\Adapter\DB::getInstance();
         $db->query("UPDATE sh_comands SET uroven=0, podskazka=0, dt_ur='0000-00-00 00:00:00'" );
@@ -61,7 +75,7 @@ class Game
     /**
      * Удалить текущую игру
      */
-    function delete()
+    public function delete()
     {
         $db = \App\Adapter\DB::getInstance();
         $db->query("update sh_comands set uroven=0, podskazka=0, dengi=0, dt_ur='0000-00-00 00:00:00'");
@@ -75,7 +89,7 @@ class Game
      * @param string $datetime
      * @param string $money
      */
-    function save($name, $datetime, $money)
+    public function save($name, $datetime, $money)
     {
         //ввод данных игры
         $db = \App\Adapter\DB::getInstance();
@@ -85,8 +99,6 @@ class Game
                 "UPDATE sh_games SET g_name='%s', dt_g='%s', fond='%s' WHERE status='%s'",
                 $name, $datetime, $money, self::STATUS_ACTUAL
             );
-            $db->query($sql);
-            //$res .= 'Изменения в настройки игры внесены.<br><br>';
         } else {
             // создание записи о предстоящей игре
             $db->query("UPDATE sh_comands SET uroven=0, podskazka=0, dt_ur='0000-00-00 00:00:00'" );
@@ -95,8 +107,21 @@ class Game
                 "INSERT INTO sh_games (g_name, dt_g, status, fond) VALUES ('%s', '%s', '%s', '%s')", 
                 $name, $datetime, self::STATUS_ACTUAL, $money
             );
-            $db->query($sql);
-            //$res.='Игра создана.<br><br>';
         }
+        $db->query($sql);
+    }
+    
+    /**
+     * Сохранить информацию о распределении мест в этой игре.
+     * Добавить команду на пьедестал
+     * @param string $teamName
+     */
+    public function updateWinners($teamName)
+    {
+        $db = \App\Adapter\DB::getInstance();
+        $db->query(sprintf(
+            "update sh_games set pedistal=CONCAT(pedistal, '%s') WHERE status='%s'",
+            $teamName . '<br>', self::STATUS_ACTUAL
+        ));
     }
 }

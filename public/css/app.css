@@ -15,7 +15,11 @@ and open the template in the editor.
 }
 
 body {
-    max-width: 1000px;
+    max-width: 1200px;
+    margin: 0 auto;
+    margin-top: 12px;
+    font-family: Verdana, Tahoma, Arial, Trebuchet MS, Sans-Serif, Georgia, Courier, Times New Roman, Serif;
+    font-size: 13px;
 }
 ul {
     margin: 0;
@@ -50,14 +54,14 @@ form {
 label {
     display: block;
 }
-input, select, textarea {
+input, select, textarea, button {
     width: 100%;
-    padding: 3px;
+    padding: 5px;
+    border: solid 1px gray;
 }
 input[type="checkbox"] {
     width: auto;
 }
-
 
 span.help-block {
     font-size: 0.8em;
@@ -72,4 +76,10 @@ span.help-block {
 
 .well {
     margin-bottom: 14px;
+}
+
+.btn.btn-danger {
+    background-color: #ff4040;
+    color: white;
+    border-color: red;
 }

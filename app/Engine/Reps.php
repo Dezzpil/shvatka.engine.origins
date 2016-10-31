@@ -173,74 +173,34 @@ HTML;
                  {$res.='</div>';}
                  $this->result=$res;
       }
-      
+     
+    /**
+     * Редактор сценария
+     */
     function scn()
     {
-        $res="";
-        $ptm="";
-        if (@$this->ipsclass->input['delg'] == "1") {
-            $this->ipsclass->DB->query("delete from sh_game");
-            $this->ipsclass->DB->query("select * from sh_games WHERE status='п'");
-            $frows = $this->ipsclass->DB->fetch_row($fquery);
-            $res.='<div align="center">Сценарий очищен.</div>';
+        $helper = new Helper\Scenario;
+        if ($this->ipsclass->input['delg'] == "1") {
+            $helper->clear();
+        }
+
+        $units = $helper->loadList();
+        
+        // TODO добавить поле в таблице, чтобы хранить это всегда
+        $time = [];
+        $prev = 0;
+        foreach ($units as $unit) {
+            if ($unit['keyw']) {
+                $prev = 0;
+            }
+            $time[] = $prev;
+            $prev += $unit['p_time'];
         }
         
-        $b=false;
-        $res=$res.'<div class="borderwrap"><div class="maintitle" align="center">Редактор сценария</div>';
-        $res.="<table style={width:100%;}><tr class=\"ipbtable\"><td class=\"row1\">";
-        $this->ipsclass->DB->query("select * from sh_game order by uroven, n_podskazki");
-        while ($frows = $this->ipsclass->DB->fetch_row($fquery))
-        {
-            $b=true;
-            if ($frows['n_podskazki']!='0') {
-                $res=$res.'<b>Подсказка №'.$frows['n_podskazki'].' ('.$ptm.' мин.)</b>';
-                if ($frows['p_time']=='0') {
-                    $res.=' Последняя подсказка уровня.';
-                }
-                $res.='<br>';
-            } else {
-                $res=$res.'<br><center><b>Уровень '.$frows['uroven'].'. ';
-                $res=$res.'Ключ: </b>'.$frows['keyw'].'';
-                if ($frows['b_keyw']!='') $res=$res.'<b>  Мозговой ключ: </b>'.$frows['b_keyw'];
-                $res=$res.'</center><br>';
-            };
-            $res=$res.$frows['text'].'<br>';
-            if ($frows['p_time']!='0') {
-                $ptm=$frows['p_time'];
-            } else {
-                $ptm="";
-            }
-            $res.='
-<div align="right"><form action="' . $this->ipsclass->base_url . '" >
-<input name="act" type="hidden" value="module">
-<input name="module" type="hidden" value="edit">
-<input name="lev" type="hidden" value="'.$frows['uroven'].'">
-<input name="npod" type="hidden" value="'.$frows['n_podskazki'].'">
-<select size="1" name="cm" style={border:1px;border:outset;border-color:#ffffff;font-size:9px;}>
-<option value="1">Редактировать</option>
-<option value="2">Удалить</option>
-</select>
-<input  type="submit" value="ОК" style={background:#D2D0D0;border:1px;border:outset;border-color:#ffffff;font-size:9px;></form></div>
-</td></tr><tr class=\'ipbtable\'><td class="row1">';
-        }
-        $res.='
-<center><form action="' . $this->ipsclass->base_url . '">
-<input name="act" type="hidden" value="module">
-<input name="module" type="hidden" value="edit">
-<input name="cm" type="hidden" value="3">
-Добавить уровень<input name="lev" type="text" SIZE="2" value="">
-подсказка<input name="npod" type="text" SIZE="2" value="">
-<input type="submit" value="ОК"></form><br>';
-if ($b)
-$res.='
-<form id="fdelgame" action="' . $this->ipsclass->base_url . '" onsubmit="return confirm(\'Уверены что хотете удалить ВЕСЬ сценарий?\')">
-<input name="act" type="hidden" value="module">
-<input name="module" type="hidden" value="reps">
-<input name="cmd" type="hidden" value="scn">
-<input name="delg" type="hidden" value="1">
-<input type="submit" value="Удалить нафиг весь сценарий (кроме загруженных файлов)."></form><br>';
-$res.='</center></td></tr></table></div>';
-        $this->result=$res;
+        $this->ipsclass->render('module/scenario.twig', [
+            'scenario' => $units,
+            'minutes' => $time
+        ]);
     }
 
       function spy()
@@ -257,6 +217,7 @@ $res.='</center></td></tr></table></div>';
                $res=$res.'</table></div>';
                $this->result=$res;
       }
+      
       function tlevs()
       {          $res="";
                  $comd=array();
@@ -410,9 +371,9 @@ $res.='</center></td></tr></table></div>';
             
         }
         
-        $teams = $teamHelper->getList();
+        $teams = $teamHelper->loadList();
         foreach ($teams as &$team) {
-            $team['players'] = $playerHelper->getListByTeamName($team['nazvanie']);
+            $team['players'] = $playerHelper->loadListByTeamName($team['nazvanie']);
         }
         
         $this->ipsclass->render('/module/reg.twig', [

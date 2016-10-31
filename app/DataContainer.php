@@ -8,13 +8,18 @@ namespace App;
  * @date 21.10.2016
  * @author Nikita Dezzpil Orlov <nikita@shvatka.ru>
  */
-class DataContainer implements \ArrayAccess 
+class DataContainer implements \ArrayAccess, \IteratorAggregate
 {
     protected $_data = [];
     
     public function __construct(array $data)
     {
         $this->_data = $data;
+    }
+    
+    public function getIterator()
+    {
+        return new \ArrayIterator($this->_data);
     }
     
     /**

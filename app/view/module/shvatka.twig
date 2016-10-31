@@ -1,0 +1,79 @@
+{% extends "template/shvatka.twig" %}
+
+{% block title %}Название игры{% endblock %}
+
+{% block content %}
+    
+    {% if hasNoGame %}
+        Дата предстоящей игры пока не определена.
+    {% endif %}
+    
+    {% if hasAccess == false %}
+        Одно из трёх:
+        <ul>
+            <li>либо текущая игра пройдена вами, но ещё не закончена другими</li>
+            <li>либо ваша команда не заявлена на эту игру</li>
+            <li>либо вы лично не сделали взнос</li>
+        </ul>
+    {% else %}
+    
+        <center id="gtimer">
+            Игра начнется <span id='dt'>%d.%m.%y в %H:%M</span> т.е. через $ctd
+        </center>
+
+        <form action="/shvatka?" autocomplete="on" method="post">
+            <input type=HIDDEN name="act" value="module">
+            <input type=HIDDEN name="module" value="shvatka">
+            <input type=HIDDEN name="cmd" value="sh">
+            Ключ: <input type=text name="keyw" SIZE=50>&nbsp;
+            {% if hasBrain is not empty %}
+                Мозговой ключ: 
+                {% if game.brainKey == brainKeyInputed %}
+                    <input type=text name="b_keyw" SIZE=50 value="{{game.brainKey}}" readonly />OK
+                {% else %}
+                    <input type=text name="b_keyw" SIZE=50 value="" />
+                {% endif %}
+            {% endif %}
+
+            <br />
+            <input type="submit" value="Проверить ключ/наличие подсказки" style="background:#D2D0D0;border:1px;border:outset;border-color:#ffffff">
+        </form>
+
+        <script>
+            function countDown() {
+                var ctd, tmp, tmp2, tmp3, tmp4;
+                ctd = tmp = tmp2 = tmp3 = tmp4 = 0;
+
+                if (document.getElementById('days') != null) ctd=parseInt(document.getElementById('days').innerHTML) * 24 * 60 * 60;
+                if (document.getElementById('hours') != null) ctd+=parseInt(document.getElementById('hours').innerHTML) * 60 * 60;
+                if (document.getElementById('mins') != null) ctd+=parseInt(document.getElementById('mins').innerHTML) * 60;
+                if (document.getElementById('secs') != null) ctd+=parseInt(document.getElementById('secs').innerHTML);
+
+                var st = "Игра начнется <span id='dt'>";
+                st += document.getElementById('dt').innerHTML;
+                st += "</span> т.е. через "
+                if (ctd <= 0) {
+                    ctd = 0;
+                    st += "... УЖЕ НАЧАЛАСЬ!!!";
+                } else {
+                    ctd--;
+                    tmp = Math.floor(ctd/86400);
+                    tmp2 = Math.floor((ctd-(tmp*86400))/3600);
+                    tmp3 = Math.floor((ctd-(tmp*86400)-(tmp2*3600))/60);
+                    tmp4 = Math.floor(ctd-(tmp*86400)-(tmp2*3600)-(tmp3*60));
+                    if (tmp>0) st += "<span id='days'>" + tmp + "</span> д. ";
+                    if (tmp2>0) st += "<span id='hours'>" + tmp2 + "</span> ч. ";
+                    if (tmp3>0) st += "<span id='mins'>" + tmp3 + "</span> м. ";
+                    if (tmp4>=0) st += "<span id='secs'>" + tmp4 + "</span> сек. ";
+                }
+
+                document.getElementById('gtimer').innerHTML = st;
+                window.setTimeout("countDown()", 1000);
+            }
+
+            countDown();
+        </script>
+        
+    {% endif %}
+    
+{% endblock %}

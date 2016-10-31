@@ -49,7 +49,7 @@ class EditTest extends \App\Tests\OrganizationControllerTest
      */
     protected $_levelData = [
         'ptm' => 10,
-        'textl' => 'Текст',
+        'text' => 'Текст',
         'keyw' => 'SHКЛЮЧПОЛЯ',
         'b_keyw' => ''
     ];
@@ -60,7 +60,7 @@ class EditTest extends \App\Tests\OrganizationControllerTest
      */
     protected $_tipData = [
         'ptm' => 10,
-        'textl' => 'Подсказка'
+        'text' => 'Подсказка'
     ];
 
 
@@ -84,7 +84,7 @@ class EditTest extends \App\Tests\OrganizationControllerTest
         );
         
         $body = $client->getResponse()->getContent();
-        $this->assertContains($data['textl'], $body);
+        $this->assertContains($data['text'], $body);
         if (array_key_exists('keyw', $data) && !empty($data['keyw'])) {
             $this->assertContains($data['keyw'], $body);
         }
@@ -93,6 +93,10 @@ class EditTest extends \App\Tests\OrganizationControllerTest
         }
     }
     
+    /**
+     * @group scn
+     * @group unit
+     */
     public function testAddLevel()
     {   
         // TODO вынести цифры в константы модуля
@@ -105,18 +109,10 @@ class EditTest extends \App\Tests\OrganizationControllerTest
         $this->_submitForm($client, $this->_levelData);
     }
     
-//    public function testAddTwiceLevel()
-//    {   
-//        // TODO вынести цифры в константы модуля
-//        $client = $this->createClient();
-//        $client->request('GET', '/shvatka', 
-//            ['module' => 'edit', 'cm' => 3, 'lev' => '1', 'npod' => '0']
-//        );
-//
-//        $this->assertTrue($client->getResponse()->isOk());
-//        $this->assertContains('Такой уровень или подсказка уже есть', $client->getResponse()->getContent());
-//    }
-    
+    /**
+     * @group scn
+     * @group unit
+     */
     public function testEditLevel()
     {
         // TODO вынести цифры в константу модуля
@@ -127,12 +123,23 @@ class EditTest extends \App\Tests\OrganizationControllerTest
         $this->assertEquals(200, $client->getResponse()->isOk());
         
         $data = $this->_levelData;
-        $data['textl'] .= ' изменен';
+        $content = $client->getResponse()->getContent();
+        $this->assertContains($data['text'], $content);
+        $this->assertContains($data['keyw'], $content);
+        if (!empty($data['b_keyw'])) {
+            $this->assertContains($data['b_keyw'], $content);
+        }
+        
+        $data['text'] .= ' изменен';
         $data['keyw'] .= 'ИЗМЕНЕН';
         $data['b_keyw'] = 'SHКЛЮЧМОЗГА';
         $this->_submitForm($client, $data);
     }
     
+    /**
+     * @group scn
+     * @group unit
+     */
     public function testAddTip()
     {
         $client = $this->createClient();
@@ -143,17 +150,10 @@ class EditTest extends \App\Tests\OrganizationControllerTest
         $this->_submitForm($client, $this->_tipData);
     }
     
-//    public function testAddTwiceTip()
-//    {
-//        $client = $this->createClient();
-//        $client->request('GET', '/shvatka', 
-//            ['module' => 'edit', 'cm' => 3, 'lev' => "1", 'npod' => "1"]
-//        );
-//        
-//        $this->assertTrue($client->getResponse()->isOk());
-//        $this->assertContains('Такой уровень или подсказка уже есть', $client->getResponse()->getContent());
-//    }
-    
+    /**
+     * @group scn
+     * @group unit
+     */
     public function testEditTip()
     {
         $client = $this->createClient();
@@ -162,11 +162,18 @@ class EditTest extends \App\Tests\OrganizationControllerTest
         );
         
         $data = $this->_tipData;
+        $content = $client->getResponse()->getContent();
+        $this->assertContains($data['text'], $content);
+        
         $data['ptm'] += 5;
-        $data['textl'] .= ' изменен';
+        $data['text'] .= ' изменен';
         $this->_submitForm($client, $data);
     }
     
+    /**
+     * @group scn
+     * @group unit
+     */
     public function testDeleteTip()
     {
         $client = $this->createClient();
@@ -181,6 +188,10 @@ class EditTest extends \App\Tests\OrganizationControllerTest
         $this->assertContains('Удалено', $body);
     }
     
+    /**
+     * @group scn
+     * @group unit
+     */
     public function testDeleteLevel()
     {
         $client = $this->createClient();

@@ -78,7 +78,7 @@ CREATE TABLE IF NOT EXISTS `sh_game` (
   `n` int(11) NOT NULL AUTO_INCREMENT,
   `uroven` int(11) NOT NULL DEFAULT '0',
   `n_podskazki` int(11) NOT NULL DEFAULT '0',
-  `p_time` int(11) NOT NULL DEFAULT '0',
+  `p_time` float NOT NULL DEFAULT '0',
   `text` text ,
   `keyw` varchar(100)  DEFAULT NULL,
   `b_keyw` varchar(100)  NOT NULL,

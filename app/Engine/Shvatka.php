@@ -3,46 +3,46 @@ namespace App\Engine;
 
 class Shvatka extends Base
 {
+    function parsdig($st)
+    {
+        $chisla=array('0','1','2','3','4','5','6','7','8','9');
+        $ya=true;            	
+        for ($i=0; $i<strlen($st); $i++) {
+            if (!in_array(substr($st,$i,1),$chisla)) {                    	
+                $ya=false;
+                break;
+            }
+        }
+        return $ya;
+    }
+    
+    function sectostr($secs)
+    {
+        $st="";
+        $tmp=floor($secs / 86400);
+        if ($tmp>0) {$st='<span id=\'days\'>'.$tmp.'</span> д. ';}
+        $tmp2=floor(($secs - ($tmp*86400))/3600);
+        if ($tmp2>0) {$st=$st.'<span id=\'hours\'>'.$tmp2.'</span> ч. ';}
+        $tmp3=floor(($secs - ($tmp*86400) - ($tmp2*3600))/60);
+        if ($tmp3>0) {$st=$st.'<span id=\'mins\'>'.$tmp3.'</span> м. ';}
+        $tmp=floor($secs - ($tmp*86400) - ($tmp2*3600)-($tmp3*60));
+        if ($tmp>0) {$st=$st.'<span id=\'secs\'>'.$tmp.'</span> сек. ';}
+        return $st;
+    }
+    
     function run_module()
     {
         parent::run_module();
-        
-        function parsdig($st)
-        {
-            $chisla=array('0','1','2','3','4','5','6','7','8','9');
-            $ya=true;            	
-            for ($i=0; $i<strlen($st); $i++) {
-                if (!in_array(substr($st,$i,1),$chisla)) {                    	
-                    $ya=false;
-                    break;
-                }
-            }
-            return $ya;
-        }
 
-        function sectostr($secs)
-        {
-            $st="";
-            $tmp=floor($secs / 86400);
-            if ($tmp>0) {$st='<span id=\'days\'>'.$tmp.'</span> д. ';}
-            $tmp2=floor(($secs - ($tmp*86400))/3600);
-            if ($tmp2>0) {$st=$st.'<span id=\'hours\'>'.$tmp2.'</span> ч. ';}
-            $tmp3=floor(($secs - ($tmp*86400) - ($tmp2*3600))/60);
-            if ($tmp3>0) {$st=$st.'<span id=\'mins\'>'.$tmp3.'</span> м. ';}
-            $tmp=floor($secs - ($tmp*86400) - ($tmp2*3600)-($tmp3*60));
-            if ($tmp>0) {$st=$st.'<span id=\'secs\'>'.$tmp.'</span> сек. ';}
-            return $st;
-        }
-
-        switch (@$this->ipsclass->input['cmd']) {
+        switch ($this->ipsclass->input['cmd']) {
             case 'sh':
-               $this->do_game(@$this->ipsclass->input['keyw'], @$this->ipsclass->input['b_keyw']);
+               $this->do_game($this->ipsclass->input['keyw'], $this->ipsclass->input['b_keyw']);
                break;
             case 'cap':
-                $this->cap(@$this->ipsclass->input['cnc'], @$this->ipsclass->input['del'], @$this->ipsclass->input['yes']);
+                $this->cap($this->ipsclass->input['cnc'], $this->ipsclass->input['del'], $this->ipsclass->input['yes']);
                 break;
             case 'nmem':
-                $this->nmem(@$this->ipsclass->input['kuda'], @$this->ipsclass->input['cnc']);
+                $this->nmem($this->ipsclass->input['kuda'], $this->ipsclass->input['cnc']);
                 break;
             default:
                 $this->do_game("","");
@@ -90,7 +90,7 @@ class Shvatka extends Base
                                 {document.getElementById(\"action\").submit();}
                             }
                             </SCRIPT>";
-             if (((($cn!="")and(!parsdig($cn)))or(($de!="")and(!parsdig($de))))or(($ye!="")and(!parsdig($ye))))
+             if (((($cn!="")and(!$this->parsdig($cn)))or(($de!="")and(!$this->parsdig($de))))or(($ye!="")and(!$this->parsdig($ye))))
              {
                   $res="<font color=red>Запрос не прошел, в запросе использованы недопустимые символы. </font><br><br>";
                   $cn="";
@@ -101,7 +101,7 @@ class Shvatka extends Base
              $komanda=$frows['komanda'];
              $iid=$this->ipsclass->input['iid'];
              $zvan=$this->ipsclass->input['zvan'];
-             if  ((($iid!="")and(parsdig($iid)))or(($zvan!="")and(parsdig($zvan))))
+             if  ((($iid!="")and($this->parsdig($iid)))or(($zvan!="")and($this->parsdig($zvan))))
              {
                   if ($iid==$frows['n'])
                   {$zvan=-1;}
@@ -278,12 +278,12 @@ class Shvatka extends Base
     {
         $chisla=array('0','1','2','3','4','5','6','7','8','9');
         $res="";
-        if (($ku!="")and(!parsdig($ku)))
+        if (($ku!="")and(!$this->parsdig($ku)))
         {
            $res="Заявка не прошла, в запросе использованы недопустимые символы<br>";
            $ku="";
         }
-        if (($cn!="")and(!parsdig($cn)))
+        if (($cn!="")and(!$this->parsdig($cn)))
         {
            $res="Отмена заявки не прошла, в запросе использованы недопустимые символы<br>";
            $cn="";
@@ -338,352 +338,184 @@ class Shvatka extends Base
         }
         $this->result=$res;
     }
-
+    
     /**
-     * 
+     * Процесс игры
      * @param type $k  ключ поля
      * @param type $bk ключ мозга
      */
     function do_game($k,$bk)
-    {
-        $z=0;                                                                           /* Поправка времени в часах */
-        $z=$z*3600;
-        //if ((strstr($k, "&")!="")or(strstr($k, "<")!="")) {$k='Были использованы запрещённые символы';};
-        $bk=addslashes($bk);
-        $k=addslashes($k);
-        $gameover=false;
-        $res="";
-        $res.= "
-            <div id=\"userlinks\">
-            <p class=\"home\"><b>Управление СХВАТКОЙ:</b></p>
-            <p>";
-        $qqq=$this->ipsclass->DB->query("select field_4 from pfields_content where member_id=".$this->ipsclass->member['id']."");
-        $fff = $this->ipsclass->DB->fetch_row($qqq);
-        if (( $this->ipsclass->member['mgroup'] == $this->ipsclass->vars['admin_group'] )or($fff['field_4']=='y'))
-        {
-            $res.= "<a href='{$this->ipsclass->base_url}act=module&module=reps'>Админцентр Схватки</a> &middot;&nbsp;";
+    {   
+        $playerHelper = new Helper\Player;
+        $gameHelper = new Helper\Game;
+        $teamHelper = new Helper\Team;
+        $logHelper = new Helper\Log;
+        
+        try {
+            $player = $playerHelper->loadByMemberId($this->ipsclass->member['id']);
+        } catch (\App\Engine\Exception $e) {
+            return $this->ipsclass->render('module/shvatka/bad-player.twig');
         }
-        $this->ipsclass->DB->query("select * from sh_igroki WHERE nick='".$this->ipsclass->member['name']."'");
-        $frows = $this->ipsclass->DB->fetch_row($fquery);
-        if ($frows['status_in_cmd']=='Капитан') $res.="<a href='{$this->ipsclass->base_url}act=module&module=shvatka&cmd=cap'>Капитанский мостик</a> &middot;&nbsp;";
-        $res.="<a href='{$this->ipsclass->base_url}act=module&module=shvatka&cmd=nmem'>Хочу в команду</a> &middot;&nbsp;
-            <a href='{$this->ipsclass->base_url}act=module&module=stat'>SH-cтатистика</a>
-            </p>
-            </div>
-            <br>
-            ";
-        $komanda="";
-        $lev=0;
-        $podskazka=0;
-        $dtcom="";
-        $this->ipsclass->DB->query("select * from sh_igroki WHERE nick='".$this->ipsclass->member['name']."'");
-        $frows = $this->ipsclass->DB->fetch_row($fquery);
-            if (( $frows['n'] == "" )or($frows['komanda'] == "Не в команде"))            /* Смотрим зачислен ли чел к какую-нить команду */
-            {
-              if ($this->ipsclass->member['id']!="")
-              {
-                   $res=$res."Вы не зачисленные ни в одну из команд.<br>";
-                   $this->ipsclass->DB->query("select * from sh_games WHERE status='п'");
-                   $frows = $this->ipsclass->DB->fetch_row($fquery);
-                   if ($frows['n']!="")                                                   /* Смотрим есть ли предстоящая или текущая игра */
-                   {
-                        $res=$res.'<center><b>Название игры: '.$frows['g_name'].'</b></center><br>';
 
-                        if (strtotime($frows['dt_g'])>($z+(strtotime("now"))))                    /* Смотрим запущена ли игра (время) */
-                        {
-                            if ($frows['fond']!="")
-                            {$res=$res.'<br>';}
-                            $ctd=strtotime($frows['dt_g'])-($z+(strtotime("now")));
-                            $res=$res.'<center id="gtimer" >Игра начнется '.strftime('<span id=\'dt\'>%d.%m.%y в %H:%M</span>', strtotime( $frows['dt_g'])).' т.е. через '.sectostr($ctd).' </center><br>';
-                            $res=$res. <<<EOF
-<SCRIPT LANGUAGE="JavaScript">
-function CountDown()
-{ ctd=0;
-tmp=0;
-tmp2=0;
-tmp3=0;
-tmp4=0;
-if (document.getElementById('days')!=null) ctd=parseInt(document.getElementById('days').innerHTML)*24*60*60;
-if (document.getElementById('hours')!=null) ctd+=parseInt(document.getElementById('hours').innerHTML)*60*60;
-if (document.getElementById('mins')!=null) ctd+=parseInt(document.getElementById('mins').innerHTML)*60;
-if (document.getElementById('secs')!=null) ctd+=parseInt(document.getElementById('secs').innerHTML);
-st="Игра начнется <span id='dt'>";
-st+=document.getElementById('dt').innerHTML;
-st+="</span> т.е. через "
-if (ctd<=0)
-{
-ctd=0;
-st+="... УЖЕ НАЧАЛАСЬ!!!";
-}
-else
-{
-ctd=ctd-1;
-tmp=Math.floor(ctd/86400);
-tmp2=Math.floor((ctd-(tmp*86400))/3600);
-tmp3=Math.floor((ctd-(tmp*86400)-(tmp2*3600))/60);
-tmp4=Math.floor(ctd-(tmp*86400)-(tmp2*3600)-(tmp3*60));
-if (tmp>0) st+="<span id='days'>"+tmp+"</span> д. ";
-if (tmp2>0) st+="<span id='hours'>"+tmp2+"</span> ч. ";
-if (tmp3>0) st+="<span id='mins'>"+tmp3+"</span> м. ";
-if (tmp4>=0) st+="<span id='secs'>"+tmp4+"</span> сек. ";
-}
-document.getElementById('gtimer').innerHTML =st;
-window.setTimeout("CountDown()",1000);
-}
-CountDown()
-</SCRIPT>
-EOF;
-                            $this->ipsclass->DB->query("select * from sh_comands WHERE dengi=1");
-                            $res=$res."<center><br><TABLE cellspacing=\"1\" style='' class=\"borderwrap\">
-<tr><td class=\"maintitle\" align=\"center\" colspan=\"2\">Заявленные команды</td></tr><tr><th align=\"center\"><b>Название</b></th><th align=\"center\"><b>Очки</b></th></tr>";
-                            while ($frows = $this->ipsclass->DB->fetch_row($fquery))
-                            {
-                                   $res=$res."<tr class=\"ipbtable\"><td class=\"row1\"><b>".$frows['nazvanie']."</b></td><td class=\"row1\"> ".$frows['ochki']."</td></tr>";
-                            }
-                            $res=$res."</table></center><br>";
-                            $this->ipsclass->DB->query("select * from sh_igroki WHERE ch_dengi=1 order by komanda");
-                            $res=$res."<center><TABLE cellspacing=\"1\" style='' class=\"borderwrap\"><tr><td class=\"maintitle\" align=\"center\" colspan=\"3\">Игроки сделавшие взносы</td></tr>
-<tr><th align=\"center\"><b>Участник</b></th><th align=\"center\"><b>Команда</b></th><th align=\"center\"><b>Очки</b></td></tr>";
-                            while ($frows = $this->ipsclass->DB->fetch_row($fquery))
-                            {
-                                   $res=$res."<tr class=\"ipbtable\"><td class=\"row1\"><b>".$frows['nick']."</b></td><td class=\"row1\"> ".$frows['komanda']."</td><td class=\"row1\"> ".$frows['ochki']."</td></tr>";
-                            }
-                            $res=$res."</table></center>";
-                       }
-                       else
-                       {
-                            $res=$res.'Игра уже идёт.<br><br>';
-                       }
-                    }
-                    else
-                    {
-                            $res=$res.'Дата предстоящей игры пока не определена.<br><br>';
-                    }
-              }
-              else
-              {
-                   $res='Вы не залогинились на форуме. Сначала залогинтесь!<br>';
-              }
+        $game = $gameHelper->load();
+        if (empty($game)) {
+            return $this->ipsclass->render('module/shvatka/no-game.twig');
+        }
 
+        $gameTime = strtotime($game['dt_g']);
+
+        /* Смотрим запущена ли игра (время) */
+        if ($gameTime > strtotime("now")) {
+            $timeRest = $gameTime - strtotime("now");
+            return $this->ipsclass->render(
+                'module/shvatka/pre-game.twig', [
+                    'game' => $game,
+                    'timeRestFormatted' => strftime('%d.%m.%y в %H:%M', $gameTime),
+                    'timeRestForHuman' => $this->sectostr($timeRest),
+                    'teams' => $teamHelper->loadRegedList(),
+                    'players' => $playerHelper->loadRegedList()
+                ]
+            );
+        }
+
+        $gameId = $game['n'];
+        $isPlayerReged = $player['ch_dengi'];
+        $playerName = $player['nick'];
+        $teamName = $player['komanda'];
+
+        try {
+            $team = $teamHelper->loadByName($teamName);
+            $isTeamReged = $team['dengi'];
+            
+            if (empty($isTeamReged) or empty($isPlayerReged)) {
+                return $this->ipsclass->render('module/shvatka/no-access.twig');
             }
-            else                                                                         /* Зачислен */
-            {
-              $chel=$frows['ch_dengi'];                                              /* регистрация на игру */
-              $komanda = $frows['komanda'];                                          /* название команды */
-//                        $res=$frows['n'].'<br>'.$frows['nick'].'<br>'.$frows['komanda'].'<br>'.$frows['status_in_cmd'].'<br>'.$frows['ochki'].'<br>' ;
-              $this->ipsclass->DB->query("select * from sh_games WHERE status='п'");
-              $frows = $this->ipsclass->DB->fetch_row($fquery);
-              $tmg=strtotime($frows['dt_g']);
-              $g_id=$frows['n'];
-              if ($frows['n']!="")                                                   /* Смотрим есть ли предстоящая или текущая игра */
-              {
-                  $res=$res.'<center><b>Название игры: '.$frows['g_name'].'</b></center><br>';
-                  if (strtotime($frows['dt_g'])>($z+(strtotime("now"))))                    /* Смотрим запущена ли игра (время) */
-                  {
-                      if ($frows['fond']!="")
-                      {$res=$res.'<br>';}
-                      $ctd=strtotime($frows['dt_g'])-($z+(strtotime("now")));
-                      $res=$res.'<center id="gtimer" >Игра начнется '.strftime('<span id=\'dt\'>%d.%m.%y в %H:%M</span>', strtotime( $frows['dt_g'])).' т.е. через '.sectostr($ctd).' </center><br>';
-                      $res=$res. <<<EOF
-<SCRIPT LANGUAGE="JavaScript">
-function CountDown()
-{ ctd=0;
-tmp=0;
-tmp2=0;
-tmp3=0;
-tmp4=0;
-if (document.getElementById('days')!=null) ctd=parseInt(document.getElementById('days').innerHTML)*24*60*60;
-if (document.getElementById('hours')!=null) ctd+=parseInt(document.getElementById('hours').innerHTML)*60*60;
-if (document.getElementById('mins')!=null) ctd+=parseInt(document.getElementById('mins').innerHTML)*60;
-if (document.getElementById('secs')!=null) ctd+=parseInt(document.getElementById('secs').innerHTML);
-st="Игра начнется <span id='dt'>";
-st+=document.getElementById('dt').innerHTML;
-st+="</span> т.е. через "
-if (ctd<=0)
-{
-ctd=0;
-st+="... УЖЕ НАЧАЛАСЬ!!!";
-}
-else
-{
-ctd=ctd-1;
-tmp=Math.floor(ctd/86400);
-tmp2=Math.floor((ctd-(tmp*86400))/3600);
-tmp3=Math.floor((ctd-(tmp*86400)-(tmp2*3600))/60);
-tmp4=Math.floor(ctd-(tmp*86400)-(tmp2*3600)-(tmp3*60));
-if (tmp>0) st+="<span id='days'>"+tmp+"</span> д. ";
-if (tmp2>0) st+="<span id='hours'>"+tmp2+"</span> ч. ";
-if (tmp3>0) st+="<span id='mins'>"+tmp3+"</span> м. ";
-if (tmp4>=0) st+="<span id='secs'>"+tmp4+"</span> сек. ";
-}
-document.getElementById('gtimer').innerHTML =st;
-window.setTimeout("CountDown()",1000);
-}
-CountDown()
-</SCRIPT>
-EOF;
-                      $this->ipsclass->DB->query("select * from sh_comands WHERE dengi=1");
-                      $res=$res."<center><br><TABLE cellspacing=\"1\" style='' class=\"borderwrap\">
-<tr><td class=\"maintitle\" align=\"center\" colspan=\"2\">Заявленные команды</td></tr><tr><th align=\"center\"><b>Название</b></th><th align=\"center\"><b>Очки</b></th></tr>";
-                      while ($frows = $this->ipsclass->DB->fetch_row($fquery))
-                      {
-                           $res=$res."<tr class=\"ipbtable\"><td class=\"row1\"><b>".$frows['nazvanie']."</b></td><td class=\"row1\"> ".$frows['ochki']."</td></tr>";
-                      }
-                      $res=$res."</table></center><br>";
-                      $this->ipsclass->DB->query("select * from sh_igroki WHERE ch_dengi=1 order by komanda");
-                      $res=$res."<center><TABLE cellspacing=\"1\" style='' class=\"borderwrap\"><tr><td class=\"maintitle\" align=\"center\" colspan=\"3\">Игроки сделавшие взносы</td></tr>
-<tr><th align=\"center\"><b>Участник</b></th><th align=\"center\"><b>Команда</b></th><th align=\"center\"><b>Очки</b></td></tr>";
-                      while ($frows = $this->ipsclass->DB->fetch_row($fquery))
-                      {
-                           $res=$res."<tr class=\"ipbtable\"><td class=\"row1\"><b>".$frows['nick']."</b></td><td class=\"row1\"> ".$frows['komanda']."</td><td class=\"row1\"> ".$frows['ochki']."</td></tr>";
-                      }
-                      $res=$res."</table></center>";
-                  }
-                  else
-                  {
- //                   $res=$res.'Игра началась!<br>';
-                      $this->ipsclass->DB->query("select * from sh_comands WHERE nazvanie='".$komanda."'");
-                      $frows = $this->ipsclass->DB->fetch_row($fquery);
-                      $lev=$frows['uroven'];                                         /* уровень на котором находится команда */
-                      $podskazka=$frows['podskazka'];                                /* номер подсказки команды */
-                      $dtcom=$frows['dt_ur'];                                        /* время начала текущего уровня команды */
-                      if (($frows['dengi'])and($chel))                               /* Смотрим зарегистрирован ли игрок на игру*/
-                      {
- //                        $res=$res.'Деньги сданы<br>';
-                           if ($lev==0)
-                           {
-                               $lev=1;
-                               $podskazka=0;
-                               $dtcom=date('Y-m-d H:i:s',($z+strtotime("now")));
-                               $this->ipsclass->DB->query("update sh_comands set uroven=1, podskazka=0, dt_ur='".$dtcom."' WHERE nazvanie='".$komanda."'");
-                           }
-                           $this->ipsclass->DB->query("select * from sh_game WHERE (uroven=". $lev.")and(n_podskazki=0)");
-                           $frows = $this->ipsclass->DB->fetch_row($fquery);
-                           $level_b_key=$frows['b_keyw'];
-                           if (($k!="")or($bk!=""))                                               /* Если ключ введён - пишем лог и проверяем ключ, если нет - смотрим пришло ли время для подсказки*/
-                           {
-                               /*$this->ipsclass->DB->query("select * from sh_log WHERE n=(select MAX(n) from sh_log)");
-                               $frows1 = $this->ipsclass->DB->fetch_row($fquery);
-                               $this->ipsclass->DB->query("INSERT INTO sh_log values(".($frows1['n']+1).",'".$komanda."','".date('Y-m-d H:i:s')."','".$k."')");  */
-                               if (($k!=$frows['keyw'])or($level_b_key!=$bk))
-                               {
-                                         $this->ipsclass->DB->query("INSERT INTO sh_log (comanda, time, keytext, autor) values('".$komanda."','".date('Y-m-d H:i:s',($z+(strtotime("now"))))."','".str_replace(" ","&nbsp;",htmlspecialchars($k.$bk))."','".$this->ipsclass->member['name']."')");
-                                         /*if ($this->ipsclass->input['lofver']==1)
-                                         header('Location:{$this->ipsclass->base_url}?act=module&module=shvatka&lofver=1');
-                                         else
-                                         header('Location:{$this->ipsclass->base_url}?act=module&module=shvatka');*/
-                               }
-                               else
-                               {
-                                         $this->ipsclass->DB->query("INSERT INTO sh_log (comanda, time, keytext, autor, levdone) values('".$komanda."','".date('Y-m-d H:i:s',($z+(strtotime("now"))))."','".str_replace(" ","&nbsp;",htmlspecialchars($k.$bk))."','".$this->ipsclass->member['name']."','".$lev."')");
-                               }
+        } catch (\App\Engine\Exception $e) {
+            return $this->ipsclass->render('module/shvatka/no-access.twig');
+        }
+        
+        $levelNum = $team['uroven'];
+        $tipNum = $team['podskazka'];
+        $levelStartTime = $team['dt_ur'];
 
-                           }
-                           if (($k==$frows['keyw'])and($level_b_key==$bk))
-                           {
-//                                $res=$res.'Ключ подошел. Переход на следующий уровень'.'<br>';
-                               $lev=$lev+1;
-                               $podskazka=0;
-                               $this->ipsclass->DB->query("select * from sh_game WHERE (uroven=".$lev.")and(n_podskazki=0)");
-                               $frows = $this->ipsclass->DB->fetch_row($fquery);
-                               $level_b_key=$frows['b_keyw'];
-                               $ltn=date('Y-m-d H:i:s',($z+strtotime("now")));
-                               if ($frows['n']!="")
-                               {
-                                    $this->ipsclass->DB->query("update sh_comands set uroven=".$lev.", podskazka=".$podskazka.", dt_ur='".$ltn."' WHERE nazvanie='".$komanda."'");
-                                    $dtcom=$ltn;
-                               }
-                               else
-                               {
-                                    $this->ipsclass->DB->query("select * from sh_comands WHERE nazvanie='".$komanda."'");
-                                    $frows = $this->ipsclass->DB->fetch_row($fquery);
-                                    $this->ipsclass->DB->query("update  sh_comands set uroven=0, podskazka=0, dengi=0, dt_ur='".$ltn."', cmp_games='".$frows['cmp_games'].$g_id." ' WHERE nazvanie='".$komanda."'");
-                                    $res='Поздравляем. Игра пройдена за '.sectostr(strtotime($ltn)-$tmg);
-                                    $gs=array();
-                                    $this->ipsclass->DB->query("select * from sh_igroki WHERE (ch_dengi=1)and(komanda='".$komanda."')");
-                                    while ($frows = $this->ipsclass->DB->fetch_row($fquery))
-                                    {                                        	 $gs[$frows['n']]=$frows['games'].$g_id;
-                                    }
-                                    foreach ($gs as $nig=>$gm)
-                                    {
-                                         $this->ipsclass->DB->query("update  sh_igroki set ch_dengi=0, games='".$gm." ' WHERE n='".$nig."'");
-                                    }
-                                    $this->ipsclass->DB->query("select * from sh_games WHERE n=".$g_id);
-                                    $frows = $this->ipsclass->DB->fetch_row($fquery);
-                                    $this->ipsclass->DB->query("update  sh_games set pedistal='".$frows['pedistal'].$komanda."<br>' WHERE n=".$g_id);
-                                    $gameover=true;
-                                    if (count($this->ipsclass->DB->query("select * from sh_comands WHERE dengi=1"))==0)
-                                    {$this->ipsclass->DB->query("update  sh_games set status='т' WHERE status='п'");}
+        if ($levelNum == 0) {
+            $tipNum = 0;
+            $levelNum = 1;
+            $levelStartTime = date('Y-m-d H:i:s');
+            $teamHelper->updateGameStatus($teamName, $levelStartTime);
+        }
+        
+        // загружаем уровень, важно tipNum == 0
+        $level = new Helper\Unit($levelNum, 0);
+        if (!$level->isExists()) {
+            // такого уровня или подсказки нет ...
+            // TODO шо делать, шо делать
+            return $this->ipsclass->render('module/shvatka/finish-game.twig', [
+                'game' => $game,
+                'duration' => $this->sectostr(strtotime($levelStartTime) - $gameTime) 
+            ]);
+        }
+        
+        $brainKey = $level['b_keyw'];
+        $fieldKey = $level['keyw'];
+        
+        if ( $k != "" || $bk != "") {
+            $logHelper->write($teamName, $fieldKey . $brainKey, $playerName);
+        }
 
-                               }
-                           }
-                           if (!$gameover)
-                           {
-                               if (($z+strtotime("now")-strtotime($dtcom))>0)
-                               {$res=$res.'<center><b>Уровень '.$lev.'. С начала уровня прошло '.(sectostr($z+strtotime("now")-strtotime($dtcom))).'</b></center><br>'.$frows['text'].'<br>';}
-                               else
-                               {$res=$res.'<center><b>Уровень '.$lev.' начат '.(date('d-m-y в H:i:s',(strtotime($dtcom)))).'</b></center><br>'.$frows['text'].'<br>';}
-                               if ($podskazka>0)
-                               {
-                                    for ($i=1;$i<= $podskazka;$i++)
-                                    {
-                                         $this->ipsclass->DB->query("select * from sh_game WHERE (uroven=". $lev.")and(n_podskazki=".$i.")");
-                                         $frows = $this->ipsclass->DB->fetch_row($fquery);
-                                         $res=$res.'<b>Подсказка '.$i.': </b>'.$frows['text'].'<br>';
-                                    }
-                               }
-                               if (($frows['p_time']!=0)and(((60*$frows['p_time'])+strtotime($dtcom))<=($z+(strtotime("now")))))
-                               {
-                                    $podskazka=$podskazka+1;
-                                    $this->ipsclass->DB->query("select * from sh_game WHERE (uroven=". $lev.")and(n_podskazki=".$podskazka.")");
-                                    $frows = $this->ipsclass->DB->fetch_row($fquery);
-                                    if ($frows['n']!="")
-                                    {
-                                         $this->ipsclass->DB->query("update sh_comands set podskazka=".$podskazka." WHERE nazvanie='".$komanda."'");
-                                    }
-                                    $res=$res.'<b>Подсказка '.$podskazka.': </b>'.$frows['text'].'<br>';
-                               }
-                               $res=$res.'<Form action="'.$this->ipsclass->base_url.'" autocomplete="on" method="post">
-<input type=HIDDEN name="act" value="module">Ключ: <input type=HIDDEN name="module" value="shvatka">
-<input type=HIDDEN name="cmd" value="sh">';
-if ($this->ipsclass->input['lofver']==1)
-{$res.='<input type=HIDDEN name="lofver" value="1">';}
-$res.='<input type=text name="keyw" SIZE=50>&nbsp;';
-if ($level_b_key!='')
-{
-$res.='Мозговой ключ: <input type=text name="b_keyw" SIZE=50 ';
-if ($level_b_key==$bk) $res.='value="'.$level_b_key.'" readonly >ОК';
-else $res.='value="">';
-}
-$res.='<br><input type=submit value="  Проверить ключ/наличие подсказки     " style={background:#D2D0D0;border:1px;border:outset;border-color:#ffffff}>
-</form>';
-                           }
-                      }
-                      else
-                      {
-                           $res=$res.'Одно из трёх,<br>
-либо текущая игра пройдена вами, но ещё не закончена другими,<br>
-либо ваша команда не заявлена на эту игру,<br>
-либо вы лично не сделали взнос.<br><br>';
-                      }
-                  }
-              }
-              else
-              {
-                  $res=$res.'Дата предстоящей игры пока не определена.<br><br>';
-              }
-              $adm_msg='';
-              $msg_q=$this->ipsclass->DB->query("select * from sh_admin_msg WHERE ((komand='все')|(FIND_IN_SET('".$komanda."',komand)!=0))&((endtime>='".time()."')&(FIND_IN_SET('".$komanda."',readed)=0))");
-              while ($frows = $this->ipsclass->DB->fetch_row($msg_q))
-              {
-                if ($frows['komand']=='все') {$color='#EE634F'; $komu='<i><u>всех</u></i> команд';} else {$color='#67ED50'; $komu='команды <i><u>'.$komanda.'</u></i>';}
-                if ($frows['endtime']>=time()) $adm_msg.='<table style="border: 1px solid black;width:100%;background:'.$color.';"><tr><th>Сообщение от организатора '.$frows['autor'].' для '.$komu.'.</th></tr><tr class="ipbtable"><td class="row1">'.$frows['msg'].' <div align="right"><form  "' . $this->ipsclass->base_url .'" method="get">
+        // проверяем ключи, сама логика игры
+        if ($k == $fieldKey && $bk == $brainKey) {
+            
+            $levelNum++;
+            $tipNum = 0;
+            $levelStartTime = date('Y-m-d H:i:s');
+            
+            $logHelper->write($teamName, $fieldKey . $brainKey, $playerName);
+            
+            $level = new Helper\Unit($levelNum, 0);
+            if ($level->isExists()) {
+                // следующий уровень
+                $teamHelper->updateGameStatus($teamName, $levelStartTime, $levelNum, $tipNum);
+                
+            } else {
+                // игра пройдена, стираем данные о положении данной команды
+                $teamHelper->updateGameHistory($teamName, $gameId);
+                $players = $playerHelper->loadListByTeamName($teamName);
+                foreach ($players as $player) {
+                    if ($player['ch_dengi'] == 1) {
+                        $playerHelper->updateGameHistory($player['n'], $gameId);
+                    }
+                }
+
+                $gameHelper->updateWinners($teamName);
+                
+                $activeTeams = $teamHelper->loadRegedList();
+                if (count($activeTeams) == 0) {
+                    // перевести игру в разряд прошедших
+                    $gameHelper->end();
+                }
+
+                return $this->ipsclass->render('module/shvatka/finish-game.twig', [
+                    'duration' => $this->sectostr(strtotime($levelStartTime) - $gameTime) 
+                ]);
+            }
+        }
+        
+        // посчитаем общую сумму ожидания след. подсказки
+        $tips = $level->loadTipsByLevel($tipNum);
+        $delay = $level['p_time'];
+        $now = strtotime("now");
+        foreach ($tips as $i => $tip) {
+            if ($tipNum <= $i) {
+                // если у команды, допустим, 1 подсказка, а это 0-ой индекс, то идем дальше
+                if ($now >= (60 * $delay + strtotime($levelStartTime))) {
+                    $tipNum++;
+                    $teamHelper->updateGameStatus($teamName, $levelStartTime, $levelNum, $tipNum);
+                } else {
+                    // если до следующей подсказки надо еще подождать, 
+                    // то удалим ее из списка на отображение
+                    unset($tips[$i]);
+                }
+            }
+            $delay += $tip['p_time'];
+        }
+        
+        return $this->ipsclass->render('module/shvatka/game.twig', [
+            'game' => $game,
+            'brainKey' => $bk,
+            'level' => $level,
+            'levelNum' => $levelNum,
+            'tipNum' => $tipNum,
+            'tips' => $tips,
+            'duration' => $this->sectostr(strtotime("now") - strtotime($levelStartTime))
+        ]);
+    }
+    
+    /**
+     * Блок сообщения от организаторов
+     * @return string
+     */
+    protected function _showMessage()
+    {
+        $adm_msg = '';
+        $msg_q = $this->ipsclass->DB->query("select * from sh_admin_msg WHERE ((komand='все')|(FIND_IN_SET('".$komanda."',komand)!=0))&((endtime>='".time()."')&(FIND_IN_SET('".$komanda."',readed)=0))");
+        while ($frows = $this->ipsclass->DB->fetch_row($msg_q)) {
+            if ($frows['komand'] == 'все') {
+                $color='#EE634F'; $komu='<i><u>всех</u></i> команд';} else {$color='#67ED50'; $komu='команды <i><u>'.$komanda.'</u></i>';
+            }
+
+            if ($frows['endtime'] >= time()) {
+                $adm_msg .= '<table style="border: 1px solid black;width:100%;background:'.$color.';"><tr><th>Сообщение от организатора '.$frows['autor'].' для '.$komu.'.</th></tr><tr class="ipbtable"><td class="row1">'.$frows['msg'].' <div align="right"><form  "' . $this->ipsclass->base_url .'" method="get">
 <input name="act" type="hidden" value="module">
 <input name="module" type="hidden" value="utils">
 <input name="hsh" type="hidden" value="'.$frows['hash'].'"><input style="font: 8pt tahoma; padding: 0pt;"type="submit" value="Прочитал"></form></div></td></tr></table>';
-              }
-              if ($adm_msg!='') $res.='<div id="adm_msg_div" style="left:35%;top:35%;width:30%;height:auto;overflow: auto;position:absolute;" onClick="javascript:this.style.display=\'none\'">'.$adm_msg.'</div>';
             }
-            $this->result = $res;
+        }
+            
+        if ($adm_msg != '') {
+            $adm_msg = '<div id="adm_msg_div" style="left:35%;top:35%;width:30%;height:auto;overflow: auto;position:absolute;" onClick="javascript:this.style.display=\'none\'">'.$adm_msg.'</div>';
+        }
+        
+        return $adm_msg;
     }
 }

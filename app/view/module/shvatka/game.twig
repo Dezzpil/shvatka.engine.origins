@@ -1,0 +1,49 @@
+{% extends "template/shvatka.twig" %}
+
+{% block title %}{% endblock %}
+
+{% block content %}
+    
+    <div class="well">
+        <center><b>Название игры: {{ game.g_name }}</b></center></div>
+    
+    <div class="well">
+        <center>
+            <b>
+                Уровень {{ levelNum }}. 
+                {% if duration %}
+                    С начала уровня прошло {{ duration|raw }}
+                {% endif %}
+            </b>
+        </center>
+    </div>
+        
+    <div class="well">
+        {{ level.text }}
+    </div>
+    
+    {% for tip in tips %}
+        <div class="well">
+            <b>Подсказка {{ loop.index }}: </b> {{ tip.text }}<br />
+        </div>
+    {% endfor %}
+    
+    <form action="/shvatka?" autocomplete="on" method="post">
+        <input type=HIDDEN name="act" value="module">
+        <input type=HIDDEN name="module" value="shvatka">
+        <input type=HIDDEN name="cmd" value="sh">
+        Ключ: <input type=text name="keyw" SIZE=50>
+        {% if level.b_keyw is not empty %}
+            Мозговой ключ: 
+            {% if brainKey == level.b_keyw %}
+                <input type=text name="b_keyw" SIZE=50 value="{{ brainKey }}" readonly />OK
+            {% else %}
+                <input type=text name="b_keyw" SIZE=50 value="" />
+            {% endif %}
+        {% endif %}
+
+        <br />&nbsp;<br />
+        <input type="submit" value="Проверить ключ/наличие подсказки">
+    </form>
+    
+{% endblock %}

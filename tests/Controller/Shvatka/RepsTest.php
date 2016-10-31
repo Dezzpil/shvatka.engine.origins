@@ -9,6 +9,9 @@ namespace App\Tests\Controller\Shvatka;
  */
 class RepsTest extends \App\Tests\OrganizationControllerTest
 {   
+    /**
+     * @group game
+     */
     function testNoUpcomingGame()
     {
         $client = $this->createClient();
@@ -20,6 +23,9 @@ class RepsTest extends \App\Tests\OrganizationControllerTest
         $this->assertNotContains('Удалить игру', $client->getResponse()->getContent());
     }
     
+    /**
+     * @group game
+     */
     function testCreateGame()
     {
         $client = $this->createClient();
@@ -39,6 +45,9 @@ class RepsTest extends \App\Tests\OrganizationControllerTest
         $this->assertContains('Игра создана', $client->getResponse()->getContent());
     }
     
+    /**
+     * @group game
+     */
     function testUpdateGame()
     {
         $client = $this->createClient();
@@ -89,6 +98,82 @@ class RepsTest extends \App\Tests\OrganizationControllerTest
         $this->assertNotEquals('checked', $input->attr('checked'));
     }
     
+    /**
+     * @group scn
+     */
+    function testDisplayLevel()
+    {
+        $level = new \App\Engine\Helper\Unit(1, 0);
+        $level->save('SHKEY', 'Ключ уровня SHKEY');
+        
+        $client = $this->createClient();
+        $crawler = $client->request('GET', '/shvatka', 
+            ['module' => 'reps', 'cmd' => 'scn']
+        );
+        
+        $this->assertContains('SHKEY', $client->getResponse()->getContent());
+        $result = $crawler->filter('form')->each(function($node) {
+            return $node->attr('level') == 1 && $node->attr('tip') == 0;
+        });
+        $this->assertContains(true, $result);
+    }
+  
+    /**
+     * @group scn
+     */
+    function testDisplayTip()
+    {
+        $level = new \App\Engine\Helper\Unit(1, 1);
+        $level->save(null, 'Подсказка 1');
+        
+        $client = $this->createClient();
+        $crawler = $client->request('GET', '/shvatka', 
+            ['module' => 'reps', 'cmd' => 'scn']
+        );
+        
+        $this->assertContains('Подсказка 1', $client->getResponse()->getContent());
+        $result = $crawler->filter('form')->each(function($node) {
+            return $node->attr('level') == 1 && $node->attr('tip') == 1;
+        });
+        $this->assertContains(true, $result);
+    }
+    
+    /**
+     * @group scn
+     */
+    function testDeleteTip()
+    {
+        $level = new \App\Engine\Helper\Unit(1, 1);
+        $level->delete();
+        
+        $client = $this->createClient();
+        $crawler = $client->request('GET', '/shvatka', 
+            ['module' => 'reps', 'cmd' => 'scn']
+        );
+        
+        $this->assertNotContains('Подсказка 1', $client->getResponse()->getContent());
+        $result = $crawler->filter('form')->each(function($node) {
+            return ($node->attr('level') == 1 && $node->attr('tip') == 1);
+        });
+        $this->assertNotContains(true, $result);
+    }
+    
+    /**
+     * @group scn
+     */
+    function testDeleteAllScenario()
+    {
+        $client = $this->createClient();
+        $client->request('POST', '/shvatka', 
+            ['module' => 'reps', 'cmd' => 'scn', 'delg' => 1]
+        );
+        
+        $this->assertNotContains('SHKEY', $client->getResponse()->getContent());
+    }
+    
+    /**
+     * @group game
+     */
     function testDeleteGame()
     {
         $client = $this->createClient();

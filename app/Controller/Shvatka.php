@@ -70,7 +70,11 @@ class Shvatka extends Authed
             $result = $mod->run_module();
         } catch (\App\Engine\Exception\AccessDenied $e) {
             $app->abort(403, $e->getMessage());
-            //return $app->render('403.twig', ['error' => $e->getMessage()]);
+        }
+        
+        $redirectRequest = $adapter->getRedirectRequest();
+        if (!empty($redirectRequest)) {
+            return $app->redirect($redirectRequest->getUrl());
         }
         
         // Задаем проверку на то, используется ли запрос на рендер с использованием

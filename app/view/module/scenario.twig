@@ -3,60 +3,84 @@
 {% block header %}Редактор сценария{% endblock %}
 
 {% block content %}
+    
+    {% for unit in scenario %}
+    <div class="well">
+        {% set level = unit.uroven %}
+        {% set tip = unit.n_podskazki %}
+        {% set formName = ['form', level, tip]|join('-') %}
+        {% set hasBrainPart = unit.b_keyw is not empty %}
 
-    {% if error is not empty %}
-
-        {{ error }}
-
-    {% else %}
-
-        {% if cm == 2 %}
-
-            {% include 'module/scenario/_delete.twig' %}
-
-        {% else %}
-
-            <h3>Уровень {{ lev }}, подсказка {{ npod }}</h3>
-            <form name="edi" action="/shvatka" method="POST" ENCTYPE=multipart/form-data>
-                <input name="act" type="hidden" value="module" />
-                <input name="module" type="hidden" value="edit" />
-                <input name="cm" type="hidden" value="{{ cm }}" />
-                <input name="lev" type="hidden" value="{{ lev }}" />
-                <input name="npod" type="hidden" value="{{ npod }}" />
-                <input name="execs" type="hidden" value="1" />
-                <div class="form-group">
-                    <label>
-                        Время, от начала уровня, через которое выскочит 
-                        <b>{{ npod == 0 ? 'первая' : 'следующая за этой' }}</b> 
-                        подсказка (минуты):
-                    </label>
-                    <input name="ptm" type="text" value="{{ ptm ?: 15 }}" /> 
-                    {% if npod != 0 %}
-                        <span class="help-block">Если это последняя подсказка, то обязательно поставьте 0.</span>
-                    {% endif %}
-                </div>
-
-                <div class="form-group">
-                    <label>Текст (можно использовать html) уровня или подсказки:</label>
-                    <textarea name="textl" rows="15">{{ textl }}</textarea>
-                </div>
-
-                {% if npod == 0 %}
-                <div class="form-group">
-                    <label>Ключ уровня: </label>
-                    <input name="keyw" type="text" value="{{ keyw }}" />
-                </div>
-                <div class="form-group">
-                    <label>Мозговой ключ уровня:</label>
-                    <input name="b_keyw" type="text" value="{{ b_keyw }}" />
-                </div>
+        <div class="well">
+            {% if tip != 0 %}
+                <b>Подсказка №{{ tip }} ({{ minutes[loop.index0] }} мин.)</b>
+                {% if unit.p_time == 0 %}
+                    Последняя подсказка уровня.
                 {% endif %}
+            {% else %}
+                <br />
+                <h3>
+                    Уровень {{ level }}<br />
+                    <small>
+                    Ключ: {{ unit.keyw }} 
+                    {% if hasBrainPart %}
+                        Мозговой ключ: {{ unit.b_keyw }}
+                    {% endif %}
+                    </small>
+                </h3>
+            {% endif %}
+        </div>
+            
+        <div class="well">
+            {{ unit.text }}
+        </div>
 
-                <input type="submit" value="Сохранить">
-            </form>
+        <form action="/shvatka" name="{{ formName }}" level="{{ level }}" tip="{{ tip }}" >
+            <input name="act" type="hidden" value="module">
+            <input name="module" type="hidden" value="edit">
+            <input name="lev" type="hidden" value="{{ unit.uroven }}">
+            <input name="npod" type="hidden" value="{{ unit.n_podskazki }}">
+            <div class="row">
+                <button class="eight columns" type="submit" name="cm" value="1">Редактировать</button>
+                <button class="four columns" type="submit" name="cm" value="2" formmethod="POST">Удалить</button>
+            </div>
+        </form>
+    </div>
+    {% endfor %}
+    <br />&nbsp<br />
+    <div class="well">
+        <form action="/shvatka">
+            <input name="act" type="hidden" value="module">
+            <input name="module" type="hidden" value="edit">
+            <input name="cm" type="hidden" value="3">
 
-        {% endif %}
+            <div class="row well">
+                <input class="six columns" name="lev" type="text" placeholder="Уровень" value="">
+                <input class="six columns" name="npod" type="text" placeholder="подсказку" value="">
+            </div>
 
+            <input type="submit" value="Добавить" />
+        </form>
+    </div>
+    
+    {% if scenario|length > 0 %}
+        <br />&nbsp<br />
+        <form id="fdelgame" action="/shvatka">
+            <input name="act" type="hidden" value="module">
+            <input name="module" type="hidden" value="reps">
+            <input name="cmd" type="hidden" value="scn">
+            <input name="delg" type="hidden" value="1">
+            <input type="submit" value="Удалить нафиг весь сценарий" class="btn btn-danger">
+        </form>
+        <script>
+            var form = document.getElementById('fdelgame');
+            form.onsubmit = function(e) {
+                e.preventDefault();
+                if (confirm('Уверены что хотите удалить ВЕСЬ сценарий?')) {
+                    form.submit();
+                }
+            }
+        </script>
     {% endif %}
     
 {% endblock %}
