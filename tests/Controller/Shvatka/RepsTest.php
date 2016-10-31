@@ -58,6 +58,37 @@ class RepsTest extends \App\Tests\OrganizationControllerTest
         $this->assertContains('Изменения в настройки игры внесены', $client->getResponse()->getContent());
     }
     
+    /**
+     * @group reps-deng
+     */
+    function testRegToGame()
+    {
+        $client = $this->createClient();
+        $client->request('GET', '/shvatka', 
+            ['module' => 'reps', 'cmd' => 'deng']
+        );
+        
+        $this->assertContains('зарегистрировано', $client->getResponse()->getContent());
+    }
+    
+    /**
+     * @group reps-deng
+     */
+    function testRegToGameMember()
+    {
+        $client = $this->createClient();
+        $crawler = $client->request('POST', '/shvatka', 
+            ['module' => 'reps', 'cmd' => 'deng', 'y' => 1, 'i2' => '1']
+        );
+        
+        $input = $crawler->filter('input[name=i2]');
+        $this->assertEquals(1, $input->count());
+        $this->assertEquals('checked', $input->attr('checked'));
+        
+        $input = $crawler->filter('input[name=i1]');
+        $this->assertNotEquals('checked', $input->attr('checked'));
+    }
+    
     function testDeleteGame()
     {
         $client = $this->createClient();

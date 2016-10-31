@@ -66,9 +66,12 @@ class Shvatka extends Authed
         $mod = new $modClass;
         $mod->ipsclass = $adapter;
 
-        // The return value of the 
-        // closure becomes the content of the page.
-        $result = $mod->run_module();
+        try {
+            $result = $mod->run_module();
+        } catch (\App\Engine\Exception\AccessDenied $e) {
+            $app->abort(403, $e->getMessage());
+            //return $app->render('403.twig', ['error' => $e->getMessage()]);
+        }
         
         // Задаем проверку на то, используется ли запрос на рендер с использованием
         // стороннего движка. Если да, то передаем данные приложению, а оно должно

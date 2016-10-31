@@ -1,0 +1,58 @@
+{% extends "template/organization.twig" %}
+{% set cnt = 0 %}
+
+{% block header %}Регистрация на игру{% endblock %}
+
+{% block content %}
+<div class="borderwrap">
+    
+    <form action="/shvatka" method="post">
+        
+        <input name="act" type="hidden" value="module">
+        <input name="module" type="hidden" value="reps">
+        <input name="cmd" type="hidden" value="deng">
+        <input name="y" type="hidden" value="1">
+        {% for team in teams %}
+            <table cellspacing="1" class="borderwrap" align="center">
+                <thead>
+                <tr>
+                    <td colspan="4" align="center">
+                        {% if team.dengi == 1 %}
+                            <input name="c{{ team.n }}" type="checkbox" value="1" checked />
+                        {% else %}
+                            <input name="c{{ team.n }}" type="checkbox" value="1" />
+                        {% endif %}
+                        {{ team.nazvanie }}
+                    </td>
+                </tr>
+                </thead><tbody>
+                <tr>
+                    <th></th>
+                    <th>Ник</th>
+                    <th>Статус</th>
+                    <th>Очки</th>
+                </tr>
+                {% for player in team.players %}
+                    <tr>
+                        <td>
+                            {% if player.ch_dengi == 1 %}
+                                <input name="i{{ player.n }}" type="checkbox" value="1" checked />
+                                {% set cnt = cnt + 1 %}
+                            {% else %}
+                                <input name="i{{ player.n }}" type="checkbox" value="1" />
+                            {% endif %}
+                        </td>
+                        <td><b>{{ player.nick }}</b></td>
+                        <td>{{ player.status_in_cmd }}</td>
+                        <td>{{ player.ochki }}</td>
+                    </tr>
+                {% endfor %}
+            </table>
+        {% endfor %}
+    
+        <div class="well">Со всех команд зарегистрировано {{ cnt }} человек(а)</div>
+        <input type="submit" value="Подтвердить изменения" />
+    
+    </form>
+</div>
+{% endblock %}

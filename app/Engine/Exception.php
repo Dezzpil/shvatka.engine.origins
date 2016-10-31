@@ -1,9 +1,10 @@
 <?php
-namespace App\Engine\Helper;
+
+namespace App\Engine;
 
 /**
  * 
- * @date 20.10.2016
+ * @date 31.10.2016
  * @author Nikita Dezzpil Orlov <nikita@shvatka.ru>
  */
 class Exception extends \Exception {

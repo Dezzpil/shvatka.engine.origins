@@ -1,0 +1,5 @@
+{% extends "template/shvatka.twig" %}
+
+{% block title %}Ошибка {{ code }}{% endblock %}
+
+{% block content %}<div class="alert alert-danger">{{ error }}</div>{% endblock %}

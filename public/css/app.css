@@ -15,7 +15,7 @@ and open the template in the editor.
 }
 
 body {
-    
+    max-width: 1000px;
 }
 ul {
     margin: 0;
@@ -36,10 +36,16 @@ ul {
 
 table {
     width:100%;
+    margin-bottom: 14px;
+}
+th {
+    color: gray;
+    font-weight: normal;
+    text-align: inherit;
 }
 
 form {
-    margin-bottom: 15px;
+    margin-bottom: 14px;
 }
 label {
     display: block;
@@ -48,13 +54,22 @@ input, select, textarea {
     width: 100%;
     padding: 3px;
 }
+input[type="checkbox"] {
+    width: auto;
+}
+
+
 span.help-block {
     font-size: 0.8em;
     color: #505050;
 }
 .form-group {
-    margin-bottom: 10px;
+    margin-bottom: 7px;
 }
 .text-danger {
     color: red !important;
+}
+
+.well {
+    margin-bottom: 14px;
 }

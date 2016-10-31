@@ -13,12 +13,14 @@ abstract class Organization extends Base
     {
         if ($this->_isOrganizator()) {
             parent::run_module();
-            $this->nav[] = "<a href='{$this->ipsclass->base_url}act=module&module=reps'>Администрирование</a>";
-            $this->nav[] = "<a href='{$this->ipsclass->base_url}act=module&module=edit'>Редактор</a>";
+//            $this->nav[] = "<a href='{$this->ipsclass->base_url}act=module&module=reps'>Администрирование</a>";
+//            $this->nav[] = "<a href='{$this->ipsclass->base_url}act=module&module=edit'>Редактор</a>";
         } else {
-            $html = "Вы не орг, вам сюда нельзя :)";
-            $this->ipsclass->print->add_output($html);
-            return $this->ipsclass->print->do_output(array('OVERRIDE' => 0, 'TITLE' => 'Вы не орг'));
+            throw new Exception\AccessDenied("Вы не организатор, вам сюда нельзя :)");
+            //$this->ipsclass->render('403.twig', ['error' => "Вы не орг, вам сюда нельзя :)"]);
+//            $html = "Вы не орг, вам сюда нельзя :)";
+//            $this->ipsclass->print->add_output($html);
+//            return $this->ipsclass->print->do_output(array('OVERRIDE' => 0, 'TITLE' => 'Вы не орг'));
         }
     }
 }

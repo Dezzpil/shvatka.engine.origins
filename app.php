@@ -96,13 +96,17 @@ $app->match(
 ->value('controller', 'index')
 ->value('action', 'index');
 
-$app->error(function (Exception $e, Request $request, $code) {
+$app->error(function (Exception $e, Request $request, $code) use ($app) {
     switch ($code) {
         case 404:
             $message = 'Ошибка 404. Страница не найдена.<br/>' . $e->getMessage();
             break;
+        case 500:
+            var_dump($e->getMessage(), $e->getTraceAsString());
+            die;
         default:
-            $message = 'Ошибка, код ' . $e->getCode() . ': ' . $e->getMessage();
+            return $app->render($code . '.twig', ['error' => $e->getMessage(), 'code' => $code]);
+            //$message = 'Ошибка, код ' . $e->getCode() . ': ' . $e->getMessage();
     }
     
     return new Response($message);

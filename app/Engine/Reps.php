@@ -1,7 +1,7 @@
 <?php
 namespace App\Engine;
 
-class Reps extends Base
+class Reps extends Organization
 {
     function sectostr($secs)
     {
@@ -21,88 +21,71 @@ class Reps extends Base
     {
         parent::run_module();
         
-        $html = '';
-        $this->ipsclass->DB->query("select field_4 from pfields_content where member_id=".$this->ipsclass->member['id']."");
-        $frows = $this->ipsclass->DB->fetch_row($fquery);
-        if (( $this->ipsclass->member['mgroup'] == $this->ipsclass->vars['admin_group'] )or($frows['field_4']=='y'))
-        {
-                $html=$html. "
-                <script type=\"text/javascript\">
-                 function confirmation()
-                 {
-                 var answer = confirm(\"Опубликовать текущую игру?\");
-                 if (answer)
-                 {
-                     window.location = \"{$this->ipsclass->base_url}act=module&module=games&cmd=pub\";
-                 }
-                 else
-                 {
-                     alert(\"Хорошо, не будем!\")
-                 }
-                 }
-                 </script>
-                <div id=\"userlinks\">
-                <p class=\"home\"><b>Администрирование Cхватки:</b></p>
-                <p>
-                <font color=red><b>Перед игрой:</b></font>
-                <a href='{$this->ipsclass->base_url}act=module&module=reps&cmd=addg' title='Настройки предстоящей(текущей) игры.
- Здесь вы можете создать игру, удалить игру или отредактировать название, дату и время и призовой фонд игры.'>Настройки игры</a> &middot;
-                <a href='{$this->ipsclass->base_url}act=module&module=reps&cmd=scn' title='Здесь вводится и редактируется сценарий. Можно использовать HTML.'>Редактор сценария</a> &middot;
-                <a href='{$this->ipsclass->base_url}act=module&module=reps&cmd=deng' title='Здесь можно отметить кто зарегистрирован на предстоящую игру. Галочка есть - зарегистрирован.'>Зарегистрировать на игру</a><br>
-                <font color=D2CB03><b>Во время игры:</b></font>
-                <a href='{$this->ipsclass->base_url}act=module&module=reps&cmd=spy' title='Во время игры здесь можно смотреть какая команда на каком уровне и подсказке, и когда она начала этот уровнь.'>Шпиён</a> &middot;
-                <a href='{$this->ipsclass->base_url}act=module&module=reps&cmd=exmsg' title='Во время игры здесь можно отправить ЭКСТРЕННЫЕ сообщения командам.'>Сообщение</a><br>
-                <font color=green><b>После игры:</b></font>
-                <a href='{$this->ipsclass->base_url}act=module&module=reps&cmd=tlevs' title='Здесь находится таблица завершения командами уровней с указанием времени и отставания от лидера.'>Финиш по уровням</a> &middot;
-                <a href='{$this->ipsclass->base_url}act=module&module=reps&cmd=logs' title='Тут находятся логи игры.'>Логи</a> &middot;
-                <a href='{$this->ipsclass->base_url}act=module&module=reps&cmd=ochki' title='Здесь начисляются очки. Очки добавляются к уже имеющимся. Чтобы снять очки нужно задать отрицательное число.'>Очки</a> &middot;
-                <a href='JavaScript:confirmation();' title='Здесь можно опубликовать текущую завершенную игру(работает только со включенными JavaScript)'>Опубликовать игру</a>
-                </p>
-                </div>
-                <br>
-                ";
-                switch( $this->ipsclass->input['cmd'] )
-                {
-                        case 'logs':
-                              $this->logs($this->ipsclass->input['id']);
-                              break;
-                        case 'scn':
-                              $this->scn();
-                              break;
-                        case 'spy':
-                              $this->spy();
-                              break;
-                        case 'tlevs':
-                              $this->tlevs();
-                              break;
-                        case 'deng':
-                              $this->deng();
-                              break;
-                        case 'addg':
-                              $this->addg();
-                              break;
-                        case 'ochki':
-                              $this->ochki();
-                              break;
-                        case 'exmsg':
-                              $this->admexmsg();
-                              break;
-                        default:
-                              $this->logs("");
-                              break;
-                }
+        $html = <<<HTML
+<script type=\"text/javascript\">
+    function confirmation() {
+        var answer = confirm(\"Опубликовать текущую игру?\");
+        if (answer) {
+            window.location = \"{$this->ipsclass->base_url}act=module&module=games&cmd=pub\";
+        } else {
+            alert(\"Хорошо, не будем!\")
+        }
+    }
+</script>
+<div id=\"userlinks\">
+    <p class=\"home\"><b>Администрирование Cхватки:</b></p>
+    <p>
+        <font color=red><b>Перед игрой:</b></font>
+        <a href='{$this->ipsclass->base_url}act=module&module=reps&cmd=addg' title='Настройки предстоящей(текущей) игры.
+        Здесь вы можете создать игру, удалить игру или отредактировать название, дату и время и призовой фонд игры.'>Настройки игры</a> &middot;
+        <a href='{$this->ipsclass->base_url}act=module&module=reps&cmd=scn' title='Здесь вводится и редактируется сценарий. Можно использовать HTML.'>Редактор сценария</a> &middot;
+        <a href='{$this->ipsclass->base_url}act=module&module=reps&cmd=deng' title='Здесь можно отметить кто зарегистрирован на предстоящую игру. Галочка есть - зарегистрирован.'>Зарегистрировать на игру</a><br>
+        <font color=D2CB03><b>Во время игры:</b></font>
+        <a href='{$this->ipsclass->base_url}act=module&module=reps&cmd=spy' title='Во время игры здесь можно смотреть какая команда на каком уровне и подсказке, и когда она начала этот уровнь.'>Шпиён</a> &middot;
+        <a href='{$this->ipsclass->base_url}act=module&module=reps&cmd=exmsg' title='Во время игры здесь можно отправить ЭКСТРЕННЫЕ сообщения командам.'>Сообщение</a><br>
+        <font color=green><b>После игры:</b></font>
+        <a href='{$this->ipsclass->base_url}act=module&module=reps&cmd=tlevs' title='Здесь находится таблица завершения командами уровней с указанием времени и отставания от лидера.'>Финиш по уровням</a> &middot;
+        <a href='{$this->ipsclass->base_url}act=module&module=reps&cmd=logs' title='Тут находятся логи игры.'>Логи</a> &middot;
+        <a href='{$this->ipsclass->base_url}act=module&module=reps&cmd=ochki' title='Здесь начисляются очки. Очки добавляются к уже имеющимся. Чтобы снять очки нужно задать отрицательное число.'>Очки</a> &middot;
+        <a href='JavaScript:confirmation();' title='Здесь можно опубликовать текущую завершенную игру(работает только со включенными JavaScript)'>Опубликовать игру</a>
+    </p>
+</div>
+<br>
+HTML;
+        switch( $this->ipsclass->input['cmd'] ) {
+            case 'logs':
+                $this->logs($this->ipsclass->input['id']);
+                break;
+            case 'scn':
+                $this->scn();
+                break;
+            case 'spy':
+                $this->spy();
+                break;
+            case 'tlevs':
+                $this->tlevs();
+                break;
+            case 'deng':
+                $this->deng();
+                break;
+            case 'addg':
+                $this->addg();
+                break;
+            case 'ochki':
+                $this->ochki();
+                break;
+            case 'exmsg':
+                $this->admexmsg();
+                break;
+            default:
+                $this->logs("");
+                break;
+        }
 
-                $html=$html.'<font size=2>'.$this->result.'</font>';
-                $this->ipsclass->print->add_output( $html );
-                $this->nav[] = "<a href='{$this->ipsclass->base_url}act=module&module=shvatka'>СХВАТКА</a>";
-                return $this->ipsclass->print->do_output(array('OVERRIDE' => 0, 'TITLE' => 'Админка игры', 'NAV' => $this->nav));
-        }
-        else
-        {
-            $html=$html."Вы не администратор";
-            $this->ipsclass->print->add_output( $html );
-            return $this->ipsclass->print->do_output(array('OVERRIDE' => 0, 'TITLE' => 'Вы не администратор'));
-        }
+        $html = $html.'<font size=2>'.$this->result.'</font>';
+        $this->ipsclass->print->add_output( $html );
+        $this->nav[] = "<a href='{$this->ipsclass->base_url}act=module&module=shvatka'>СХВАТКА</a>";
+        return $this->ipsclass->print->do_output(array('OVERRIDE' => 0, 'TITLE' => 'Админка игры', 'NAV' => $this->nav));
     }
 
       function admexmsg()
@@ -193,21 +176,6 @@ class Reps extends Base
       
     function scn()
     {
-        // TODO восстановить это логирование позже
-//        $sub="{$this->ipsclass->base_url}act=module&module=reps&cmd=scn";
-//        $sub1="{$this->ipsclass->base_url}act=module&module=edit";
-//        $ref=@$_SERVER['HTTP_REFERER'];
-//        if ((strpos(trim($ref),trim($sub))===FALSE)&&(strpos(trim($ref),trim($sub))===FALSE)) {
-//            $this->ipsclass->DB->do_insert( 'admin_logs', array(
-//                'act'        => 'Адм.Схватки',
-//                'code'       => 'Вход',
-//                'member_id'  => $this->ipsclass->member['id'],
-//                'ctime'      => time(),
-//                'note'       => 'Просмотр сценария. Пришел с '.$ref,
-//                'ip_address' => $this->ipsclass->input['IP_ADDRESS'],
-//            ));
-//        }
-        
         $res="";
         $ptm="";
         if (@$this->ipsclass->input['delg'] == "1") {
@@ -410,79 +378,48 @@ $res.='</center></td></tr></table></div>';
         $this->ipsclass->render('module/game.twig', $result);
     }
       
-      function deng()
-      {
-                $all=0;
-                $qut=0;
-                $res="";
-                if ($this->ipsclass->input['y']=="1")
-                {
-                    $res.='<center><b>Изменения внесены</b></center>';
-                    $fq=$this->ipsclass->DB->query("select * from sh_igroki");
-                    while ($frows = $this->ipsclass->DB->fetch_row($fq))
-                    {
-                        if (@$this->ipsclass->input[$frows['n']]=="1") {
-                            $this->ipsclass->DB->query("update  sh_igroki set ch_dengi=1 where n=".$frows['n']);
-                        } else {
-                            $this->ipsclass->DB->query("update  sh_igroki set ch_dengi=0 where n=".$frows['n']);
-                        }
-
-                    }
-                    $fq=$this->ipsclass->DB->query("select * from sh_comands");
-                    while ($frows = $this->ipsclass->DB->fetch_row($fq))
-                    {
-                        if ($this->ipsclass->input['c'.$frows['n']]=="1") {
-                            $this->ipsclass->DB->query("update  sh_comands set dengi=1 where n=".$frows['n']);
-                        } else {
-                            $this->ipsclass->DB->query("update  sh_comands set dengi=0 where n=".$frows['n']);
-                        }
-                    }
+    /**
+     * Регистрация игроков и команд на игру
+     */
+    function deng()
+    {
+        $teamHelper = new Helper\Team;
+        $playerHelper = new Helper\Player;
+            
+        if ($this->ipsclass->input['y'] == "1") {
+            
+            $teamHelper->unregAll();
+            $playerHelper->unregAll();
+            $data = $this->ipsclass->input->toArray();
+            foreach ($data as $key => $value) {
+                if (preg_match('/^c(\d+)$/i', $key, $match)) {
+                    $helper = $teamHelper;
+                } else if (preg_match('/^i(\d+)$/i', $key, $match)) {
+                    $helper = $playerHelper;
+                } else {
+                    continue;
                 }
-                $comd=array();
-                $this->ipsclass->DB->query("select * from sh_comands");
-                while ($frows = $this->ipsclass->DB->fetch_row($fquery))
-                {
-                   $comd[$frows['n']]=$frows['nazvanie'];
-                 }
-                 $res.='<div class="borderwrap"><div class="maintitle" align="center">Регистрация на игру </div><br><form action="' . $this->ipsclass->base_url . '">
-<input name="act" type="hidden" value="module">
-<input name="module" type="hidden" value="reps">
-<input name="cmd" type="hidden" value="deng">
-<input name="y" type="hidden" value="1">';
-                 foreach ($comd as $n=>$naz)
-                 {
-                    $res=$res.'<table cellspacing="1" class="borderwrap" align="center"><tr><td align="center" colspan="3" class="maintitle"><input name="c'.$n.'" type="checkbox" value="1"';
-                    $commands = $this->ipsclass->DB->query("select * from sh_comands where nazvanie='".$naz."'");
-                    $cmn = $this->ipsclass->DB->fetch_row($commands);
-                    if ($cmn['dengi']==1)
-                    {
-                        $res.='checked';
-                    }
-                    $res.='>'.$naz.'</td></tr>';
-                    $fq=$this->ipsclass->DB->query("select * from sh_igroki where komanda='".$naz."'");
-                    
-                    $res=$res.'<tr><th align="center" width="50%">Ник</th><th align="center" >Статус</th><th align="center" >Очки</th></tr>';
-                    while ($frows = $this->ipsclass->DB->fetch_row($fq))
-                    {
-                        $members = $this->ipsclass->DB->query("select * from members where name='".($frows['nick'])."'");
-                        $usID=$this->ipsclass->DB->fetch_row($members);
-                        $res=$res."<tr class='ipbtable'><td class=\"row1\"><input name=\"".$frows['n']."\" type=\"checkbox\" value=\"1\"";
-                        if ($frows['ch_dengi']=='1') {
-                             $res.='checked';
-                             $qut=$qut+1;
-                        }
-                        $res.="><b><a href=\"{$this->ipsclass->base_url}showuser=".$usID['id']."\">".($frows['nick'])."</a></b></td><td class=\"row2\" align=\"center\">".($frows['status_in_cmd'])."</td><td class=\"row2\" align=\"center\">".($frows['ochki'])."</td></tr>";
-                    }
-                    $res=$res."</TABLE><center>Всего зарегистрированых $qut</center><br>";
-                    $all=$all+$qut;
-                    $qut=0;
-                 }
-                 $res.='<center>Со всех команд зарегистрировано '.$all.' человек(а) <br>
-                        <center><br>';
-                 $res.='<center><input type="submit" value="Подтвердить изменения" style={background:#D2D0D0;border:1px;border:outset;border-color:#ffffff;font-size:11px;}></center></form></div>';
-
-                 $this->result=$res;
-      }
+                
+                $id = $match[1];
+                if (intval($value) === 1) {
+                    $helper->regToGame($id);
+                } else {
+                    $helper->unregToGame($id);
+                }
+            }
+            
+        }
+        
+        $teams = $teamHelper->getList();
+        foreach ($teams as &$team) {
+            $team['players'] = $playerHelper->getListByTeamName($team['nazvanie']);
+        }
+        
+        $this->ipsclass->render('/module/reg.twig', [
+            'teams' => $teams
+        ]);
+    }
+      
       function ochki()
       {
                if ($this->ipsclass->input['y']=="1")

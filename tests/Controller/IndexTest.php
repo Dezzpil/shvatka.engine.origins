@@ -56,7 +56,7 @@ class IndexTest extends \App\Tests\ControllerTest
             ['module' => 'reps', 'cmd' => 'addg']
         );
         $this->assertContains(
-            'Вы не администратор',
+            'Вы не организатор',
             $client->getResponse()->getContent()
         );
     }
