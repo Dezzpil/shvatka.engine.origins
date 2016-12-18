@@ -420,6 +420,7 @@ class Shvatka extends Base
         $fieldKey = $level['keyw'];
         
         if ( $k != "" || $bk != "") {
+            // пишем лог, если хоть что-то было забито в поле ключа
             $logHelper->write($teamName, $fieldKey . $brainKey, $playerName);
         }
 
@@ -429,8 +430,6 @@ class Shvatka extends Base
             $levelNum++;
             $tipNum = 0;
             $levelStartTime = date('Y-m-d H:i:s');
-            
-            $logHelper->write($teamName, $fieldKey . $brainKey, $playerName);
             
             $level = new Helper\Unit($levelNum, 0);
             if ($level->isExists()) {
